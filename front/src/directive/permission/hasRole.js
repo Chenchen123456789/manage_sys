@@ -1,6 +1,6 @@
  /**
  * 角色权限处理
- * Copyright (c) 2019 ruoyi
+ * Copyright (c) 2019 chenchen
  */
  
 import store from '@/store'
