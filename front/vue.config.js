@@ -8,7 +8,10 @@ function resolve(dir) {
 
 const name = defaultSettings.title || '后台管理系统' // 标题
 
-const port = process.env.port || process.env.npm_config_port || 8070 // 端口
+const port = process.env.port || process.env.npm_config_port || 4100 // 端口
+
+const productionGzipExtensions = /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i;
+const CompressionWebpackPlugin = require('compression-webpack-plugin');
 
 // vue.config.js 配置说明
 //官方vue.config.js 参考文档 https://cli.vuejs.org/zh/config/#css-loaderoptions
@@ -33,7 +36,7 @@ module.exports = {
     proxy: {
       // detail: https://cli.vuejs.org/config/#devserver-proxy
       [process.env.VUE_APP_BASE_API]: {
-        target: `http://localhost:8080`,
+        target: `http://localhost:4000`,
         changeOrigin: true,
         pathRewrite: {
           ['^' + process.env.VUE_APP_BASE_API]: ''
@@ -42,13 +45,27 @@ module.exports = {
     },
     disableHostCheck: true
   },
-  configureWebpack: {
-    name: name,
-    resolve: {
-      alias: {
-        '@': resolve('src')
+  configureWebpack: config => {
+    let wepackConfig = {
+      name: name,
+      resolve: {
+        alias: {
+          '@': resolve('src')
+        }
       }
     }
+    if (process.env.NODE_ENV === 'production') {
+      wepackConfig.plugins = [
+        new CompressionWebpackPlugin({
+          filename: '[path].gz[query]',
+          algorithm: 'gzip',
+          test: productionGzipExtensions,
+          threshold: 10240,
+          minRatio: 0.8
+        })
+      ]
+    }
+    return wepackConfig
   },
   chainWebpack(config) {
     config.plugins.delete('preload') // TODO: need test
@@ -95,7 +112,7 @@ module.exports = {
             .plugin('ScriptExtHtmlWebpackPlugin')
             .after('html')
             .use('script-ext-html-webpack-plugin', [{
-            // `runtime` must same as runtimeChunk name. default is `runtime`
+              // `runtime` must same as runtimeChunk name. default is `runtime`
               inline: /runtime\..*\.js$/
             }])
             .end()
