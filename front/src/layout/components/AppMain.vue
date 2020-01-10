@@ -2,21 +2,38 @@
   <section class="app-main">
     <transition name="fade-transform" mode="out-in">
       <keep-alive :include="cachedViews">
-        <router-view :key="key" />
+        <router-view v-if="!$route.meta.iframeSrc" :key="key" />
       </keep-alive>
     </transition>
+    <transition-group name="fade-transform" mode="out-in">
+      <iframe-component
+        v-for="(item, index) in iframeViews"
+        :key="item.path"
+        :myIframeId="'iframe' + index"
+        v-show="$route.path === item.path"
+        :src="$route.meta.iframeSrc"
+      ></iframe-component>
+    </transition-group>
   </section>
 </template>
 
 <script>
+import IframeComponent from './Iframe/index'
+
 export default {
   name: 'AppMain',
+  components: {
+    IframeComponent
+  },
   computed: {
-    cachedViews() {
+    cachedViews () {
       return this.$store.state.tagsView.cachedViews
     },
-    key() {
+    key () {
       return this.$route.path
+    },
+    iframeViews () {
+      return this.$store.state.tagsView.iframeViews
     }
   }
 }
@@ -31,17 +48,17 @@ export default {
   overflow: hidden;
 }
 
-.fixed-header+.app-main {
+.fixed-header + .app-main {
   padding-top: 50px;
 }
 
 .hasTagsView {
   .app-main {
-    /* 84 = navbar + tags-view = 50 + 34 */
-    min-height: calc(100vh - 84px);
+    /* 98 = header width */
+    min-height: calc(100vh - 98px);
   }
 
-  .fixed-header+.app-main {
+  .fixed-header + .app-main {
     padding-top: 84px;
   }
 }

@@ -2,12 +2,14 @@ package com.eim.project.system.mapper;
 
 import java.util.List;
 import com.eim.project.system.domain.SysRoleMenu;
+import org.springframework.stereotype.Repository;
 
 /**
  * 角色与菜单关联表 数据层
  * 
  * @author chenchen
  */
+@Repository
 public interface SysRoleMenuMapper
 {
     /**

@@ -24,7 +24,12 @@
       <br />
       <el-row>
         <el-col :lg="2" :md="2">
-          <el-upload :show-file-list="false" :before-upload="beforeUpload">
+          <el-upload
+            action="#"
+            :http-request="requestUpload"
+            :show-file-list="false"
+            :before-upload="beforeUpload"
+          >
             <el-button size="small">
               上传
               <i class="el-icon-upload el-icon--right"></i>
@@ -44,7 +49,7 @@
           <el-button icon="el-icon-refresh-right" size="small" @click="rotateRight()"></el-button>
         </el-col>
         <el-col :lg="{span: 2, offset: 6}" :md="2">
-          <el-button type="primary" size="small" @click="uploadImg()">上 传</el-button>
+          <el-button type="primary" size="small" @click="uploadImg()">提 交</el-button>
         </el-col>
       </el-row>
     </el-dialog>
@@ -84,6 +89,8 @@ export default {
     editCropper() {
       this.open = true;
     },
+    // 覆盖默认的上传行为
+    requestUpload() {},
     // 向左旋转
     rotateLeft() {
       this.$refs.cropper.rotateLeft();

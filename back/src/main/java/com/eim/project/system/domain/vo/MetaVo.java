@@ -1,10 +1,15 @@
 package com.eim.project.system.domain.vo;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 /**
  * 路由显示信息
  * 
  * @author chenchen
  */
+@Data
+@Accessors(chain = true)
 public class MetaVo
 {
     /**
@@ -17,33 +22,9 @@ public class MetaVo
      */
     private String icon;
 
-    public MetaVo()
-    {
-    }
+    /**
+     * 设置iframe的src
+     */
+    private String iframeSrc;
 
-    public MetaVo(String title, String icon)
-    {
-        this.title = title;
-        this.icon = icon;
-    }
-
-    public String getTitle()
-    {
-        return title;
-    }
-
-    public void setTitle(String title)
-    {
-        this.title = title;
-    }
-
-    public String getIcon()
-    {
-        return icon;
-    }
-
-    public void setIcon(String icon)
-    {
-        this.icon = icon;
-    }
 }

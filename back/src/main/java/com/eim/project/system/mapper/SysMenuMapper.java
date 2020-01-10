@@ -3,12 +3,14 @@ package com.eim.project.system.mapper;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import com.eim.project.system.domain.SysMenu;
+import org.springframework.stereotype.Repository;
 
 /**
  * 菜单表 数据层
  * 
  * @author chenchen
  */
+@Repository
 public interface SysMenuMapper
 {
     /**

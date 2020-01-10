@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.eim.framework.web.domain.BaseEntity;
@@ -117,7 +119,7 @@ public class SysMenu extends BaseEntity
 
     public void setPath(String path)
     {
-        this.path = path;
+        this.path = StringEscapeUtils.unescapeHtml(path);;
     }
 
     @Size(min = 0, max = 200, message = "组件路径不能超过255个字符")

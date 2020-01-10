@@ -151,8 +151,8 @@ export default {
       loading: true,
       // 表格树数据
       deptList: [],
-      // 部门部门树选项
-      deptOptions: undefined,
+      // 部门树选项
+      deptOptions: [],
       // 弹出层标题
       title: "",
       // 是否显示弹出层
@@ -228,7 +228,7 @@ export default {
     reset() {
       this.form = {
         deptId: undefined,
-        parentId: 100,
+        parentId: undefined,
         deptName: undefined,
         orderNum: undefined,
         leader: undefined,

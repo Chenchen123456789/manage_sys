@@ -22,7 +22,13 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button type="primary" icon="el-icon-plus" size="mini" @click="handleAdd" v-hasPermi="['system:menu:add']">新增</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-plus"
+          size="mini"
+          @click="handleAdd"
+          v-hasPermi="['system:menu:add']"
+        >新增</el-button>
       </el-form-item>
     </el-form>
 
@@ -49,16 +55,17 @@
       </el-table-column>
       <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
         <template slot-scope="scope">
-          <el-button size="mini" 
-            type="text" 
-            icon="el-icon-edit" 
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-edit"
             @click="handleUpdate(scope.row)"
             v-hasPermi="['system:menu:edit']"
           >修改</el-button>
-          <el-button 
-            size="mini" 
-            type="text" 
-            icon="el-icon-plus" 
+          <el-button
+            size="mini"
+            type="text"
+            icon="el-icon-plus"
             @click="handleAdd(scope.row)"
             v-hasPermi="['system:menu:add']"
           >新增</el-button>
@@ -129,19 +136,39 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item v-if="form.menuType != 'F'" label="是否外链">
+            <el-form-item v-if="form.menuType != 'F'" label="是否外链" prop="isFrame">
               <el-radio-group v-model="form.isFrame">
                 <el-radio label="0">是</el-radio>
                 <el-radio label="1">否</el-radio>
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item v-if="form.menuType != 'F'" label="路由地址" prop="path">
+          <el-col :span="12" v-if="form.isFrame === '1' && form.menuType != 'F'">
+            <el-form-item label="路由地址" prop="path">
               <el-input v-model="form.path" placeholder="请输入路由地址" />
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="form.menuType == 'C'">
+
+          <el-col :span="12">
+            <el-form-item
+              v-if="form.isFrame === '0' && form.menuType != 'F'"
+              label="路由地址"
+              prop="routerPath"
+            >
+              <el-input v-model="form.path" placeholder="请输入路由地址" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="24">
+            <el-form-item
+              v-if="form.isFrame === '0' && form.menuType != 'F'"
+              label="链接地址"
+              prop="frameSrc"
+            >
+              <el-input v-model="form.frameSrc" placeholder="请输入链接地址" />
+            </el-form-item>
+          </el-col>
+
+          <el-col :span="12" v-if="form.menuType == 'C' && form.isFrame == '1'">
             <el-form-item label="组件路径" prop="component">
               <el-input v-model="form.component" placeholder="请输入组件路径" />
             </el-form-item>
@@ -181,7 +208,7 @@ import IconSelect from "@/components/IconSelect";
 export default {
   name: "Menu",
   components: { Treeselect, IconSelect },
-  data() {
+  data () {
     return {
       // 遮罩层
       loading: true,
@@ -213,7 +240,7 @@ export default {
       }
     };
   },
-  created() {
+  created () {
     this.getList();
     this.getDicts("sys_show_hide").then(response => {
       this.visibleOptions = response.data;
@@ -221,11 +248,11 @@ export default {
   },
   methods: {
     // 选择图标
-    selected(name) {
+    selected (name) {
       this.form.icon = name;
     },
     /** 查询菜单列表 */
-    getList() {
+    getList () {
       this.loading = true;
       listMenu(this.queryParams).then(response => {
         this.menuList = response.data;
@@ -233,7 +260,7 @@ export default {
       });
     },
     /** 查询菜单下拉树结构 */
-    getTreeselect() {
+    getTreeselect () {
       treeselect().then(response => {
         this.menuOptions = [];
         const menu = { id: 0, label: '主类目', children: [] };
@@ -242,19 +269,19 @@ export default {
       });
     },
     // 菜单显示状态字典翻译
-    visibleFormat(row, column) {
+    visibleFormat (row, column) {
       if (row.menuType == "F") {
         return "";
       }
       return this.selectDictLabel(this.visibleOptions, row.visible);
     },
     // 取消按钮
-    cancel() {
+    cancel () {
       this.open = false;
       this.reset();
     },
     // 表单重置
-    reset() {
+    reset () {
       this.form = {
         menuId: undefined,
         parentId: 0,
@@ -263,16 +290,18 @@ export default {
         menuType: "M",
         orderNum: undefined,
         isFrame: "1",
-        visible: "0"
+        visible: "0",
+        frameSrc: undefined,
+        routerPath: undefined
       };
       this.resetForm("form");
     },
     /** 搜索按钮操作 */
-    handleQuery() {
+    handleQuery () {
       this.getList();
     },
     /** 新增按钮操作 */
-    handleAdd(row) {
+    handleAdd (row) {
       this.reset();
       this.getTreeselect();
       if (row != null) {
@@ -282,19 +311,33 @@ export default {
       this.title = "添加菜单";
     },
     /** 修改按钮操作 */
-    handleUpdate(row) {
+    handleUpdate (row) {
       this.reset();
       this.getTreeselect();
       getMenu(row.menuId).then(response => {
-        this.form = response.data;
+        let resDate = response.data
+        if (resDate.isFrame === '0') {
+          const path = resDate.path
+          const index = path.indexOf('&iframe?url=')
+          if (index > -1) {
+            const routerPath = path.substring(0, index)
+            const frameSrc = path.substring(index + 12)
+            resDate.path = routerPath
+            resDate.frameSrc = frameSrc
+          }
+        }
+        this.form = resDate;
         this.open = true;
         this.title = "修改菜单";
       });
     },
     /** 提交按钮 */
-    submitForm: function() {
+    submitForm: function () {
       this.$refs["form"].validate(valid => {
         if (valid) {
+          if (this.form.isFrame === '0') {
+            this.form.path = this.form.routerPath + '&iframe?url=' + this.form.frameSrc
+          }
           if (this.form.menuId != undefined) {
             updateMenu(this.form).then(response => {
               if (response.code === 200) {
@@ -320,17 +363,17 @@ export default {
       });
     },
     /** 删除按钮操作 */
-    handleDelete(row) {
+    handleDelete (row) {
       this.$confirm('是否确认删除名称为"' + row.menuName + '"的数据项?', "警告", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning"
-        }).then(function() {
-          return delMenu(row.menuId);
-        }).then(() => {
-          this.getList();
-          this.msgSuccess("删除成功");
-        }).catch(function() {});
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      }).then(function () {
+        return delMenu(row.menuId);
+      }).then(() => {
+        this.getList();
+        this.msgSuccess("删除成功");
+      }).catch(function () { });
     }
   }
 };

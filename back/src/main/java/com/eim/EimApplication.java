@@ -16,6 +16,6 @@ public class EimApplication
     {
         // System.setProperty("spring.devtools.restart.enabled", "false");
         SpringApplication.run(EimApplication.class, args);
-        System.out.println("(♥◠‿◠)ﾉﾞ  启动成功");
+        System.out.println("启动成功");
     }
 }
