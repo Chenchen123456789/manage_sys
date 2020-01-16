@@ -11,8 +11,8 @@
         :key="item.path"
         :myIframeId="'iframe' + index"
         v-show="$route.path === item.path"
-        :src="$route.meta.iframeSrc"
-      ></iframe-component>
+        :src="item.meta.iframeSrc"
+      > </iframe-component>
     </transition-group>
   </section>
 </template>

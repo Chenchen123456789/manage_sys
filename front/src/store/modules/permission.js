@@ -1,6 +1,13 @@
-import { constantRoutes } from '@/router'
-import { getRouters } from '@/api/menu'
+import {
+  constantRoutes
+} from '@/router'
+import {
+  getRouters
+} from '@/api/menu'
 import Layout from '@/layout/index'
+import {
+  getHomeSetting
+} from '@/api/system/homeSetting'
 
 const permission = {
   state: {
@@ -15,14 +22,45 @@ const permission = {
   },
   actions: {
     // 生成路由
-    GenerateRoutes({ commit }) {
+    GenerateRoutes({
+      commit
+    }) {
       return new Promise(resolve => {
-        // 向后端请求路由数据
-        getRouters().then(res => {
-          const accessedRoutes = filterAsyncRouter(res.data)
-          accessedRoutes.push({ path: '*', redirect: '/404', hidden: true })
-          commit('SET_ROUTES', accessedRoutes)
-          resolve(accessedRoutes)
+        getHomeSetting().then(res => {
+          let home = {
+            path: '',
+            component: Layout,
+            redirect: res.data.router,
+            children: [{
+              path: res.data.router,
+              // component: () => import('@/views/index'),
+              name: res.data.menuName,
+              meta: {
+                title: res.data.menuName,
+                icon: res.data.iconClass,
+                noCache: true,
+                affix: true
+              }
+            }]
+          }
+          if(res.data.isFrame === 0) {
+              home.children[0].meta.iframeSrc = res.data.frameSrc
+          } else{
+             home.component = loadView(res.data.component)
+          }
+
+          // 向后端请求路由数据
+          getRouters().then(res => {
+            const accessedRoutes = filterAsyncRouter(res.data)
+            accessedRoutes.unshift(home)
+            accessedRoutes.push({
+              path: '*',
+              redirect: '/404',
+              hidden: true
+            })
+            commit('SET_ROUTES', accessedRoutes)
+            resolve(accessedRoutes)
+          })
         })
       })
     }

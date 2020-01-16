@@ -15,6 +15,7 @@
 
 <script>
 import logoImg from '@/assets/logo/logo.png'
+import defaultSettings from '@/settings.js'
 
 export default {
   name: 'SidebarLogo',
@@ -26,7 +27,7 @@ export default {
   },
   data() {
     return {
-      title: '后台管理系统',
+      title: defaultSettings.title || '后台管理系统',
       logo: logoImg
     }
   }

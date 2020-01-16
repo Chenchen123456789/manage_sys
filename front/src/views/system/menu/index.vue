@@ -336,7 +336,7 @@ export default {
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.isFrame === '0') {
-            this.form.path = this.form.routerPath + '&iframe?url=' + this.form.frameSrc
+            this.form.path = this.form.path + '&iframe?url=' + this.form.frameSrc
           }
           if (this.form.menuId != undefined) {
             updateMenu(this.form).then(response => {
