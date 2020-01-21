@@ -46,7 +46,7 @@ const permission = {
           if(res.data.isFrame === 0) {
               home.children[0].meta.iframeSrc = res.data.frameSrc
           } else{
-             home.component = loadView(res.data.component)
+              home.children[0].component = loadView(res.data.component)
           }
 
           // 向后端请求路由数据

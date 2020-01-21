@@ -4,11 +4,11 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 <generatorConfiguration>
     <!-- 数据库驱动:选择你的本地硬盘上面的数据库驱动包-->
-    <classPathEntry location="E:/mysql-connector-java-5.1.48.jar"/>
+    <classPathEntry location="E:/chenchen/sqljdbc4-4.0.jar"/>
     <context id="DB2Tables" targetRuntime="MyBatis3">
         <property name="autoDelimitKeywords" value="true" />
-        <property name="beginningDelimiter" value="`" />
-        <property name="endingDelimiter" value="`" />
+        <property name="beginningDelimiter" value="[" />
+        <property name="endingDelimiter" value="]" />
         <plugin type="com.github.dongfg.plugin.LombokPlugin"></plugin>
         <commentGenerator>
             <property name="suppressDate" value="true"/>
@@ -16,25 +16,26 @@
             <property name="suppressAllComments" value="true"/>
         </commentGenerator>
         <!--数据库链接URL，用户名、密码 -->
-        <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://localhost:3306/example?useSSL=true" userId="root"
-                        password="root">
+        <jdbcConnection driverClass="com.microsoft.sqlserver.jdbc.SQLServerDriver"
+                        connectionURL="jdbc:sqlserver://192.192.192.150:1433;DatabaseName=energy"
+                        userId="sa"
+                        password="P@$$w0rd">
         </jdbcConnection>
         <javaTypeResolver>
             <property name="forceBigDecimals" value="false"/>
         </javaTypeResolver>
 
         <!-- 生成模型的包名和位置-->
-        <javaModelGenerator targetPackage="com.eim.example.entity.setting" targetProject="src/main/java">
+        <javaModelGenerator targetPackage="com.eim.project.energy.entity" targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
             <property name="trimStrings" value="true"/>
         </javaModelGenerator>
         <!-- 生成映射文件的包名和位置-->
-        <sqlMapGenerator targetPackage="mapper/setting" targetProject="src/main/resources">
+        <sqlMapGenerator targetPackage="mybatis/energy" targetProject="src/main/resources">
             <property name="enableSubPackages" value="true"/>
         </sqlMapGenerator>
         <!--生成DAO的包名和位置-->
-        <javaClientGenerator type="XMLMAPPER" targetPackage="com.eim.example.mapper.setting"
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.eim.project.energy.mapper"
                              targetProject="src/main/java">
             <property name="enableSubPackages" value="true"/>
         </javaClientGenerator>
@@ -42,7 +43,7 @@
 
 
         <!-- 要生成的表 tableName是数据库中的表名或视图名 domainObjectName是实体类名-->
-        <table tableName="user_info" domainObjectName="UserInfo" enableCountByExample="false" enableUpdateByExample="false"
+        <table tableName="O_5Meter" domainObjectName="Meter" enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false"
                selectByExampleQueryId="false">
         </table>

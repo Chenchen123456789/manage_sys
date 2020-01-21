@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eim.project.energy.mapper.CompanyMapper">
+  <resultMap id="BaseResultMap" type="com.eim.project.energy.entity.Company">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="company_code" jdbcType="NVARCHAR" property="companyCode" />
+    <result column="company_name" jdbcType="NVARCHAR" property="companyName" />
+    <result column="company_description" jdbcType="NVARCHAR" property="companyDescription" />
+    <result column="create_by" jdbcType="NVARCHAR" property="createBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_by" jdbcType="NVARCHAR" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, company_code, company_name, company_description, create_by, create_time, update_by,
+    update_time
+  </sql>
+
+  <select id="selectCompanyList" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from O_1Company
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from O_1Company
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="selectByCompanyCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from O_1Company
+    where company_code = #{companyCode,jdbcType=NVARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from O_1Company
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.eim.project.energy.entity.Company">
+    insert into O_1Company (id, company_code, company_name,
+      company_description, create_by, create_time, 
+      update_by, update_time)
+    values (#{id,jdbcType=INTEGER}, #{companyCode,jdbcType=NVARCHAR}, #{companyName,jdbcType=NVARCHAR},
+      #{companyDescription,jdbcType=NVARCHAR}, #{createBy,jdbcType=NVARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=NVARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.eim.project.energy.entity.Company">
+    insert into O_1Company
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="companyCode != null">
+        company_code,
+      </if>
+      <if test="companyName != null">
+        company_name,
+      </if>
+      <if test="companyDescription != null">
+        company_description,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="companyCode != null">
+        #{companyCode,jdbcType=NVARCHAR},
+      </if>
+      <if test="companyName != null">
+        #{companyName,jdbcType=NVARCHAR},
+      </if>
+      <if test="companyDescription != null">
+        #{companyDescription,jdbcType=NVARCHAR},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=NVARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=NVARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.eim.project.energy.entity.Company">
+    update O_1Company
+    <set>
+      <if test="companyCode != null">
+        company_code = #{companyCode,jdbcType=NVARCHAR},
+      </if>
+      <if test="companyName != null">
+        company_name = #{companyName,jdbcType=NVARCHAR},
+      </if>
+      <if test="companyDescription != null">
+        company_description = #{companyDescription,jdbcType=NVARCHAR},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=NVARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=NVARCHAR},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.eim.project.energy.entity.Company">
+    update O_1Company
+    set company_code = #{companyCode,jdbcType=NVARCHAR},
+      company_name = #{companyName,jdbcType=NVARCHAR},
+      company_description = #{companyDescription,jdbcType=NVARCHAR},
+      create_by = #{createBy,jdbcType=NVARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=NVARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <delete id="deleteByIds" parameterType="java.lang.Integer">
+    delete from O_1Company where id in
+    <foreach collection="array" item="id" open="(" separator="," close=")">
+      #{id}
+    </foreach>
+  </delete>
+</mapper>
