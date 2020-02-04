@@ -1,14 +1,9 @@
 package com.eim.project.energy.service;
 
-import com.eim.common.constant.UserConstants;
-import com.eim.common.exception.CustomException;
-import com.eim.common.utils.StringUtils;
 import com.eim.framework.aspectj.lang.annotation.DataSource;
 import com.eim.framework.aspectj.lang.enums.DataSourceType;
-import com.eim.framework.web.domain.AjaxResult;
 import com.eim.project.energy.entity.Company;
 import com.eim.project.energy.mapper.CompanyMapper;
-import com.eim.project.system.domain.SysPost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -11,7 +11,6 @@ import com.eim.project.energy.entity.Building;
 import com.eim.project.energy.service.BuildingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
