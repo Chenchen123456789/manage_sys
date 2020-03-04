@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eim.project.energy.mapper.UnitPriceMapper">
+    <resultMap id="BaseResultMap" type="com.eim.project.energy.entity.UnitPrice">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="energy_type" jdbcType="NVARCHAR" property="energyType"/>
+        <result column="price" jdbcType="DOUBLE" property="price"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, energy_type, price
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from unit_price
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <select id="selectUnitPriceList" resultType="map">
+        SELECT
+            id,
+            energy_type energyType,
+            price
+        FROM
+            unit_price
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from unit_price
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.eim.project.energy.entity.UnitPrice">
+    insert into unit_price (id, energy_type, price
+      )
+    values (#{id,jdbcType=INTEGER}, #{energyType,jdbcType=NVARCHAR}, #{price,jdbcType=DOUBLE}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.eim.project.energy.entity.UnitPrice">
+        insert into unit_price
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="energyType != null">
+                energy_type,
+            </if>
+            <if test="price != null">
+                price,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="energyType != null">
+                #{energyType,jdbcType=NVARCHAR},
+            </if>
+            <if test="price != null">
+                #{price,jdbcType=DOUBLE},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByEnergyTypeSelective" parameterType="com.eim.project.energy.entity.UnitPrice">
+        update unit_price
+        <set>
+            <if test="price != null">
+                price = #{price,jdbcType=DOUBLE},
+            </if>
+        </set>
+        where energy_type = #{energyType,jdbcType=NVARCHAR}
+    </update>
+    <update id="updateByPrimaryKeySelective" parameterType="com.eim.project.energy.entity.UnitPrice">
+        update unit_price
+        <set>
+            <if test="energyType != null">
+                energy_type = #{energyType,jdbcType=NVARCHAR},
+            </if>
+            <if test="price != null">
+                price = #{price,jdbcType=DOUBLE},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.eim.project.energy.entity.UnitPrice">
+    update unit_price
+    set energy_type = #{energyType,jdbcType=NVARCHAR},
+      price = #{price,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

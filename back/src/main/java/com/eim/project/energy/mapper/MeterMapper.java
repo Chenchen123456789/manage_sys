@@ -28,5 +28,5 @@ public interface MeterMapper {
 
     int deleteByIds(Integer[] ids);
 
-    Meter selectByMeterCode(String meterCode);
+    Meter selectByMeterCode(String meterCode, Integer deviceId);
 }

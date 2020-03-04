@@ -60,7 +60,7 @@ public class PlantController extends BaseController {
     @Log(title = "工厂管理", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody Plant plant) {
-        Plant existPlant = plantService.selectPlantByPlantCode(plant.getPlantCode());
+        Plant existPlant = plantService.selectPlantByPlantCode(plant.getPlantCode(), plant.getCompanyId());
         if (existPlant != null) {
             return AjaxResult.error("新增工厂'" + plant.getPlantCode() + "'失败，工厂编码已存在");
         }
@@ -76,7 +76,7 @@ public class PlantController extends BaseController {
     @Log(title = "工厂管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@Validated @RequestBody Plant plant) {
-        Plant existPlant = plantService.selectPlantByPlantCode(plant.getPlantCode());
+        Plant existPlant = plantService.selectPlantByPlantCode(plant.getPlantCode(), plant.getCompanyId());
         if (existPlant != null && !existPlant.getId().equals(plant.getId())) {
             return AjaxResult.error("修改工厂'" + plant.getPlantCode() + "'失败，工厂编码已存在");
         }

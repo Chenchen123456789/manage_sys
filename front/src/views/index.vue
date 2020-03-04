@@ -79,7 +79,8 @@ export default {
 
 <style lang="scss" scoped>
 .dashboard-editor-container {
-  height: 100vh;
+  min-height: 100vh;
+  max-height: 100%;
   padding: 32px;
   background-color: rgb(240, 242, 245);
   position: relative;

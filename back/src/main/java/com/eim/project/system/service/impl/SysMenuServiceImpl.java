@@ -127,7 +127,7 @@ public class SysMenuServiceImpl implements ISysMenuService {
                 router.setAlwaysShow(true);
                 router.setRedirect("noRedirect");
                 router.setChildren(buildMenus(cMenus));
-            }
+        }
             routers.add(router);
         }
         return routers;

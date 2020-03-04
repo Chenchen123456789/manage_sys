@@ -32,7 +32,7 @@ server:
 # 日志配置
 logging:
   level:
-#    com.eim: debug
+    com.eim: debug
     org.springframework: warn
 
 # Spring配置

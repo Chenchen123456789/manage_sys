@@ -10,9 +10,9 @@ export function listDevice(query) {
 }
 
 // 查询设备详细
-export function getDevice(deviceCode) {
+export function getDevice(deviceId) {
   return request({
-    url: '/energy/device/' + deviceCode,
+    url: '/energy/device/' + deviceId,
     method: 'get'
   })
 }
@@ -36,9 +36,9 @@ export function updateDevice(data) {
 }
 
 // 删除设备
-export function delDevice(deviceCode) {
+export function delDevice(deviceId) {
   return request({
-    url: '/energy/device/' + deviceCode,
+    url: '/energy/device/' + deviceId,
     method: 'delete'
   })
 }

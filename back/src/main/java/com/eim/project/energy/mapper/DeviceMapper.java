@@ -29,5 +29,5 @@ public interface DeviceMapper {
 
     int deleteByIds(Integer[] ids);
 
-    Device selectByDeviceCode(String deviceCode);
+    Device selectByDeviceCode(String deviceCode, Integer buildingId);
 }

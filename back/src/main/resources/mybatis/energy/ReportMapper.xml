@@ -1,0 +1,826 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eim.project.energy.mapper.ReportMapper">
+    <select id="selectHistoryOfYearDosage" resultType="map" parameterType="map">
+        SELECT
+        a.plant_name plantName,
+        a.building_name buildingName,
+        a.system_name systemName,
+        a.device_name deviceName,
+        a.device_id deviceId,
+        a.tag_name tagName,
+        a.energy_type_name energyTypeName,
+        b.TagValue tagValue,
+        r.tagvalue rTagValue,
+        a.Description description,
+        b.[datatime] dataTime,
+        CAST ( r.tagvalue - b.tagvalue AS NUMERIC ( 20, 2 ) ) dValue
+        FROM
+        dbo.Variable_Info a,
+        dbo.T_daydata b,
+        dbo.RTable r
+        <where>
+            b.TagName = a.tag_name
+            AND a.tag_name = r.tagname
+            AND a.[disable] != 1
+            AND a.total_flag = 1
+            AND YEAR ( b.DataTime ) = YEAR ( #{queryTime} )
+            AND b.DataTime = (
+            SELECT MAX
+            ( c.DataTime )
+            FROM
+            dbo.T_daydata c
+            WHERE
+            b.tagname = c.tagname
+            AND YEAR ( c.DataTime ) = YEAR ( #{queryTime} )
+            )
+            <if test="energyTypeId !=null">
+                AND a.energy_type_id = #{energyTypeId, jdbcType=INTEGER}
+            </if>
+            <if test="systemId !=null">
+                AND a.system_id = #{systemId, jdbcType=INTEGER}
+            </if>
+            <if test="companyId !=null">
+                AND a.company_id = #{companyId, jdbcType=INTEGER}
+            </if>
+            <if test="plantId !=null">
+                AND a.plant_id = #{plantId, jdbcType=INTEGER}
+            </if>
+            <if test="buildingId !=null">
+                AND a.building_id = #{buildingId, jdbcType=INTEGER}
+            </if>
+            <if test="deviceId !=null">
+                AND a.device_id = #{deviceId, jdbcType=INTEGER}
+            </if>
+            <if test="meterId !=null">
+                AND a.meter_id = #{meterId, jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+    <select id="selectHistoryOfMonthDosage" resultType="map" parameterType="map">
+        SELECT
+        a.plant_name plantName,
+        a.building_name buildingName,
+        a.system_name systemName,
+        a.device_name deviceName,
+        a.device_id deviceId,
+        a.tag_name tagName,
+        a.energy_type_name energyTypeName,
+        b.TagValue tagValue,
+        r.tagvalue rTagValue,
+        a.Description description,
+        b.[datatime] dataTime,
+        CAST ( r.tagvalue - b.tagvalue AS NUMERIC ( 20, 2 ) ) dValue
+        FROM
+        dbo.Variable_Info a,
+        dbo.T_daydata b,
+        dbo.RTable r
+        <where>
+            b.TagName = a.tag_name
+            AND a.tag_name = r.tagname
+            AND a.[disable] != 1
+            AND a.total_flag = 1
+            AND YEAR ( b.DataTime ) = YEAR ( #{queryTime} )
+            AND MONTH ( b.DataTime ) = MONTH ( #{queryTime} )
+            AND b.DataTime = (
+            SELECT MAX
+            ( c.DataTime )
+            FROM
+            dbo.T_daydata c
+            WHERE
+            b.tagname = c.tagname
+            AND YEAR ( c.DataTime ) = YEAR ( #{queryTime} )
+            AND MONTH ( c.DataTime ) = MONTH ( #{queryTime} )
+            )
+            <if test="energyTypeId !=null">
+                AND a.energy_type_id = #{energyTypeId, jdbcType=INTEGER}
+            </if>
+            <if test="systemId !=null">
+                AND a.system_id = #{systemId, jdbcType=INTEGER}
+            </if>
+            <if test="companyId !=null">
+                AND a.company_id = #{companyId, jdbcType=INTEGER}
+            </if>
+            <if test="plantId !=null">
+                AND a.plant_id = #{plantId, jdbcType=INTEGER}
+            </if>
+            <if test="buildingId !=null">
+                AND a.building_id = #{buildingId, jdbcType=INTEGER}
+            </if>
+            <if test="deviceId !=null">
+                AND a.device_id = #{deviceId, jdbcType=INTEGER}
+            </if>
+            <if test="meterId !=null">
+                AND a.meter_id = #{meterId, jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+    <select id="selectHistoryOfDayDosage" resultType="map" parameterType="map">
+        SELECT
+        a.plant_name plantName,
+        a.building_name buildingName,
+        a.system_name systemName,
+        a.device_name deviceName,
+        a.device_id deviceId,
+        a.tag_name tagName,
+        a.energy_type_name energyTypeName,
+        b.TagValue tagValue,
+        r.tagvalue rTagValue,
+        a.Description description,
+        b.[datatime] dataTime,
+        CAST ( r.tagvalue - b.tagvalue AS NUMERIC ( 20, 2 ) ) dValue
+        FROM
+        dbo.Variable_Info a,
+        dbo.T_daydata b,
+        dbo.RTable r
+        <where>
+            b.TagName = a.tag_name
+            AND a.tag_name = r.tagname
+            AND a.[disable] != 1
+            AND a.total_flag = 1
+            AND YEAR ( b.DataTime ) = YEAR ( #{queryTime} )
+            AND MONTH ( b.DataTime ) = MONTH ( #{queryTime} )
+            AND DAY ( b.DataTime ) = DAY ( #{queryTime} )
+            AND b.DataTime = (
+            SELECT MAX
+            ( c.DataTime )
+            FROM
+            dbo.T_daydata c
+            WHERE
+            b.tagname = c.tagname
+            AND YEAR ( c.DataTime ) = YEAR ( #{queryTime} )
+            AND MONTH ( c.DataTime ) = MONTH ( #{queryTime} )
+            AND DAY ( c.DataTime ) = DAY ( #{queryTime} )
+            )
+            <if test="energyTypeId !=null">
+                AND a.energy_type_id = #{energyTypeId, jdbcType=INTEGER}
+            </if>
+            <if test="systemId !=null">
+                AND a.system_id = #{systemId, jdbcType=INTEGER}
+            </if>
+            <if test="companyId !=null">
+                AND a.company_id = #{companyId, jdbcType=INTEGER}
+            </if>
+            <if test="plantId !=null">
+                AND a.plant_id = #{plantId, jdbcType=INTEGER}
+            </if>
+            <if test="buildingId !=null">
+                AND a.building_id = #{buildingId, jdbcType=INTEGER}
+            </if>
+            <if test="deviceId !=null">
+                AND a.device_id = #{deviceId, jdbcType=INTEGER}
+            </if>
+            <if test="meterId !=null">
+                AND a.meter_id = #{meterId, jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+    <select id="selectHistoryOfHourDosage" resultType="map" parameterType="map">
+        SELECT
+        a.plant_name plantName,
+        a.building_name buildingName,
+        a.system_name systemName,
+        a.device_name deviceName,
+        a.device_id deviceId,
+        a.tag_name tagName,
+        a.energy_type_name energyTypeName,
+        b.TagValue tagValue,
+        r.tagvalue rTagValue,
+        a.Description description,
+        b.[datatime] dataTime,
+        CAST ( r.tagvalue - b.tagvalue AS NUMERIC ( 20, 2 ) ) dValue
+        FROM
+        dbo.Variable_Info a,
+        dbo.T_daydata b,
+        dbo.RTable r
+        <where>
+            b.TagName = a.tag_name
+            AND a.tag_name = r.tagname
+            AND a.[disable] != 1
+            AND a.total_flag = 1
+            AND YEAR ( b.DataTime ) = YEAR ( #{queryTime} )
+            AND MONTH ( b.DataTime ) = MONTH ( #{queryTime} )
+            AND DAY ( b.DataTime ) = DAY ( #{queryTime} )
+            AND DATENAME(HOUR, b.DataTime) = DATENAME(HOUR, #{queryTime} )
+            AND b.DataTime = (
+            SELECT MAX
+            ( c.DataTime )
+            FROM
+            dbo.T_daydata c
+            WHERE
+            b.tagname = c.tagname
+            AND YEAR ( c.DataTime ) = YEAR ( #{queryTime} )
+            AND MONTH ( c.DataTime ) = MONTH ( #{queryTime} )
+            AND DAY ( c.DataTime ) = DAY ( #{queryTime} )
+            AND DATENAME(HOUR, c.DataTime) = DATENAME(HOUR, #{queryTime} )
+            )
+            <if test="energyTypeId !=null">
+                AND a.energy_type_id = #{energyTypeId, jdbcType=INTEGER}
+            </if>
+            <if test="systemId !=null">
+                AND a.system_id = #{systemId, jdbcType=INTEGER}
+            </if>
+            <if test="companyId !=null">
+                AND a.company_id = #{companyId, jdbcType=INTEGER}
+            </if>
+            <if test="plantId !=null">
+                AND a.plant_id = #{plantId, jdbcType=INTEGER}
+            </if>
+            <if test="buildingId !=null">
+                AND a.building_id = #{buildingId, jdbcType=INTEGER}
+            </if>
+            <if test="deviceId !=null">
+                AND a.device_id = #{deviceId, jdbcType=INTEGER}
+            </if>
+            <if test="meterId !=null">
+                AND a.meter_id = #{meterId, jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+    <select id="selectMonthDosageOfWater_COUNT" parameterType="map" resultType="java.lang.Long">
+        SELECT COUNT
+        ( 0 )
+        FROM
+        (
+        SELECT
+        top 100 percent
+        M.plant_id plantId,
+        M.plant_name plantName,
+        M.tag_name tagName,
+        M.building_name buildingName,
+        N.pre preMonthValue,
+        N.cur currentMonthValue
+        FROM
+        Variable_Info M,
+        (
+        SELECT
+        TagName,
+        (
+        SELECT
+        TagValue
+        FROM
+        T_DayData B
+        WHERE
+        A.TagName = B.TagName
+        AND CONVERT ( VARCHAR ( 7 ), B.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
+        AND B.DataTime = ( SELECT MAX ( C.DataTime ) FROM dbo.T_Daydata C WHERE B.tagname = C.tagname )
+        ) cur,
+        (
+        SELECT
+        TagValue
+        FROM
+        T_DayData D
+        WHERE
+        A.TagName = D.TagName
+        AND CONVERT ( VARCHAR ( 7 ), D.DataTime, 120 ) =
+        CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, #{queryTime} ), 120 )
+        AND D.DataTime = (
+        SELECT MAX
+        ( E.DataTime )
+        FROM
+        dbo.T_Daydata E
+        WHERE
+        D.tagname = E.tagname
+        AND CONVERT ( VARCHAR ( 7 ), E.DataTime, 120 ) =
+        CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, #{queryTime} ), 120 )
+        )
+        ) pre
+        FROM
+        T_DayData A
+        GROUP BY
+        TagName
+        ) N
+        WHERE
+        M.tag_name = N.TagName
+        AND M.[disable]!= 1
+        AND M.total_flag = 1
+        AND M.energy_type_name = '水'
+        <if test="plantId!=null">
+            AND M.plant_id = #{plantId, jdbcType=INTEGER}
+        </if>
+        ORDER BY building_name ASC
+        ) tmp_count
+    </select>
+    <select id="selectMonthDosageOfWater" resultType="map" parameterType="map">
+        SELECT
+        M.plant_id plantId,
+        M.plant_name plantName,
+        M.tag_name tagName,
+        M.building_name buildingName,
+        N.pre preMonthValue,
+        N.cur currentMonthValue
+        FROM
+        Variable_Info M,
+        (
+        SELECT
+        TagName,
+        (
+        SELECT
+        TagValue
+        FROM
+        T_DayData B
+        WHERE
+        A.TagName = B.TagName
+        AND CONVERT ( VARCHAR ( 7 ), B.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
+        -- AND B.DataTime = ( SELECT MAX ( C.DataTime ) FROM dbo.T_Daydata C WHERE B.tagname = C.tagname )
+        ) cur,
+        (
+        SELECT
+        TagValue
+        FROM
+        T_DayData D
+        WHERE
+        A.TagName = D.TagName
+        AND CONVERT ( VARCHAR ( 7 ), D.DataTime, 120 ) =
+        CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, #{queryTime} ), 120 )
+        AND D.DataTime = (
+        SELECT MAX
+        ( E.DataTime )
+        FROM
+        dbo.T_Daydata E
+        WHERE
+        D.tagname = E.tagname
+        AND CONVERT ( VARCHAR ( 7 ), E.DataTime, 120 ) =
+        CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, #{queryTime} ), 120 )
+        )
+        ) pre
+        FROM
+        T_DayData A
+        GROUP BY
+        TagName
+        ) N
+        WHERE
+        M.tag_name = N.TagName
+        AND M.[disable]!= 1
+        AND M.total_flag = 1
+        AND M.energy_type_name = '水'
+        <if test="plantId!=null">
+            AND M.plant_id = #{plantId, jdbcType=INTEGER}
+        </if>
+        ORDER BY building_name ASC
+    </select>
+    <select id="selectMonthDosageOfElectricity" parameterType="map" resultType="map">
+        SELECT
+        a.plant_id plantId,
+        a.plant_name plantName,
+        a.building_id buildingId,
+        a.building_name buildingName,
+        a.device_id deviceId,
+        a.device_name deviceName,
+        a.meter_id meterId,
+        a.meter_name meterName,
+        a.meter_code meterCode,
+        a.tag_name tagName,
+        a.meter_spec meterSpec,
+        a.meter_location meterLocation,
+        b.DataTime dataTime,
+        b.FValue fValue,
+        b.PValue pValue,
+        b.GValue gValue
+        FROM
+        Variable_Info a,
+        T_DayDataJFPG b
+        <where>
+            a.tag_name = b.TagName
+            AND a.[disable] != 1
+            AND a.total_flag = 1
+            AND a.energy_type_name = '电'
+            AND CONVERT ( VARCHAR ( 7 ), b.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
+            <if test="companyId !=null">
+                AND a.company_id = #{companyId, jdbcType=INTEGER}
+            </if>
+            <if test="plantId !=null">
+                AND a.plant_id = #{plantId, jdbcType=INTEGER}
+            </if>
+            <if test="buildingId !=null">
+                AND a.building_id = #{buildingId, jdbcType=INTEGER}
+            </if>
+            <if test="deviceId !=null">
+                AND a.device_id = #{deviceId, jdbcType=INTEGER}
+            </if>
+            <if test="meterId !=null">
+                AND a.meter_id = #{meterId, jdbcType=INTEGER}
+            </if>
+        </where>
+        ORDER BY
+        a.building_name ASC
+    </select>
+    <select id="selectMonthSettlement" parameterType="map" resultType="map">
+        SELECT
+        plant_id plantId,
+        CAST ( SUM ( CASE WHEN energy_type_name = '水'
+        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
+        THEN DValue ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
+        currentWaterSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '电'
+        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
+        THEN DValue ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
+        currentElectricitySumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '空气'
+        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
+        THEN DValue ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
+        currentAirSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '蒸汽'
+        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
+        THEN DValue ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
+        currentSteamSumValue,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '水'
+        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, #{queryTime} ),
+        120
+        ) THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) preWaterSumValue,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '电'
+        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, #{queryTime} ),
+        120
+        ) THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) preElectricitySumValue,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '空气'
+        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, #{queryTime} ),
+        120
+        ) THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) preAirSumValue,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '蒸汽'
+        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, #{queryTime} ),
+        120
+        ) THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) preSteamSumValue
+        FROM
+        T_DayData A,
+        Variable_Info B
+        <where>
+            A.TagName = B.tag_name
+            <if test="plantId!=null">
+                AND B.plant_id = #{plantId, jdbcType=INTEGER}
+            </if>
+        </where>
+        GROUP BY plant_id
+    </select>
+    <select id="selectClassList" resultType="map">
+        SELECT
+            class_id classId,
+            class_name className,
+            class_description classDescription
+        FROM
+            S_Class
+    </select>
+    <select id="selectEnergyTypeList" resultType="map">
+        SELECT
+            energy_type_id energyTypeId,
+            energy_type_name energyTypeName,
+            energy_type_description energyTypeDescription
+        FROM
+            S_EnergyType
+    </select>
+    <select id="selectSignalTypeList" resultType="map">
+        SELECT
+            signal_type_id	 signalTypeId,
+            signal_type_name signalTypeName,
+            signal_type_description signalTypeDescription
+        FROM
+            S_SignalType
+    </select>
+    <select id="selectSystemList" resultType="map">
+        SELECT
+            system_id systemId,
+            system_name systemName,
+            system_description systemDescription
+        FROM
+            S_System
+    </select>
+
+    <select id="selectBuildingYearDosage" parameterType="map" resultType="map">
+        SELECT
+        T.*,
+        building_name buildingName
+        FROM
+        (
+        SELECT
+        building_id buildingId,
+        CAST (
+        SUM ( CASE
+        WHEN energy_type_name = '水' AND YEAR ( A.DataTime ) = YEAR ( GETDATE( ) )
+        THEN DValue ELSE 0 END ) AS
+        NUMERIC ( 20, 2 )
+        ) currentWaterSumValue,
+        CAST (
+        SUM ( CASE
+        WHEN energy_type_name = '电' AND YEAR ( A.DataTime ) = YEAR ( GETDATE( ) )
+        THEN DValue ELSE 0 END ) AS
+        NUMERIC ( 20, 2 )
+        ) currentElectricitySumValue,
+        CAST (
+        SUM ( CASE
+        WHEN energy_type_name = '空气' AND YEAR ( A.DataTime ) = YEAR ( GETDATE( ) )
+        THEN DValue ELSE 0 END )
+        AS NUMERIC ( 20, 2 )
+        ) currentAirSumValue,
+        CAST (
+        SUM ( CASE
+        WHEN energy_type_name = '蒸汽' AND YEAR ( A.DataTime ) = YEAR ( GETDATE( ) )
+        THEN DValue ELSE 0 END )
+        AS NUMERIC ( 20, 2 )
+        ) currentSteamSumValue,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '水'
+        AND YEAR ( A.DataTime ) = YEAR ( DATEADD( YEAR, - 1, GETDATE( ) ) ) THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) preWaterSumValue,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '电'
+        AND YEAR ( A.DataTime ) = YEAR ( DATEADD( YEAR, - 1, GETDATE( ) ) ) THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) preElectricitySumValue,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '空气'
+        AND YEAR ( A.DataTime ) = YEAR ( DATEADD( YEAR, - 1, GETDATE( ) ) ) THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) preAirSumValue,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '蒸汽'
+        AND YEAR ( A.DataTime ) = YEAR ( DATEADD( YEAR, - 1, GETDATE( ) ) ) THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) preSteamSumValue
+        FROM
+        T_DayData A,
+        Variable_Info B
+        <where>
+            A.TagName = B.tag_name
+            <if test="buildingId!=null">
+                AND building_id = #{buildingId, jdbcType=INTEGER}
+            </if>
+        </where>
+        GROUP BY
+        building_id
+        ) T,
+        O_3Building S
+        WHERE
+        S.id = T.buildingId
+    </select>
+
+    <select id="selectBuildingMonthDosage" parameterType="map" resultType="map">
+        SELECT
+        T.*,
+        building_name buildingName
+        FROM
+        (
+        SELECT
+        building_id buildingId,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '水'
+        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), GETDATE( ), 120 ) THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) currentWaterSumValue,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '电'
+        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), GETDATE( ), 120 ) THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) currentElectricitySumValue,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '空气'
+        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), GETDATE( ), 120 ) THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) currentAirSumValue,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '蒸汽'
+        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), GETDATE( ), 120 ) THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) currentSteamSumValue,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '水'
+        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, GETDATE( ) ), 120
+        ) THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) preWaterSumValue,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '电'
+        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, GETDATE( ) ), 120
+        ) THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) preElectricitySumValue,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '空气'
+        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, GETDATE( ) ), 120
+        ) THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) preAirSumValue,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '蒸汽'
+        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, GETDATE( ) ), 120
+        ) THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) preSteamSumValue
+        FROM
+        T_DayData A,
+        Variable_Info B
+        <where>
+            A.TagName = B.tag_name
+            <if test="buildingId!=null">
+                AND building_id = #{buildingId, jdbcType=INTEGER}
+            </if>
+        </where>
+        GROUP BY
+        building_id
+        ) T,
+        O_3Building S
+        WHERE
+        S.id = T.buildingId
+    </select>
+
+    <select id="selectBuildingDayDosage" parameterType="map" resultType="map">
+        SELECT
+        T.*,
+        building_name buildingName
+        FROM
+        (
+        SELECT
+        building_id buildingId,
+        CAST (
+        SUM ( CASE WHEN energy_type_name = '水' AND CONVERT(VARCHAR(10),A.DataTime,120) =
+        CONVERT(VARCHAR(10),GETDATE(),120) THEN DValue ELSE 0 END ) AS NUMERIC ( 20, 2 )
+        ) currentWaterSumValue,
+        CAST (
+        SUM ( CASE WHEN energy_type_name = '电' AND CONVERT(VARCHAR(10),A.DataTime,120) =
+        CONVERT(VARCHAR(10),GETDATE(),120) THEN DValue ELSE 0 END ) AS NUMERIC ( 20, 2 )
+        ) currentElectricitySumValue,
+        CAST (
+        SUM ( CASE WHEN energy_type_name = '空气' AND CONVERT(VARCHAR(10),A.DataTime,120) =
+        CONVERT(VARCHAR(10),GETDATE(),120) THEN DValue ELSE 0 END ) AS NUMERIC ( 20, 2 )
+        ) currentAirSumValue,
+        CAST (
+        SUM ( CASE WHEN energy_type_name = '蒸汽' AND CONVERT(VARCHAR(10),A.DataTime,120) =
+        CONVERT(VARCHAR(10),GETDATE(),120) THEN DValue ELSE 0 END ) AS NUMERIC ( 20, 2 )
+        ) currentSteamSumValue,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '水'
+        AND CONVERT ( VARCHAR ( 10 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 10 ), DATEADD(day, -1, GETDATE()), 120 )
+        THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) preWaterSumValue,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '电'
+        AND CONVERT ( VARCHAR ( 10 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 10 ), DATEADD(day, -1, GETDATE()), 120 )
+        THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) preElectricitySumValue,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '空气'
+        AND CONVERT ( VARCHAR ( 10 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 10 ), DATEADD(day, -1, GETDATE()), 120 )
+        THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) preAirSumValue,
+        CAST (
+        SUM (
+        CASE
+        WHEN energy_type_name = '蒸汽'
+        AND CONVERT ( VARCHAR ( 10 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 10 ), DATEADD(day, -1, GETDATE()), 120 )
+        THEN
+        DValue ELSE 0
+        END
+        ) AS NUMERIC ( 20, 2 )
+        ) preSteamSumValue
+        FROM
+        T_DayData A,
+        Variable_Info B
+        <where>
+            A.TagName = B.tag_name
+            <if test="buildingId!=null">
+                AND building_id = #{buildingId, jdbcType=INTEGER}
+            </if>
+        </where>
+        GROUP BY
+        building_id
+        ) T,
+        O_3Building S
+        WHERE
+        S.id = T.buildingId
+    </select>
+
+    <select id="selectBuildingDistribution" resultType="map">
+        SELECT
+            building_id buildingId,
+            building_name buildingName
+        FROM
+            building_distribution A
+            JOIN O_3Building B ON A.building_id = B.id
+    </select>
+
+    <select id="selectBuildingMainMPValue" resultType="map" parameterType="java.lang.Integer">
+        SELECT
+        building_id buildingId,
+        building_name buildingName,
+        tag_name tagName,
+        TagValue tagValue,
+        [description]
+        FROM
+        Variable_Info A,
+        T_DayData B
+        <where>
+            A.tag_name = B.TagName
+            AND A.main_tag = 1
+            AND A.disable != 1
+            <if test="buildingId!=null">
+                AND building_id = #{buildingId,jdbcType = INTEGER}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectHomePageChartSettingList" resultType="map">
+        SELECT
+            A.id,
+            A.placeholder_id placeholderId,
+            TagName tagName,
+            TagValue tagValue,
+            description
+        FROM
+            home_page_chart_setting A,
+            T_HourData B
+        WHERE
+            A.tag_name = B.TagName
+            AND DataTime = ( SELECT MAX ( DataTime ) FROM T_HourData C WHERE B.TagName = C.TagName )
+    </select>
+
+</mapper>

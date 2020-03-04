@@ -10,9 +10,9 @@ export function listMeter(query) {
 }
 
 // 查询仪表详细
-export function getMeter(meterCode) {
+export function getMeter(meterId) {
   return request({
-    url: '/energy/meter/' + meterCode,
+    url: '/energy/meter/' + meterId,
     method: 'get'
   })
 }
@@ -36,9 +36,9 @@ export function updateMeter(data) {
 }
 
 // 删除仪表
-export function delMeter(meterCode) {
+export function delMeter(meterId) {
   return request({
-    url: '/energy/meter/' + meterCode,
+    url: '/energy/meter/' + meterId,
     method: 'delete'
   })
 }

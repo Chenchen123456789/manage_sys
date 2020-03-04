@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eim.project.energy.mapper.MeasuringPointMapper">
+    <resultMap id="BaseResultMap" type="com.eim.project.energy.entity.MeasuringPoint">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="tag_name" jdbcType="NVARCHAR" property="tagName"/>
+        <result column="company_id" jdbcType="INTEGER" property="companyId"/>
+        <result column="plant_id" jdbcType="INTEGER" property="plantId"/>
+        <result column="building_id" jdbcType="INTEGER" property="buildingId"/>
+        <result column="device_id" jdbcType="INTEGER" property="deviceId"/>
+        <result column="meter_id" jdbcType="INTEGER" property="meterId"/>
+        <result column="company_name" jdbcType="NVARCHAR" property="companyName"/>
+        <result column="plant_name" jdbcType="NVARCHAR" property="plantName"/>
+        <result column="building_name" jdbcType="NVARCHAR" property="buildingName"/>
+        <result column="device_name" jdbcType="NVARCHAR" property="deviceName"/>
+        <result column="meter_name" jdbcType="NVARCHAR" property="meterName"/>
+        <result column="device_tag" jdbcType="NVARCHAR" property="deviceTag"/>
+        <result column="description" jdbcType="NVARCHAR" property="description"/>
+        <result column="unit" jdbcType="NVARCHAR" property="unit"/>
+        <result column="range_min" jdbcType="NVARCHAR" property="rangeMin"/>
+        <result column="range_max" jdbcType="NVARCHAR" property="rangeMax"/>
+        <result column="total_flag" jdbcType="NVARCHAR" property="totalFlag"/>
+        <result column="main_tag" jdbcType="NVARCHAR" property="mainTag"/>
+        <result column="note" jdbcType="NVARCHAR" property="note"/>
+        <result column="disable" jdbcType="INTEGER" property="disable"/>
+        <result column="class_id" jdbcType="INTEGER" property="classId"/>
+        <result column="energy_type_id" jdbcType="INTEGER" property="energyTypeId"/>
+        <result column="signal_type_id" jdbcType="INTEGER" property="signalTypeId"/>
+        <result column="system_id" jdbcType="INTEGER" property="systemId"/>
+        <result column="class_name" jdbcType="NVARCHAR" property="className"/>
+        <result column="energy_type_name" jdbcType="NVARCHAR" property="energyTypeName"/>
+        <result column="signal_type_name" jdbcType="NVARCHAR" property="signalTypeName"/>
+        <result column="system_name" jdbcType="NVARCHAR" property="systemName"/>
+        <result column="location" jdbcType="NVARCHAR" property="location"/>
+        <result column="create_by" jdbcType="NVARCHAR" property="createBy"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_by" jdbcType="NVARCHAR" property="updateBy"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, tag_name, device_tag, description, unit, range_min, range_max, total_flag, main_tag, 
+    note, [disable], class_id, energy_type_id, signal_type_id, system_id, meter_id, [location], 
+    create_by, create_time, update_by, update_time
+  </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+      SELECT
+          A.id,
+          tag_name,
+          company_id,
+          plant_id,
+          building_id,
+          device_id,
+          meter_id,
+          A.energy_type_id,
+          energy_type_name,
+          A.signal_type_id,
+          signal_type_name,
+          A.system_id,
+          system_name,
+          A.class_id,
+          class_name,
+          total_flag,
+          main_tag,
+          description,
+          [disable],
+          A.create_by,
+          A.create_time,
+          A.update_by,
+          A.update_time
+      FROM
+          S2_Variable A
+          JOIN O_5Meter B ON A.meter_id = B.id
+          JOIN O_4Device C ON B.device_id = C.id
+          JOIN O_3Building D ON C.building_id = D.id
+          JOIN O_2Plant E ON D.plant_id = E.id
+          LEFT JOIN S_Class F ON A.class_id = F.class_id
+          LEFT JOIN S_EnergyType G ON A.energy_type_id = G.energy_type_id
+          LEFT JOIN S_SignalType H ON A.signal_type_id = H.signal_type_id
+          LEFT JOIN S_System I ON A.system_id = I.system_id
+      where A.id = #{id,jdbcType=INTEGER}
+  </select>
+    <select id="selectMeasuringPointList" parameterType="MeasuringPoint" resultMap="BaseResultMap">
+        SELECT
+        A.id,
+        tag_name,
+        company_id,
+        plant_id,
+        building_id,
+        device_id,
+        meter_id,
+        company_name,
+        plant_name,
+        building_name,
+        device_name,
+        meter_name,
+        A.energy_type_id,
+        energy_type_name,
+        A.signal_type_id,
+        signal_type_name,
+        A.system_id,
+        system_name,
+        A.class_id,
+        class_name,
+        total_flag,
+        main_tag,
+        description,
+        [disable],
+        A.create_by,
+        A.create_time,
+        A.update_by,
+        A.update_time
+        FROM
+        S2_Variable A
+        JOIN O_5Meter B ON A.meter_id = B.id
+        JOIN O_4Device C ON B.device_id = C.id
+        JOIN O_3Building D ON C.building_id = D.id
+        JOIN O_2Plant E ON D.plant_id = E.id
+        JOIN O_1Company J ON E.company_id = J.id
+        LEFT JOIN S_Class F ON A.class_id = F.class_id
+        LEFT JOIN S_EnergyType G ON A.energy_type_id = G.energy_type_id
+        LEFT JOIN S_SignalType H ON A.signal_type_id = H.signal_type_id
+        LEFT JOIN S_System I ON A.system_id = I.system_id
+        <where>
+            <if test="plantId != null">
+                plant_id = #{plantId, jdbcType=INTEGER}
+            </if>
+            <if test="buildingId != null">
+                and building_id = #{buildingId, jdbcType=INTEGER}
+            </if>
+            <if test="deviceId != null">
+                and device_id = #{deviceId, jdbcType=INTEGER}
+            </if>
+            <if test="meterId != null">
+                and meter_id = #{meterId, jdbcType=INTEGER}
+            </if>
+        </where>
+    </select>
+    <select id="selectByTagName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from S2_Variable
+        where tag_name = #{tagName,jdbcType=NVARCHAR}
+    </select>
+    <delete id="deleteByIds" parameterType="java.lang.Integer">
+        delete from S2_Variable where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from S2_Variable
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+    <insert id="insert" parameterType="com.eim.project.energy.entity.MeasuringPoint">
+    insert into S2_Variable (id, tag_name, device_tag, 
+      description, unit, range_min, 
+      range_max, total_flag, main_tag, 
+      note, [disable], class_id, 
+      energy_type_id, signal_type_id, system_id, 
+      meter_id, [location], create_by, 
+      create_time, update_by, update_time
+      )
+    values (#{id,jdbcType=INTEGER}, #{tagName,jdbcType=NVARCHAR}, #{deviceTag,jdbcType=NVARCHAR}, 
+      #{description,jdbcType=NVARCHAR}, #{unit,jdbcType=NVARCHAR}, #{rangeMin,jdbcType=NVARCHAR}, 
+      #{rangeMax,jdbcType=NVARCHAR}, #{totalFlag,jdbcType=NVARCHAR}, #{mainTag,jdbcType=NVARCHAR}, 
+      #{note,jdbcType=NVARCHAR}, #{disable,jdbcType=INTEGER}, #{classId,jdbcType=INTEGER}, 
+      #{energyTypeId,jdbcType=INTEGER}, #{signalTypeId,jdbcType=INTEGER}, #{systemId,jdbcType=INTEGER}, 
+      #{meterId,jdbcType=INTEGER}, #{location,jdbcType=NVARCHAR}, #{createBy,jdbcType=NVARCHAR}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=NVARCHAR}, #{updateTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+    <insert id="insertSelective" parameterType="com.eim.project.energy.entity.MeasuringPoint">
+        insert into S2_Variable
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="tagName != null">
+                tag_name,
+            </if>
+            <if test="deviceTag != null">
+                device_tag,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="unit != null">
+                unit,
+            </if>
+            <if test="rangeMin != null">
+                range_min,
+            </if>
+            <if test="rangeMax != null">
+                range_max,
+            </if>
+            <if test="totalFlag != null">
+                total_flag,
+            </if>
+            <if test="mainTag != null">
+                main_tag,
+            </if>
+            <if test="note != null">
+                note,
+            </if>
+            <if test="disable != null">
+                [disable],
+            </if>
+            <if test="classId != null">
+                class_id,
+            </if>
+            <if test="energyTypeId != null">
+                energy_type_id,
+            </if>
+            <if test="signalTypeId != null">
+                signal_type_id,
+            </if>
+            <if test="systemId != null">
+                system_id,
+            </if>
+            <if test="meterId != null">
+                meter_id,
+            </if>
+            <if test="location != null">
+                [location],
+            </if>
+            <if test="createBy != null">
+                create_by,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateBy != null">
+                update_by,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=INTEGER},
+            </if>
+            <if test="tagName != null">
+                #{tagName,jdbcType=NVARCHAR},
+            </if>
+            <if test="deviceTag != null">
+                #{deviceTag,jdbcType=NVARCHAR},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=NVARCHAR},
+            </if>
+            <if test="unit != null">
+                #{unit,jdbcType=NVARCHAR},
+            </if>
+            <if test="rangeMin != null">
+                #{rangeMin,jdbcType=NVARCHAR},
+            </if>
+            <if test="rangeMax != null">
+                #{rangeMax,jdbcType=NVARCHAR},
+            </if>
+            <if test="totalFlag != null">
+                #{totalFlag,jdbcType=NVARCHAR},
+            </if>
+            <if test="mainTag != null">
+                #{mainTag,jdbcType=NVARCHAR},
+            </if>
+            <if test="note != null">
+                #{note,jdbcType=NVARCHAR},
+            </if>
+            <if test="disable != null">
+                #{disable,jdbcType=INTEGER},
+            </if>
+            <if test="classId != null">
+                #{classId,jdbcType=INTEGER},
+            </if>
+            <if test="energyTypeId != null">
+                #{energyTypeId,jdbcType=INTEGER},
+            </if>
+            <if test="signalTypeId != null">
+                #{signalTypeId,jdbcType=INTEGER},
+            </if>
+            <if test="systemId != null">
+                #{systemId,jdbcType=INTEGER},
+            </if>
+            <if test="meterId != null">
+                #{meterId,jdbcType=INTEGER},
+            </if>
+            <if test="location != null">
+                #{location,jdbcType=NVARCHAR},
+            </if>
+            <if test="createBy != null">
+                #{createBy,jdbcType=NVARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null">
+                #{updateBy,jdbcType=NVARCHAR},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.eim.project.energy.entity.MeasuringPoint">
+        update S2_Variable
+        <set>
+            <if test="tagName != null">
+                tag_name = #{tagName,jdbcType=NVARCHAR},
+            </if>
+            <if test="deviceTag != null">
+                device_tag = #{deviceTag,jdbcType=NVARCHAR},
+            </if>
+            <if test="description != null">
+                description = #{description,jdbcType=NVARCHAR},
+            </if>
+            <if test="unit != null">
+                unit = #{unit,jdbcType=NVARCHAR},
+            </if>
+            <if test="rangeMin != null">
+                range_min = #{rangeMin,jdbcType=NVARCHAR},
+            </if>
+            <if test="rangeMax != null">
+                range_max = #{rangeMax,jdbcType=NVARCHAR},
+            </if>
+            <if test="totalFlag != null">
+                total_flag = #{totalFlag,jdbcType=NVARCHAR},
+            </if>
+            <if test="mainTag != null">
+                main_tag = #{mainTag,jdbcType=NVARCHAR},
+            </if>
+            <if test="note != null">
+                note = #{note,jdbcType=NVARCHAR},
+            </if>
+            <if test="disable != null">
+                [disable] = #{disable,jdbcType=INTEGER},
+            </if>
+            <if test="classId != null">
+                class_id = #{classId,jdbcType=INTEGER},
+            </if>
+            <if test="energyTypeId != null">
+                energy_type_id = #{energyTypeId,jdbcType=INTEGER},
+            </if>
+            <if test="signalTypeId != null">
+                signal_type_id = #{signalTypeId,jdbcType=INTEGER},
+            </if>
+            <if test="systemId != null">
+                system_id = #{systemId,jdbcType=INTEGER},
+            </if>
+            <if test="meterId != null">
+                meter_id = #{meterId,jdbcType=INTEGER},
+            </if>
+            <if test="location != null">
+                [location] = #{location,jdbcType=NVARCHAR},
+            </if>
+            <if test="createBy != null">
+                create_by = #{createBy,jdbcType=NVARCHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateBy != null">
+                update_by = #{updateBy,jdbcType=NVARCHAR},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.eim.project.energy.entity.MeasuringPoint">
+    update S2_Variable
+    set tag_name = #{tagName,jdbcType=NVARCHAR},
+      device_tag = #{deviceTag,jdbcType=NVARCHAR},
+      description = #{description,jdbcType=NVARCHAR},
+      unit = #{unit,jdbcType=NVARCHAR},
+      range_min = #{rangeMin,jdbcType=NVARCHAR},
+      range_max = #{rangeMax,jdbcType=NVARCHAR},
+      total_flag = #{totalFlag,jdbcType=NVARCHAR},
+      main_tag = #{mainTag,jdbcType=NVARCHAR},
+      note = #{note,jdbcType=NVARCHAR},
+      [disable] = #{disable,jdbcType=INTEGER},
+      class_id = #{classId,jdbcType=INTEGER},
+      energy_type_id = #{energyTypeId,jdbcType=INTEGER},
+      signal_type_id = #{signalTypeId,jdbcType=INTEGER},
+      system_id = #{systemId,jdbcType=INTEGER},
+      meter_id = #{meterId,jdbcType=INTEGER},
+      [location] = #{location,jdbcType=NVARCHAR},
+      create_by = #{createBy,jdbcType=NVARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=NVARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

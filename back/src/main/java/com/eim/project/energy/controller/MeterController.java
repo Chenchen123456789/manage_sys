@@ -60,7 +60,7 @@ public class MeterController extends BaseController {
     @Log(title = "设备管理", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody Meter meter) {
-        Meter existMeter = meterService.selectMeterByMeterCode(meter.getMeterCode());
+        Meter existMeter = meterService.selectMeterByMeterCode(meter.getMeterCode(), meter.getDeviceId());
         if (existMeter != null) {
             return AjaxResult.error("新增设备'" + meter.getMeterCode() + "'失败，设备编码已存在");
         }
@@ -76,7 +76,7 @@ public class MeterController extends BaseController {
     @Log(title = "设备管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@Validated @RequestBody Meter meter) {
-        Meter existMeter = meterService.selectMeterByMeterCode(meter.getMeterCode());
+        Meter existMeter = meterService.selectMeterByMeterCode(meter.getMeterCode(), meter.getDeviceId());
         if (existMeter != null && !existMeter.getId().equals(meter.getId())) {
             return AjaxResult.error("修改设备'" + meter.getMeterCode() + "'失败，设备编码已存在");
         }

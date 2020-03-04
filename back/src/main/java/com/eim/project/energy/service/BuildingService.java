@@ -39,7 +39,7 @@ public class BuildingService {
         return buildingMapper.insertSelective(building);
     }
 
-    public Building selectBuildingByBuildingCode(String buildingCode) {
-        return buildingMapper.selectByBuildingCode(buildingCode);
+    public Building selectBuildingByBuildingCode(String buildingCode, Integer plantId) {
+        return buildingMapper.selectByBuildingCode(buildingCode, plantId);
     }
 }

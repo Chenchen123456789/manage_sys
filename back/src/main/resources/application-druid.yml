@@ -13,9 +13,9 @@ spring:
             slave:
                 # 从数据源开关/默认关闭
                 enabled: true
-                url: jdbc:sqlserver://192.192.192.150:1433;DatabaseName=energy
+                url: jdbc:sqlserver://localhost:1433;DatabaseName=energy
                 username: sa
-                password: P@$$w0rd
+                password: root
                 driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
             # 初始连接数
             initialSize: 5

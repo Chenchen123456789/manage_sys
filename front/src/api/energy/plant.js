@@ -10,9 +10,9 @@ export function listPlant(query) {
 }
 
 // 查询工厂详细
-export function getPlant(plantCode) {
+export function getPlant(plantId) {
   return request({
-    url: '/energy/plant/' + plantCode,
+    url: '/energy/plant/' + plantId,
     method: 'get'
   })
 }
@@ -36,9 +36,9 @@ export function updatePlant(data) {
 }
 
 // 删除工厂
-export function delPlant(plantCode) {
+export function delPlant(plantId) {
   return request({
-    url: '/energy/plant/' + plantCode,
+    url: '/energy/plant/' + plantId,
     method: 'delete'
   })
 }

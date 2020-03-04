@@ -31,8 +31,11 @@
     <select id="selectDeviceList" resultMap="BaseResultMap">
         SELECT
             A.id,
+            company_id,
             company_name,
+            plant_id,
             plant_name,
+            building_id,
             building_name,
             device_code,
             device_name,
@@ -58,6 +61,7 @@
         <include refid="Base_Column_List"/>
         from O_4Device
         where device_code = #{deviceCode,jdbcType=NVARCHAR}
+        AND building_id = #{buildingId,jdbcType=INTEGER}
     </select>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         SELECT

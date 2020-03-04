@@ -21,7 +21,7 @@
   </sql>
     <select id="selectBuildingList" resultMap="BaseResultMap">
     SELECT
-	A.id, company_name, plant_name, building_code, building_name, building_description, A.create_by, A.create_time, A.update_by, A.update_time
+	A.id, company_id, company_name, plant_id, plant_name, building_code, building_name, building_description, A.create_by, A.create_time, A.update_by, A.update_time
     FROM
 	O_3Building A
 	JOIN O_2Plant B ON A.plant_id = B.id
@@ -32,6 +32,7 @@
         <include refid="Base_Column_List" />
         from O_3Building A
         where building_code = #{buildingCode,jdbcType=NVARCHAR}
+        AND plant_id = #{plantId,jdbcType=INTEGER}
     </select>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select

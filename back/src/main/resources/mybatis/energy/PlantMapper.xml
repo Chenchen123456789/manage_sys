@@ -30,6 +30,7 @@
     <include refid="Base_Column_List" />
     from O_2Plant
     where plant_code = #{plantCode,jdbcType=NVARCHAR}
+    AND company_id = #{companyId,jdbcType=INTEGER}
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
     select 

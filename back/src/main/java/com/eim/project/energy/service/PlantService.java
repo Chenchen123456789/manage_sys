@@ -39,7 +39,7 @@ public class PlantService {
         return plantMapper.insertSelective(plant);
     }
 
-    public Plant selectPlantByPlantCode(String plantCode) {
-        return plantMapper.selectByPlantCode(plantCode);
+    public Plant selectPlantByPlantCode(String plantCode, Integer companyId) {
+        return plantMapper.selectByPlantCode(plantCode, companyId);
     }
 }

@@ -37,7 +37,7 @@ public class MeterService {
         return meterMapper.insertSelective(meter);
     }
 
-    public Meter selectMeterByMeterCode(String meterCode) {
-        return meterMapper.selectByMeterCode(meterCode);
+    public Meter selectMeterByMeterCode(String meterCode, Integer deviceId) {
+        return meterMapper.selectByMeterCode(meterCode, deviceId);
     }
 }

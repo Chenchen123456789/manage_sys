@@ -60,7 +60,7 @@ public class DeviceController extends BaseController {
     @Log(title = "设备管理", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody Device device) {
-        Device existDevice = deviceService.selectDeviceByDeviceCode(device.getDeviceCode());
+        Device existDevice = deviceService.selectDeviceByDeviceCode(device.getDeviceCode(), device.getBuildingId());
         if (existDevice != null) {
             return AjaxResult.error("新增设备'" + device.getDeviceCode() + "'失败，设备编码已存在");
         }
@@ -76,7 +76,7 @@ public class DeviceController extends BaseController {
     @Log(title = "设备管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@Validated @RequestBody Device device) {
-        Device existDevice = deviceService.selectDeviceByDeviceCode(device.getDeviceCode());
+        Device existDevice = deviceService.selectDeviceByDeviceCode(device.getDeviceCode(), device.getBuildingId());
         if (existDevice != null && !existDevice.getId().equals(device.getId())) {
             return AjaxResult.error("修改设备'" + device.getDeviceCode() + "'失败，设备编码已存在");
         }

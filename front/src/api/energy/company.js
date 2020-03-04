@@ -10,9 +10,9 @@ export function listCompany(query) {
 }
 
 // 查询公司详细
-export function getCompany(companyCode) {
+export function getCompany(companyId) {
   return request({
-    url: '/energy/company/' + companyCode,
+    url: '/energy/company/' + companyId,
     method: 'get'
   })
 }
@@ -36,9 +36,9 @@ export function updateCompany(data) {
 }
 
 // 删除公司
-export function delCompany(companyCode) {
+export function delCompany(companyId) {
   return request({
-    url: '/energy/company/' + companyCode,
+    url: '/energy/company/' + companyId,
     method: 'delete'
   })
 }

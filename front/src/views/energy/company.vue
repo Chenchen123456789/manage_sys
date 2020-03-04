@@ -31,13 +31,29 @@
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="warning"
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['energy:company:export']"
-        >导出</el-button>
+        <el-popover placement="bottom" trigger="click">
+          <div style="text-align: right; margin: 0">
+            <el-button
+              icon="el-icon-download"
+              type="warning"
+              size="mini"
+              @click="handleExport(0)"
+            >导出全部数据</el-button>
+            <el-button
+              icon="el-icon-download"
+              type="warning"
+              size="mini"
+              @click="handleExport(1)"
+            >导出当前页数据</el-button>
+          </div>
+          <el-button
+            type="warning"
+            icon="el-icon-download"
+            size="mini"
+            v-hasPermi="['energy:company:export']"
+            slot="reference"
+          >导出</el-button>
+        </el-popover>
       </el-col>
     </el-row>
 
@@ -97,11 +113,18 @@
 </template>
 
 <script>
-import { listCompany, getCompany, delCompany, addCompany, updateCompany, exportCompany } from "@/api/energy/company";
+import {
+  listCompany,
+  getCompany,
+  delCompany,
+  addCompany,
+  updateCompany,
+  exportCompany
+} from '@/api/energy/company'
 
 export default {
-  name: "Company",
-  data () {
+  name: 'Company',
+  data() {
     return {
       // 遮罩层
       loading: true,
@@ -116,145 +139,153 @@ export default {
       // 公司表格数据
       companyList: [],
       // 弹出层标题
-      title: "",
+      title: '',
       // 是否显示弹出层
       open: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 10
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
         companyName: [
-          { required: true, message: "公司名称不能为空", trigger: "blur" }
+          { required: true, message: '公司名称不能为空', trigger: 'blur' }
         ],
         companyCode: [
-          { required: true, message: "公司编号不能为空", trigger: "blur" }
+          { required: true, message: '公司编号不能为空', trigger: 'blur' }
         ]
       }
-    };
+    }
   },
-  created () {
-    this.getList();
+  created() {
+    this.getList()
   },
   methods: {
-    indexMethod (index) {
-      return ((this.queryParams.pageNum - 1) * this.queryParams.pageSize) + index + 1
+    indexMethod(index) {
+      return (
+        (this.queryParams.pageNum - 1) * this.queryParams.pageSize + index + 1
+      )
     },
     /** 查询公司列表 */
-    getList () {
-      this.loading = true;
+    getList() {
+      this.loading = true
       listCompany(this.queryParams).then(response => {
-        this.companyList = response.rows;
-        this.total = response.total;
-        this.loading = false;
-      });
+        this.companyList = response.rows
+        this.total = response.total
+        this.loading = false
+      })
     },
     // 取消按钮
-    cancel () {
-      this.open = false;
-      this.reset();
+    cancel() {
+      this.open = false
+      this.reset()
     },
     // 表单重置
-    reset () {
+    reset() {
       this.form = {
         id: undefined,
         companyCode: undefined,
         companyName: undefined,
-        companyDescription: 0,
-      };
-      this.resetForm("form");
+        companyDescription: 0
+      }
+      this.resetForm('form')
     },
     /** 搜索按钮操作 */
-    handleQuery () {
-      this.queryParams.pageNum = 1;
-      this.getList();
+    handleQuery() {
+      this.queryParams.pageNum = 1
+      this.getList()
     },
     /** 重置按钮操作 */
-    resetQuery () {
-      this.resetForm("queryForm");
-      this.handleQuery();
+    resetQuery() {
+      this.resetForm('queryForm')
+      this.handleQuery()
     },
     // 多选框选中数据
-    handleSelectionChange (selection) {
+    handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
       this.single = selection.length != 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
-    handleAdd () {
-      this.reset();
-      this.open = true;
-      this.title = "添加公司";
+    handleAdd() {
+      this.reset()
+      this.open = true
+      this.title = '添加公司'
     },
     /** 修改按钮操作 */
-    handleUpdate (row) {
-      this.reset();
+    handleUpdate(row) {
+      this.reset()
       const id = row.id
       getCompany(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改公司";
-      });
+        this.form = response.data
+        this.open = true
+        this.title = '修改公司'
+      })
     },
     /** 提交按钮 */
-    submitForm: function () {
-      this.$refs["form"].validate(valid => {
+    submitForm: function() {
+      this.$refs['form'].validate(valid => {
         if (valid) {
           if (this.form.id != undefined) {
             updateCompany(this.form).then(response => {
               if (response.code === 200) {
-                this.msgSuccess("修改成功");
-                this.open = false;
-                this.getList();
+                this.msgSuccess('修改成功')
+                this.open = false
+                this.getList()
               } else {
-                this.msgError(response.msg);
+                this.msgError(response.msg)
               }
-            });
+            })
           } else {
             addCompany(this.form).then(response => {
               if (response.code === 200) {
-                this.msgSuccess("新增成功");
-                this.open = false;
-                this.getList();
+                this.msgSuccess('新增成功')
+                this.open = false
+                this.getList()
               } else {
-                this.msgError(response.msg);
+                this.msgError(response.msg)
               }
-            });
+            })
           }
         }
-      });
+      })
     },
     /** 删除按钮操作 */
-    handleDelete (row) {
-      const ids = row.id || this.ids;
-      this.$confirm('是否确认删除,删除后不能恢复?', "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(function () {
-        return delCompany(ids);
-      }).then(() => {
-        this.getList();
-        this.msgSuccess("删除成功");
-      }).catch(function () { });
+    handleDelete(row) {
+      const ids = row.id || this.ids
+      this.$confirm('是否确认删除,删除后不能恢复?', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(function() {
+          return delCompany(ids)
+        })
+        .then(() => {
+          this.getList()
+          this.msgSuccess('删除成功')
+        })
+        .catch(function() {})
     },
     /** 导出按钮操作 */
-    handleExport () {
-      const queryParams = this.queryParams;
-      this.$confirm('是否确认导出所有公司数据项?', "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(function () {
-        return exportCompany(queryParams);
-      }).then(response => {
-        this.download(response.msg);
-      }).catch(function () { });
+    handleExport(type) {
+      const queryParams = this.queryParams
+      this.$confirm('是否确认导出公司数据项?', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(function() {
+          return exportCompany(queryParams)
+        })
+        .then(response => {
+          this.download(response.msg)
+        })
+        .catch(function() {})
     }
   }
-};
+}
 </script>

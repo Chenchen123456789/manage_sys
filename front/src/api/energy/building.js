@@ -10,9 +10,9 @@ export function listBuilding(query) {
 }
 
 // 查询建筑详细
-export function getBuilding(buildingCode) {
+export function getBuilding(buildingId) {
   return request({
-    url: '/energy/building/' + buildingCode,
+    url: '/energy/building/' + buildingId,
     method: 'get'
   })
 }
@@ -36,9 +36,9 @@ export function updateBuilding(data) {
 }
 
 // 删除建筑
-export function delBuilding(buildingCode) {
+export function delBuilding(buildingId) {
   return request({
-    url: '/energy/building/' + buildingCode,
+    url: '/energy/building/' + buildingId,
     method: 'delete'
   })
 }

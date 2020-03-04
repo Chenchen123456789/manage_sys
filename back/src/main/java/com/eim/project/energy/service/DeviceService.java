@@ -40,7 +40,7 @@ public class DeviceService {
         return deviceMapper.insertSelective(device);
     }
 
-    public Device selectDeviceByDeviceCode(String deviceCode) {
-        return deviceMapper.selectByDeviceCode(deviceCode);
+    public Device selectDeviceByDeviceCode(String deviceCode, Integer buildingId) {
+        return deviceMapper.selectByDeviceCode(deviceCode, buildingId);
     }
 }

@@ -59,7 +59,7 @@ public class BuildingController extends BaseController {
     @Log(title = "建筑管理", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody Building building) {
-        Building existBuilding = buildingService.selectBuildingByBuildingCode(building.getBuildingCode());
+        Building existBuilding = buildingService.selectBuildingByBuildingCode(building.getBuildingCode(), building.getPlantId());
         if (existBuilding != null) {
             return AjaxResult.error("新增建筑'" + building.getBuildingCode() + "'失败，建筑编码已存在");
         }
@@ -75,7 +75,7 @@ public class BuildingController extends BaseController {
     @Log(title = "建筑管理", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody Building building) {
-        Building existBuilding = buildingService.selectBuildingByBuildingCode(building.getBuildingCode());
+        Building existBuilding = buildingService.selectBuildingByBuildingCode(building.getBuildingCode(), building.getPlantId());
         if (existBuilding != null && !existBuilding.getId().equals(building.getId())) {
             return AjaxResult.error("修改建筑'" + building.getBuildingCode() + "'失败，建筑编码已存在");
         }

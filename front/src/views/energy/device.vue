@@ -85,12 +85,17 @@
     />
 
     <!-- 添加或修改设备对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px">
+    <el-dialog :title="title" @close="handleDialogClose" :visible.sync="open" width="500px">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
         <el-form-item label="公司" prop="companyId">
-          <el-select v-model="form.companyId" placeholder="请选择">
+          <el-select
+            clearable
+            @change="changeFormCompanyOptions"
+            v-model="form.companyId"
+            placeholder="请选择"
+          >
             <el-option
-              v-for="item in companyOptions"
+              v-for="item in formCompanyOptions"
               :key="item.id"
               :label="item.companyName"
               :value="item.id"
@@ -98,9 +103,14 @@
           </el-select>
         </el-form-item>
         <el-form-item label="工厂" prop="plantId">
-          <el-select v-model="form.plantId" placeholder="请选择">
+          <el-select
+            clearable
+            @change="changeFormPlantOptions"
+            v-model="form.plantId"
+            placeholder="请选择"
+          >
             <el-option
-              v-for="item in plantOptions"
+              v-for="item in formPlantOptions"
               :key="item.id"
               :label="item.plantName"
               :value="item.id"
@@ -108,9 +118,14 @@
           </el-select>
         </el-form-item>
         <el-form-item label="建筑" prop="buildingId">
-          <el-select v-model="form.buildingId" placeholder="请选择">
+          <el-select
+            clearable
+            @change="changeFormBuildingOptions"
+            v-model="form.buildingId"
+            placeholder="请选择"
+          >
             <el-option
-              v-for="item in buildingOptions"
+              v-for="item in formBuildingOptions"
               :key="item.id"
               :label="item.buildingName"
               :value="item.id"
@@ -154,14 +169,21 @@
 </template>
 
 <script>
-import { listDevice, getDevice, delDevice, addDevice, updateDevice, exportDevice } from "@/api/energy/device";
-import { listCompany } from "@/api/energy/company";
-import { listPlant } from "@/api/energy/plant";
-import { listBuilding } from "@/api/energy/building";
+import {
+  listDevice,
+  getDevice,
+  delDevice,
+  addDevice,
+  updateDevice,
+  exportDevice
+} from '@/api/energy/device'
+import { listCompany } from '@/api/energy/company'
+import { listPlant } from '@/api/energy/plant'
+import { listBuilding } from '@/api/energy/building'
 
 export default {
-  name: "Device",
-  data () {
+  name: 'Device',
+  data() {
     return {
       // 遮罩层
       loading: true,
@@ -178,173 +200,232 @@ export default {
       companyOptions: [],
       plantOptions: [],
       buildingOptions: [],
+      formCompanyOptions: [],
+      formPlantOptions: [],
+      formBuildingOptions: [],
       // 弹出层标题
-      title: "",
+      title: '',
       // 是否显示弹出层
       open: false,
       // 查询参数
       queryParams: {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 10
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
         companyId: [
-          { required: true, message: "公司不能为空", trigger: "blur" }
+          { required: false, message: '公司不能为空', trigger: 'blur' }
         ],
         plantId: [
-          { required: true, message: "工厂不能为空", trigger: "blur" }
+          { required: false, message: '工厂不能为空', trigger: 'blur' }
         ],
         buildingId: [
-          { required: true, message: "建筑不能为空", trigger: "blur" }
+          { required: true, message: '建筑不能为空', trigger: 'blur' }
         ],
         deviceName: [
-          { required: true, message: "设备名称不能为空", trigger: "blur" }
+          { required: true, message: '设备名称不能为空', trigger: 'blur' }
         ],
         deviceCode: [
-          { required: true, message: "设备编号不能为空", trigger: "blur" }
+          { required: true, message: '设备编号不能为空', trigger: 'blur' }
         ]
       }
-    };
+    }
   },
-  created () {
+  created() {
     this.getList()
     this.getCompanyOptions()
     this.getPlantOptions()
     this.getBuildingOptions()
   },
   methods: {
-    getCompanyOptions () {
+    changeFormCompanyOptions(value) {
+      if (value === '') {
+        this.formPlantOptions = this.plantOptions
+        this.formBuildingOptions = this.buildingOptions
+      } else {
+        const temp = this.form
+        temp.plantId = temp.buildingId = null
+        this.form = { ...temp }
+        this.formPlantOptions = this.plantOptions.filter(
+          item => item.companyId == value
+        )
+        this.formBuildingOptions = this.buildingOptions.filter(
+          item => item.companyId == value
+        )
+      }
+    },
+    changeFormPlantOptions(value) {
+      if (value === '') {
+        this.formBuildingOptions = this.buildingOptions
+      } else {
+        const temp = this.form
+        temp.buildingId = null
+        this.form = { ...temp }
+        const plant = this.plantOptions.find(item => item.id == value)
+        const companyId = plant.companyId || null
+        this.form.companyId = companyId
+        this.formBuildingOptions = this.buildingOptions.filter(
+          item => item.plantId == value
+        )
+      }
+    },
+    changeFormBuildingOptions(value) {
+      if (value === '') {
+      } else {
+        const building = this.buildingOptions.find(item => item.id == value)
+        const companyId = building.companyId || null
+        const plantId = building.plantId || null
+        const temp = this.form
+        temp.companyId = companyId
+        temp.plantId = plantId
+        this.form = { ...temp }
+      }
+    },
+    getCompanyOptions() {
       listCompany().then(res => {
-        this.companyOptions = res.rows
+        this.companyOptions = this.formCompanyOptions = res.rows
       })
     },
-    getPlantOptions () {
+    getPlantOptions() {
       listPlant().then(res => {
-        this.plantOptions = res.rows
+        this.plantOptions = this.formPlantOptions = res.rows
       })
     },
-    getBuildingOptions () {
+    getBuildingOptions() {
       listBuilding().then(res => {
-        this.buildingOptions = res.rows
+        this.buildingOptions = this.formBuildingOptions = res.rows
       })
     },
-    indexMethod (index) {
-      return ((this.queryParams.pageNum - 1) * this.queryParams.pageSize) + index + 1
+    indexMethod(index) {
+      return (
+        (this.queryParams.pageNum - 1) * this.queryParams.pageSize + index + 1
+      )
     },
     /** 查询设备列表 */
-    getList () {
-      this.loading = true;
+    getList() {
+      this.loading = true
       listDevice(this.queryParams).then(response => {
-        this.deviceList = response.rows;
-        this.total = response.total;
-        this.loading = false;
-      });
+        this.deviceList = response.rows
+        this.total = response.total
+        this.loading = false
+      })
     },
     // 取消按钮
-    cancel () {
-      this.open = false;
-      this.reset();
+    cancel() {
+      this.open = false
+      this.reset()
+    },
+    handleDialogClose() {
+      this.formCompanyOptions = this.companyOptions
+      this.formPlantOptions = this.plantOptions
+      this.formBuildingOptions = this.buildingOptions
     },
     // 表单重置
-    reset () {
+    reset() {
       this.form = {
         id: undefined,
         deviceCode: undefined,
         deviceName: undefined,
-        deviceDescription: undefined,
-      };
-      this.resetForm("form");
+        deviceDescription: undefined
+      }
+      this.resetForm('form')
     },
     /** 搜索按钮操作 */
-    handleQuery () {
-      this.queryParams.pageNum = 1;
-      this.getList();
+    handleQuery() {
+      this.queryParams.pageNum = 1
+      this.getList()
     },
     /** 重置按钮操作 */
-    resetQuery () {
-      this.resetForm("queryForm");
-      this.handleQuery();
+    resetQuery() {
+      this.resetForm('queryForm')
+      this.handleQuery()
     },
     // 多选框选中数据
-    handleSelectionChange (selection) {
+    handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
       this.single = selection.length != 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
-    handleAdd () {
-      this.reset();
-      this.open = true;
-      this.title = "添加设备";
+    handleAdd() {
+      this.reset()
+      this.open = true
+      this.title = '添加设备'
     },
     /** 修改按钮操作 */
-    handleUpdate (row) {
-      this.reset();
+    handleUpdate(row) {
+      this.reset()
       const id = row.id
       getDevice(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改设备";
-      });
+        this.form = response.data
+        this.open = true
+        this.title = '修改设备'
+      })
     },
     /** 提交按钮 */
-    submitForm: function () {
-      this.$refs["form"].validate(valid => {
+    submitForm: function() {
+      this.$refs['form'].validate(valid => {
         if (valid) {
           if (this.form.id != undefined) {
             updateDevice(this.form).then(response => {
               if (response.code === 200) {
-                this.msgSuccess("修改成功");
-                this.open = false;
-                this.getList();
+                this.msgSuccess('修改成功')
+                this.open = false
+                this.getList()
               } else {
-                this.msgError(response.msg);
+                this.msgError(response.msg)
               }
-            });
+            })
           } else {
             addDevice(this.form).then(response => {
               if (response.code === 200) {
-                this.msgSuccess("新增成功");
-                this.open = false;
-                this.getList();
+                this.msgSuccess('新增成功')
+                this.open = false
+                this.getList()
               } else {
-                this.msgError(response.msg);
+                this.msgError(response.msg)
               }
-            });
+            })
           }
         }
-      });
+      })
     },
     /** 删除按钮操作 */
-    handleDelete (row) {
-      const ids = row.id || this.ids;
-      this.$confirm('是否确认删除,删除后不能恢复?', "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(function () {
-        return delDevice(ids);
-      }).then(() => {
-        this.getList();
-        this.msgSuccess("删除成功");
-      }).catch(function () { });
+    handleDelete(row) {
+      const ids = row.id || this.ids
+      this.$confirm('是否确认删除,删除后不能恢复?', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(function() {
+          return delDevice(ids)
+        })
+        .then(() => {
+          this.getList()
+          this.msgSuccess('删除成功')
+        })
+        .catch(function() {})
     },
     /** 导出按钮操作 */
-    handleExport () {
-      const queryParams = this.queryParams;
-      this.$confirm('是否确认导出所有设备数据项?', "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(function () {
-        return exportDevice(queryParams);
-      }).then(response => {
-        this.download(response.msg);
-      }).catch(function () { });
+    handleExport() {
+      const queryParams = this.queryParams
+      this.$confirm('是否确认导出所有设备数据项?', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(function() {
+          return exportDevice(queryParams)
+        })
+        .then(response => {
+          this.download(response.msg)
+        })
+        .catch(function() {})
     }
   }
-};
+}
 </script>

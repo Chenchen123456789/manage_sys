@@ -28,5 +28,5 @@ public interface PlantMapper {
 
     int deleteByIds(Integer[] ids);
 
-    Plant selectByPlantCode(String plantCode);
+    Plant selectByPlantCode(String plantCode, Integer companyId);
 }

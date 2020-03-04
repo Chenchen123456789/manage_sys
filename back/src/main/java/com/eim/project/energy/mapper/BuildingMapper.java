@@ -29,5 +29,5 @@ public interface BuildingMapper {
 
     int deleteByIds(Integer[] ids);
 
-    Building selectByBuildingCode(String buildingCode);
+    Building selectByBuildingCode(String buildingCode, Integer plantId);
 }
