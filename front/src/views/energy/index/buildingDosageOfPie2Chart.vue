@@ -20,7 +20,7 @@ export default {
     },
     height: {
       type: String,
-      default: '350px'
+      default: '320px'
     },
     chartData: {
       type: Array,
@@ -62,9 +62,9 @@ export default {
       })
       const legendData = chartData.map(item => item.buildingName)
       this.chart.setOption({
-        legend: {
-          data: legendData
-        },
+        // legend: {
+        //   data: legendData
+        // },
         series: [
           {
             data: seriesData

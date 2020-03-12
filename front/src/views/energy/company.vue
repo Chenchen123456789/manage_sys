@@ -31,6 +31,15 @@
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
+        <el-button
+          type="info"
+          icon="el-icon-upload2"
+          size="mini"
+          @click="handleImport"
+          v-hasPermi="['energy:company:import']"
+        >导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
         <el-popover placement="bottom" trigger="click">
           <div style="text-align: right; margin: 0">
             <el-button
@@ -109,6 +118,8 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <ImportData :importData="{importType:'company', upload}"></ImportData>
   </div>
 </template>
 
@@ -121,9 +132,13 @@ import {
   updateCompany,
   exportCompany
 } from '@/api/energy/company'
+import ImportData from '../components/importData'
 
 export default {
   name: 'Company',
+  components: {
+    ImportData
+  },
   data() {
     return {
       // 遮罩层
@@ -146,6 +161,10 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10
+      },
+      upload: {
+        title: '',
+        open: false
       },
       // 表单参数
       form: {},
@@ -272,19 +291,31 @@ export default {
     },
     /** 导出按钮操作 */
     handleExport(type) {
-      const queryParams = this.queryParams
+      const queryParams = { ...this.queryParams }
       this.$confirm('是否确认导出公司数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(function() {
-          return exportCompany(queryParams)
+          if (type === 0) {
+            return exportCompany()
+          }
+          if (type === 1) {
+            return exportCompany(queryParams)
+          }
         })
         .then(response => {
           this.download(response.msg)
         })
         .catch(function() {})
+    },
+    /** 导入按钮操作 */
+    handleImport() {
+      this.upload = {
+        title: '公司导入',
+        open: true
+      }
     }
   }
 }

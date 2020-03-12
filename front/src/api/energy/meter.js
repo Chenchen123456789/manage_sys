@@ -51,3 +51,11 @@ export function exportMeter(query) {
     params: query
   })
 }
+
+ // 下载导入模板
+ export function importMeterTemplate() {
+  return request({
+    url: '/energy/meter/importTemplate',
+    method: 'get'
+  })
+}

@@ -15,17 +15,18 @@ import lombok.experimental.Accessors;
 public class Building extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    @Excel(name = "序号", cellType = Excel.ColumnType.NUMERIC)
+    @Excel(name = "ID", cellType = Excel.ColumnType.NUMERIC)
     private Integer id;
 
     private Integer companyId;
 
-    @Excel(name = "公司名称", cellType = Excel.ColumnType.STRING)
+    @Excel(name = "公司名称", cellType = Excel.ColumnType.STRING, type = Excel.Type.EXPORT)
     private String companyName;
 
+    @Excel(name = "工厂ID", cellType = Excel.ColumnType.NUMERIC)
     private Integer plantId;
 
-    @Excel(name = "工厂名称", cellType = Excel.ColumnType.STRING)
+    @Excel(name = "工厂名称", cellType = Excel.ColumnType.STRING, type = Excel.Type.EXPORT)
     private String plantName;
 
     @Excel(name = "建筑编号", cellType = Excel.ColumnType.STRING)

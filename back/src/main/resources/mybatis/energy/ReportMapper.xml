@@ -7,21 +7,17 @@
         a.building_name buildingName,
         a.system_name systemName,
         a.device_name deviceName,
-        a.device_id deviceId,
+        a.meter_code meterCode,
         a.tag_name tagName,
         a.energy_type_name energyTypeName,
         b.TagValue tagValue,
-        r.tagvalue rTagValue,
         a.Description description,
-        b.[datatime] dataTime,
-        CAST ( r.tagvalue - b.tagvalue AS NUMERIC ( 20, 2 ) ) dValue
+        b.[datatime] dataTime
         FROM
         dbo.Variable_Info a,
-        dbo.T_daydata b,
-        dbo.RTable r
+        dbo.T_daydata b
         <where>
             b.TagName = a.tag_name
-            AND a.tag_name = r.tagname
             AND a.[disable] != 1
             AND a.total_flag = 1
             AND YEAR ( b.DataTime ) = YEAR ( #{queryTime} )
@@ -63,21 +59,17 @@
         a.building_name buildingName,
         a.system_name systemName,
         a.device_name deviceName,
-        a.device_id deviceId,
+        a.meter_code meterCode,
         a.tag_name tagName,
         a.energy_type_name energyTypeName,
         b.TagValue tagValue,
-        r.tagvalue rTagValue,
         a.Description description,
-        b.[datatime] dataTime,
-        CAST ( r.tagvalue - b.tagvalue AS NUMERIC ( 20, 2 ) ) dValue
+        b.[datatime] dataTime
         FROM
         dbo.Variable_Info a,
-        dbo.T_daydata b,
-        dbo.RTable r
+        dbo.T_daydata b
         <where>
             b.TagName = a.tag_name
-            AND a.tag_name = r.tagname
             AND a.[disable] != 1
             AND a.total_flag = 1
             AND YEAR ( b.DataTime ) = YEAR ( #{queryTime} )
@@ -121,18 +113,15 @@
         a.building_name buildingName,
         a.system_name systemName,
         a.device_name deviceName,
-        a.device_id deviceId,
+        a.meter_code meterCode,
         a.tag_name tagName,
         a.energy_type_name energyTypeName,
         b.TagValue tagValue,
-        r.tagvalue rTagValue,
         a.Description description,
-        b.[datatime] dataTime,
-        CAST ( r.tagvalue - b.tagvalue AS NUMERIC ( 20, 2 ) ) dValue
+        b.[datatime] dataTime
         FROM
         dbo.Variable_Info a,
-        dbo.T_daydata b,
-        dbo.RTable r
+        dbo.T_HourData b
         <where>
             b.TagName = a.tag_name
             AND a.tag_name = r.tagname
@@ -145,7 +134,7 @@
             SELECT MAX
             ( c.DataTime )
             FROM
-            dbo.T_daydata c
+            dbo.T_HourData c
             WHERE
             b.tagname = c.tagname
             AND YEAR ( c.DataTime ) = YEAR ( #{queryTime} )
@@ -181,21 +170,17 @@
         a.building_name buildingName,
         a.system_name systemName,
         a.device_name deviceName,
-        a.device_id deviceId,
+        a.meter_code meterCode,
         a.tag_name tagName,
         a.energy_type_name energyTypeName,
         b.TagValue tagValue,
-        r.tagvalue rTagValue,
         a.Description description,
-        b.[datatime] dataTime,
-        CAST ( r.tagvalue - b.tagvalue AS NUMERIC ( 20, 2 ) ) dValue
+        b.[datatime] dataTime
         FROM
         dbo.Variable_Info a,
-        dbo.T_daydata b,
-        dbo.RTable r
+        dbo.T_MinuteData b
         <where>
             b.TagName = a.tag_name
-            AND a.tag_name = r.tagname
             AND a.[disable] != 1
             AND a.total_flag = 1
             AND YEAR ( b.DataTime ) = YEAR ( #{queryTime} )
@@ -206,7 +191,7 @@
             SELECT MAX
             ( c.DataTime )
             FROM
-            dbo.T_daydata c
+            dbo.T_MinuteData c
             WHERE
             b.tagname = c.tagname
             AND YEAR ( c.DataTime ) = YEAR ( #{queryTime} )
@@ -322,7 +307,8 @@
         WHERE
         A.TagName = B.TagName
         AND CONVERT ( VARCHAR ( 7 ), B.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
-        -- AND B.DataTime = ( SELECT MAX ( C.DataTime ) FROM dbo.T_Daydata C WHERE B.tagname = C.tagname )
+        AND B.DataTime = ( SELECT MAX ( C.DataTime ) FROM dbo.T_Daydata C WHERE B.tagname = C.tagname
+        AND CONVERT ( VARCHAR ( 7 ), B.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 ))
         ) cur,
         (
         SELECT
@@ -407,74 +393,69 @@
     </select>
     <select id="selectMonthSettlement" parameterType="map" resultType="map">
         SELECT
-        plant_id plantId,
-        CAST ( SUM ( CASE WHEN energy_type_name = '水'
-        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
-        THEN DValue ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
+        M.plant_id plantId,
+        ( SELECT plant_name FROM O_2Plant WHERE id = plant_id ) plantName,
+        CAST ( SUM ( CASE WHEN energy_type_name = '水' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
         currentWaterSumValue,
-        CAST ( SUM ( CASE WHEN energy_type_name = '电'
-        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
-        THEN DValue ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
+        CAST ( SUM ( CASE WHEN energy_type_name = '水' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) preWaterSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '电' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
         currentElectricitySumValue,
-        CAST ( SUM ( CASE WHEN energy_type_name = '空气'
-        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
-        THEN DValue ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
+        CAST ( SUM ( CASE WHEN energy_type_name = '电' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
+        preElectricitySumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '空气' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
         currentAirSumValue,
-        CAST ( SUM ( CASE WHEN energy_type_name = '蒸汽'
-        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
-        THEN DValue ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
+        CAST ( SUM ( CASE WHEN energy_type_name = '空气' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) preAirSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '蒸汽' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
         currentSteamSumValue,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '水'
-        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, #{queryTime} ),
-        120
-        ) THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) preWaterSumValue,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '电'
-        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, #{queryTime} ),
-        120
-        ) THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) preElectricitySumValue,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '空气'
-        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, #{queryTime} ),
-        120
-        ) THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) preAirSumValue,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '蒸汽'
-        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, #{queryTime} ),
-        120
-        ) THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) preSteamSumValue
+        CAST ( SUM ( CASE WHEN energy_type_name = '蒸汽' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) preSteamSumValue
         FROM
-        T_DayData A,
-        Variable_Info B
+        Variable_Info M,
+        (
+        SELECT
+        TagName,
+        (
+        SELECT
+        TagValue
+        FROM
+        T_DayData B
+        WHERE
+        A.TagName = B.TagName
+        AND CONVERT ( VARCHAR ( 7 ), B.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
+        AND B.DataTime = ( SELECT MAX ( C.DataTime ) FROM dbo.T_Daydata C WHERE B.tagname = C.tagname
+        AND CONVERT ( VARCHAR ( 7 ), B.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
+        )
+        ) cur,
+        (
+        SELECT
+        TagValue
+        FROM
+        T_DayData D
+        WHERE
+        A.TagName = D.TagName
+        AND CONVERT ( VARCHAR ( 7 ), D.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, #{queryTime} ),
+        120 )
+        AND D.DataTime = (
+        SELECT MAX
+        ( E.DataTime )
+        FROM
+        dbo.T_Daydata E
+        WHERE
+        D.tagname = E.tagname
+        AND CONVERT ( VARCHAR ( 7 ), E.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, #{queryTime} ),
+        120 )
+        )
+        ) pre
+        FROM
+        T_DayData A
+        GROUP BY
+        TagName
+        ) N
         <where>
-            A.TagName = B.tag_name
+            M.tag_name = N.TagName
+            AND M.[disable] != 1
+            AND M.total_flag = 1
             <if test="plantId!=null">
-                AND B.plant_id = #{plantId, jdbcType=INTEGER}
+                AND plant_id = #{plantId, jdbcType=INTEGER}
             </if>
         </where>
         GROUP BY plant_id
@@ -514,269 +495,275 @@
 
     <select id="selectBuildingYearDosage" parameterType="map" resultType="map">
         SELECT
-        T.*,
-        building_name buildingName
+        building_id,
+        buildingName,
+        ( currentWaterSumValue - preWaterSumValue ) currentWaterSumValue,
+        ( currentElectricitySumValue - preElectricitySumValue ) currentElectricitySumValue,
+        ( currentAirSumValue - preAirSumValue ) currentAirSumValue,
+        ( currentSteamSumValue - preSteamSumValue ) currentSteamSumValue
         FROM
         (
         SELECT
-        building_id buildingId,
-        CAST (
-        SUM ( CASE
-        WHEN energy_type_name = '水' AND YEAR ( A.DataTime ) = YEAR ( GETDATE( ) )
-        THEN DValue ELSE 0 END ) AS
-        NUMERIC ( 20, 2 )
-        ) currentWaterSumValue,
-        CAST (
-        SUM ( CASE
-        WHEN energy_type_name = '电' AND YEAR ( A.DataTime ) = YEAR ( GETDATE( ) )
-        THEN DValue ELSE 0 END ) AS
-        NUMERIC ( 20, 2 )
-        ) currentElectricitySumValue,
-        CAST (
-        SUM ( CASE
-        WHEN energy_type_name = '空气' AND YEAR ( A.DataTime ) = YEAR ( GETDATE( ) )
-        THEN DValue ELSE 0 END )
-        AS NUMERIC ( 20, 2 )
-        ) currentAirSumValue,
-        CAST (
-        SUM ( CASE
-        WHEN energy_type_name = '蒸汽' AND YEAR ( A.DataTime ) = YEAR ( GETDATE( ) )
-        THEN DValue ELSE 0 END )
-        AS NUMERIC ( 20, 2 )
-        ) currentSteamSumValue,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '水'
-        AND YEAR ( A.DataTime ) = YEAR ( DATEADD( YEAR, - 1, GETDATE( ) ) ) THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) preWaterSumValue,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '电'
-        AND YEAR ( A.DataTime ) = YEAR ( DATEADD( YEAR, - 1, GETDATE( ) ) ) THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) preElectricitySumValue,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '空气'
-        AND YEAR ( A.DataTime ) = YEAR ( DATEADD( YEAR, - 1, GETDATE( ) ) ) THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) preAirSumValue,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '蒸汽'
-        AND YEAR ( A.DataTime ) = YEAR ( DATEADD( YEAR, - 1, GETDATE( ) ) ) THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) preSteamSumValue
+        building_id,
+        ( SELECT building_name FROM O_3Building WHERE id = building_id ) buildingName,
+        CAST ( SUM ( CASE WHEN energy_type_name = '水' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
+        currentWaterSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '水' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) preWaterSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '电' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
+        currentElectricitySumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '电' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
+        preElectricitySumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '空气' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
+        currentAirSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '空气' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) preAirSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '蒸汽' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
+        currentSteamSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '蒸汽' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) preSteamSumValue
         FROM
-        T_DayData A,
-        Variable_Info B
+        Variable_Info M,
+        (
+        SELECT
+        TagName,
+        (
+        SELECT
+        TagValue
+        FROM
+        T_DayData B
+        WHERE
+        A.TagName = B.TagName
+        AND B.DataTime = (
+        SELECT MAX
+        ( C.DataTime )
+        FROM
+        dbo.T_DayData C
+        WHERE
+        B.tagname = C.tagname
+        AND YEAR(B.DataTime) = YEAR(GETDATE( ))
+        )
+        ) cur,
+        (
+        SELECT
+        TagValue
+        FROM
+        T_DayData D
+        WHERE
+        A.TagName = D.TagName
+        AND D.DataTime = (
+        SELECT MAX
+        ( E.DataTime )
+        FROM
+        dbo.T_DayData E
+        WHERE
+        D.tagname = E.tagname
+        AND YEAR(E.DataTime) = YEAR(DATEADD( YEAR, - 1, GETDATE( ) ))
+        )
+        ) pre
+        FROM
+        T_DayData A
+        GROUP BY
+        TagName
+        ) N
+        WHERE
+        M.tag_name = N.TagName
+        AND M.[disable] != 1
+        AND M.total_flag = 1
+        GROUP BY
+        building_id
+        ) T
         <where>
-            A.TagName = B.tag_name
             <if test="buildingId!=null">
                 AND building_id = #{buildingId, jdbcType=INTEGER}
             </if>
         </where>
-        GROUP BY
-        building_id
-        ) T,
-        O_3Building S
-        WHERE
-        S.id = T.buildingId
     </select>
 
     <select id="selectBuildingMonthDosage" parameterType="map" resultType="map">
         SELECT
-        T.*,
-        building_name buildingName
+        building_id,
+        buildingName,
+        ( currentWaterSumValue - preWaterSumValue ) currentWaterSumValue,
+        ( currentElectricitySumValue - preElectricitySumValue ) currentElectricitySumValue,
+        ( currentAirSumValue - preAirSumValue ) currentAirSumValue,
+        ( currentSteamSumValue - preSteamSumValue ) currentSteamSumValue,
+        ( preWaterSumValue - twoPreWaterSumValue ) preWaterSumValue,
+        ( preElectricitySumValue - twoPreElectricitySumValue ) preElectricitySumValue,
+        ( preAirSumValue - twoPreAirSumValue ) preAirSumValue,
+        ( preSteamSumValue - twoPreSteamSumValue ) preSteamSumValue
         FROM
         (
         SELECT
-        building_id buildingId,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '水'
-        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), GETDATE( ), 120 ) THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) currentWaterSumValue,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '电'
-        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), GETDATE( ), 120 ) THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) currentElectricitySumValue,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '空气'
-        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), GETDATE( ), 120 ) THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) currentAirSumValue,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '蒸汽'
-        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), GETDATE( ), 120 ) THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) currentSteamSumValue,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '水'
-        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, GETDATE( ) ), 120
-        ) THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) preWaterSumValue,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '电'
-        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, GETDATE( ) ), 120
-        ) THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) preElectricitySumValue,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '空气'
-        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, GETDATE( ) ), 120
-        ) THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) preAirSumValue,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '蒸汽'
-        AND CONVERT ( VARCHAR ( 7 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, GETDATE( ) ), 120
-        ) THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) preSteamSumValue
+        building_id,
+        ( SELECT building_name FROM O_3Building WHERE id = building_id ) buildingName,
+        CAST ( SUM ( CASE WHEN energy_type_name = '水' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) currentWaterSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '水' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) preWaterSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '电' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) currentElectricitySumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '电' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) preElectricitySumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '空气' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) currentAirSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '空气' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) preAirSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '蒸汽' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) currentSteamSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '蒸汽' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) preSteamSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '水' THEN N.twoPre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) twoPreWaterSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '电' THEN N.twoPre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) twoPreElectricitySumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '空气' THEN N.twoPre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) twoPreAirSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '蒸汽' THEN N.twoPre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) twoPreSteamSumValue
         FROM
-        T_DayData A,
-        Variable_Info B
+        Variable_Info M,
+        (
+        SELECT
+        TagName,
+        (
+        SELECT
+        TagValue
+        FROM
+        T_DayData B
+        WHERE
+        A.TagName = B.TagName
+        AND B.DataTime = (
+        SELECT MAX
+        ( C.DataTime )
+        FROM
+        dbo.T_DayData C
+        WHERE
+        B.tagname = C.tagname
+        AND CONVERT ( VARCHAR ( 7 ), B.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), GETDATE( ), 120 )
+        )
+        ) cur,
+        (
+        SELECT
+        TagValue
+        FROM
+        T_DayData D
+        WHERE
+        A.TagName = D.TagName
+        AND D.DataTime = (
+        SELECT MAX
+        ( E.DataTime )
+        FROM
+        dbo.T_DayData E
+        WHERE
+        D.tagname = E.tagname
+        AND CONVERT ( VARCHAR ( 7 ), E.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, GETDATE( ) ), 120 )
+        )
+        ) pre,
+        (
+        SELECT
+        TagValue
+        FROM
+        T_DayData D
+        WHERE
+        A.TagName = D.TagName
+        AND D.DataTime = (
+        SELECT MAX
+        ( E.DataTime )
+        FROM
+        dbo.T_DayData E
+        WHERE
+        D.tagname = E.tagname
+        AND CONVERT ( VARCHAR ( 7 ), E.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 2, GETDATE( ) ), 120 )
+        )
+        ) twoPre
+        FROM
+        T_DayData A
+        GROUP BY
+        TagName
+        ) N
+        WHERE
+        M.tag_name = N.TagName
+        AND M.[disable] != 1
+        AND M.total_flag = 1
+        GROUP BY
+        building_id
+        ) T
         <where>
-            A.TagName = B.tag_name
             <if test="buildingId!=null">
                 AND building_id = #{buildingId, jdbcType=INTEGER}
             </if>
         </where>
-        GROUP BY
-        building_id
-        ) T,
-        O_3Building S
-        WHERE
-        S.id = T.buildingId
     </select>
 
     <select id="selectBuildingDayDosage" parameterType="map" resultType="map">
         SELECT
-        T.*,
-        building_name buildingName
+        building_id,
+        buildingName,
+        ( currentWaterSumValue - preWaterSumValue ) currentWaterSumValue,
+        ( currentElectricitySumValue - preElectricitySumValue ) currentElectricitySumValue,
+        ( currentAirSumValue - preAirSumValue ) currentAirSumValue,
+        ( currentSteamSumValue - preSteamSumValue ) currentSteamSumValue
         FROM
         (
         SELECT
-        building_id buildingId,
-        CAST (
-        SUM ( CASE WHEN energy_type_name = '水' AND CONVERT(VARCHAR(10),A.DataTime,120) =
-        CONVERT(VARCHAR(10),GETDATE(),120) THEN DValue ELSE 0 END ) AS NUMERIC ( 20, 2 )
-        ) currentWaterSumValue,
-        CAST (
-        SUM ( CASE WHEN energy_type_name = '电' AND CONVERT(VARCHAR(10),A.DataTime,120) =
-        CONVERT(VARCHAR(10),GETDATE(),120) THEN DValue ELSE 0 END ) AS NUMERIC ( 20, 2 )
-        ) currentElectricitySumValue,
-        CAST (
-        SUM ( CASE WHEN energy_type_name = '空气' AND CONVERT(VARCHAR(10),A.DataTime,120) =
-        CONVERT(VARCHAR(10),GETDATE(),120) THEN DValue ELSE 0 END ) AS NUMERIC ( 20, 2 )
-        ) currentAirSumValue,
-        CAST (
-        SUM ( CASE WHEN energy_type_name = '蒸汽' AND CONVERT(VARCHAR(10),A.DataTime,120) =
-        CONVERT(VARCHAR(10),GETDATE(),120) THEN DValue ELSE 0 END ) AS NUMERIC ( 20, 2 )
-        ) currentSteamSumValue,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '水'
-        AND CONVERT ( VARCHAR ( 10 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 10 ), DATEADD(day, -1, GETDATE()), 120 )
-        THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) preWaterSumValue,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '电'
-        AND CONVERT ( VARCHAR ( 10 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 10 ), DATEADD(day, -1, GETDATE()), 120 )
-        THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) preElectricitySumValue,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '空气'
-        AND CONVERT ( VARCHAR ( 10 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 10 ), DATEADD(day, -1, GETDATE()), 120 )
-        THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) preAirSumValue,
-        CAST (
-        SUM (
-        CASE
-        WHEN energy_type_name = '蒸汽'
-        AND CONVERT ( VARCHAR ( 10 ), A.DataTime, 120 ) = CONVERT ( VARCHAR ( 10 ), DATEADD(day, -1, GETDATE()), 120 )
-        THEN
-        DValue ELSE 0
-        END
-        ) AS NUMERIC ( 20, 2 )
-        ) preSteamSumValue
+        building_id,
+        ( SELECT building_name FROM O_3Building WHERE id = building_id ) buildingName,
+        CAST ( SUM ( CASE WHEN energy_type_name = '水' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
+        currentWaterSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '水' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) preWaterSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '电' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
+        currentElectricitySumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '电' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
+        preElectricitySumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '空气' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
+        currentAirSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '空气' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) preAirSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '蒸汽' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) )
+        currentSteamSumValue,
+        CAST ( SUM ( CASE WHEN energy_type_name = '蒸汽' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) preSteamSumValue
         FROM
-        T_DayData A,
-        Variable_Info B
+        Variable_Info M,
+        (
+        SELECT
+        TagName,
+        (
+        SELECT
+        TagValue
+        FROM
+        T_HourData B
+        WHERE
+        A.TagName = B.TagName
+        AND B.DataTime = (
+        SELECT MAX
+        ( C.DataTime )
+        FROM
+        dbo.T_HourData C
+        WHERE
+        B.tagname = C.tagname
+        AND CONVERT ( VARCHAR ( 10 ), B.DataTime, 120 ) = CONVERT ( VARCHAR ( 10 ), GETDATE( ), 120 )
+        )
+        ) cur,
+        (
+        SELECT
+        TagValue
+        FROM
+        T_HourData D
+        WHERE
+        A.TagName = D.TagName
+        AND D.DataTime = (
+        SELECT MAX
+        ( E.DataTime )
+        FROM
+        dbo.T_HourData E
+        WHERE
+        D.tagname = E.tagname
+        AND CONVERT ( VARCHAR ( 10 ), E.DataTime, 120 ) = CONVERT ( VARCHAR ( 10 ), DATEADD( DAY, - 1, GETDATE( ) ), 120
+        )
+        )
+        ) pre
+        FROM
+        T_HourData A
+        GROUP BY
+        TagName
+        ) N
+        WHERE
+        M.tag_name = N.TagName
+        AND M.[disable] != 1
+        AND M.total_flag = 1
+        GROUP BY
+        building_id
+        ) T
         <where>
-            A.TagName = B.tag_name
             <if test="buildingId!=null">
                 AND building_id = #{buildingId, jdbcType=INTEGER}
             </if>
         </where>
-        GROUP BY
-        building_id
-        ) T,
-        O_3Building S
-        WHERE
-        S.id = T.buildingId
     </select>
 
     <select id="selectBuildingDistribution" resultType="map">
@@ -801,7 +788,7 @@
         <where>
             A.tag_name = B.TagName
             AND A.main_tag = 1
-            AND A.disable != 1
+            AND A.[disable] != 1
             <if test="buildingId!=null">
                 AND building_id = #{buildingId,jdbcType = INTEGER}
             </if>
@@ -821,6 +808,66 @@
         WHERE
             A.tag_name = B.TagName
             AND DataTime = ( SELECT MAX ( DataTime ) FROM T_HourData C WHERE B.TagName = C.TagName )
+    </select>
+
+    <select id="selectYearTotal" resultType="map">
+        SELECT 
+            CAST( SUM ( CASE WHEN energy_type_name = '水' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) currentWaterSumValue,
+            CAST ( SUM ( CASE WHEN energy_type_name = '水' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) preWaterSumValue,
+            CAST ( SUM ( CASE WHEN energy_type_name = '电' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) currentElectricitySumValue,
+            CAST ( SUM ( CASE WHEN energy_type_name = '电' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) preElectricitySumValue,
+            CAST ( SUM ( CASE WHEN energy_type_name = '空气' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) currentAirSumValue,
+            CAST ( SUM ( CASE WHEN energy_type_name = '空气' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) preAirSumValue,
+            CAST ( SUM ( CASE WHEN energy_type_name = '蒸汽' THEN N.cur ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) currentSteamSumValue,
+            CAST ( SUM ( CASE WHEN energy_type_name = '蒸汽' THEN N.pre ELSE 0 END ) AS NUMERIC ( 20, 2 ) ) preSteamSumValue
+        FROM
+            Variable_Info M,
+            (
+            SELECT
+                TagName,
+                (
+                SELECT
+                    TagValue
+                FROM
+                    T_HourData B
+                WHERE
+                    A.TagName = B.TagName
+                    AND B.DataTime = (
+                    SELECT MAX
+                        ( C.DataTime )
+                    FROM
+                        dbo.T_HourData C
+                    WHERE
+                        B.tagname = C.tagname
+                        AND YEAR ( B.DataTime ) = YEAR ( getDate( ) )
+                    )
+                ) cur,
+                (
+                SELECT
+                    TagValue
+                FROM
+                    T_HourData D
+                WHERE
+                    A.TagName = D.TagName
+                    AND D.DataTime = (
+                    SELECT MAX
+                        ( E.DataTime )
+                    FROM
+                        dbo.T_HourData E
+                    WHERE
+                        D.tagname = E.tagname
+                        AND YEAR ( E.DataTime ) = YEAR ( DATEADD( YEAR, - 1, getDate( ) ) )
+                    )
+                ) pre
+            FROM
+                T_HourData A
+            GROUP BY
+                TagName
+            ) N
+        WHERE
+            M.tag_name = N.TagName
+            AND M.[disable] != 1
+            AND M.total_flag = 1
     </select>
 
 </mapper>

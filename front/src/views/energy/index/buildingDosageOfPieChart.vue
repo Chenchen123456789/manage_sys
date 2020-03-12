@@ -20,7 +20,7 @@ export default {
     },
     height: {
       type: String,
-      default: '300px'
+      default: '350px'
     },
     chartData: {
       type: Array,
@@ -62,11 +62,12 @@ export default {
       })
       const legendData = chartData.map(item => item.buildingName)
       this.chart.setOption({
-        legend: {
-          data: legendData
-        },
+        // legend: {
+        //   data: legendData
+        // },
         series: [
           {
+             top: 80,
             data: seriesData
           }
         ]
@@ -92,7 +93,7 @@ export default {
           {
             name: '月用量',
             type: 'pie',
-            top: 40,
+           
             center: ['50%', '38%'],
             data: [],
             animationEasing: 'cubicInOut',

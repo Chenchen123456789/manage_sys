@@ -13,7 +13,7 @@ import lombok.EqualsAndHashCode;
 public class Meter extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    @Excel(name = "序号", cellType = Excel.ColumnType.NUMERIC)
+    @Excel(name = "ID", cellType = Excel.ColumnType.NUMERIC)
     private Integer id;
 
     private Integer companyId;
@@ -22,18 +22,19 @@ public class Meter extends BaseEntity {
 
     private Integer buildingId;
 
-    @Excel(name = "公司名称", cellType = Excel.ColumnType.STRING)
+    @Excel(name = "公司名称", cellType = Excel.ColumnType.STRING, type = Excel.Type.EXPORT)
     private String companyName;
 
-    @Excel(name = "工厂名称", cellType = Excel.ColumnType.STRING)
+    @Excel(name = "工厂名称", cellType = Excel.ColumnType.STRING, type = Excel.Type.EXPORT)
     private String plantName;
 
-    @Excel(name = "建筑名称", cellType = Excel.ColumnType.STRING)
+    @Excel(name = "建筑名称", cellType = Excel.ColumnType.STRING, type = Excel.Type.EXPORT)
     private String buildingName;
 
-    @Excel(name = "设备名称", cellType = Excel.ColumnType.STRING)
+    @Excel(name = "设备名称", cellType = Excel.ColumnType.STRING, type = Excel.Type.EXPORT)
     private String deviceName;
 
+    @Excel(name = "设备ID", cellType = Excel.ColumnType.NUMERIC)
     private Integer deviceId;
 
     @Excel(name = "仪表编号", cellType = Excel.ColumnType.STRING)

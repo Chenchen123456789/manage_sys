@@ -32,12 +32,37 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="warning"
-          icon="el-icon-download"
+          type="info"
+          icon="el-icon-upload2"
           size="mini"
-          @click="handleExport"
-          v-hasPermi="['energy:building:export']"
-        >导出</el-button>
+          @click="handleImport"
+          v-hasPermi="['energy:building:import']"
+        >导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-popover placement="bottom" trigger="click">
+          <div style="text-align: right; margin: 0">
+            <el-button
+              icon="el-icon-download"
+              type="warning"
+              size="mini"
+              @click="handleExport(0)"
+            >导出全部数据</el-button>
+            <el-button
+              icon="el-icon-download"
+              type="warning"
+              size="mini"
+              @click="handleExport(1)"
+            >导出当前页数据</el-button>
+          </div>
+          <el-button
+            type="warning"
+            icon="el-icon-download"
+            size="mini"
+            v-hasPermi="['energy:building:export']"
+            slot="reference"
+          >导出</el-button>
+        </el-popover>
       </el-col>
     </el-row>
 
@@ -125,6 +150,8 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <ImportData :importData="{importType:'building', upload}"></ImportData>
   </div>
 </template>
 
@@ -139,9 +166,13 @@ import {
 } from '@/api/energy/building'
 import { listCompany } from '@/api/energy/company'
 import { listPlant } from '@/api/energy/plant'
+import ImportData from '../components/importData'
 
 export default {
   name: 'Building',
+  components:{
+    ImportData
+  },
   data() {
     return {
       // 遮罩层
@@ -168,6 +199,10 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10
+      },
+      upload: {
+        title: '',
+        open: false
       },
       // 表单参数
       form: {},
@@ -243,7 +278,7 @@ export default {
       this.open = false
       this.reset()
     },
-    handleDialogClose(){
+    handleDialogClose() {
       this.formCompanyOptions = this.companyOptions
       this.formPlantOptions = this.plantOptions
     },
@@ -335,9 +370,12 @@ export default {
         .catch(function() {})
     },
     /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams
-      this.$confirm('是否确认导出所有建筑数据项?', '警告', {
+    handleExport(type) {
+      const queryParams = { ...this.queryParams }
+      if (type === 0) {
+        queryParams.pageNum = null
+      }
+      this.$confirm('是否确认导出建筑数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
@@ -349,6 +387,13 @@ export default {
           this.download(response.msg)
         })
         .catch(function() {})
+    },
+    /** 导入按钮操作 */
+    handleImport() {
+      this.upload = {
+        title: '建筑导入',
+        open: true
+      }
     }
   }
 }

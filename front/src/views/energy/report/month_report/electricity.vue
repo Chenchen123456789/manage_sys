@@ -82,15 +82,29 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
+      <el-popover placement="bottom" trigger="click">
+        <div style="text-align: right; margin: 0">
+          <el-button
+            icon="el-icon-download"
+            type="warning"
+            size="mini"
+            @click="handleExport(0)"
+          >导出全部数据</el-button>
+          <el-button
+            icon="el-icon-download"
+            type="warning"
+            size="mini"
+            @click="handleExport(1)"
+          >导出当前页数据</el-button>
+        </div>
         <el-button
           type="warning"
           icon="el-icon-download"
           size="mini"
-          @click="handleExport"
           v-hasPermi="['energy:report_monthDosageOfElectricity:export']"
+          slot="reference"
         >导出</el-button>
-      </el-col>
+      </el-popover> 
     </el-row>
 
     <el-table show-summary v-loading="loading" :data="monthDosageOfElectricityList">
@@ -104,9 +118,9 @@
       <el-table-column label="上月抄见数" align="center" prop="preMonthValue" />
       <el-table-column label="本月抄见数" align="center" prop="currentMonthValue" />
       <el-table-column label="本月用电数" align="center">
-        <el-table-column label="峰" align="center" prop="fvalue" />
-        <el-table-column label="平" align="center" prop="pvalue" />
-        <el-table-column label="谷" align="center" prop="gvalue" />
+        <el-table-column label="峰" align="center" prop="fValue" />
+        <el-table-column label="平" align="center" prop="pValue" />
+        <el-table-column label="谷" align="center" prop="gValue" />
       </el-table-column>
     </el-table>
 
@@ -135,7 +149,7 @@ export default {
       loading: true,
       // 总条数
       total: 0,
-      // 岗位表格数据
+      // 表格数据
       monthDosageOfElectricityList: [],
       plantOptions: [],
       buildingOptions: [],
@@ -272,7 +286,7 @@ export default {
         (this.queryParams.pageNum - 1) * this.queryParams.pageSize + index + 1
       )
     },
-    /** 查询岗位列表 */
+    /** 查询列表 */
     getList() {
       this.loading = true
       listMonthDosageOfElectricity(this.queryParams).then(response => {
@@ -292,9 +306,12 @@ export default {
       this.handleQuery()
     },
     /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams
-      this.$confirm('是否确认导出所有岗位数据项?', '警告', {
+    handleExport(type) {
+      const queryParams = { ...this.queryParams }
+      if (type === 0) {
+        queryParams.pageNum = null
+      }
+      this.$confirm('是否确认导出电量月报数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

@@ -15,8 +15,8 @@ import lombok.experimental.Accessors;
 public class Company extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    /** 序号 */
-    @Excel(name = "序号", cellType = Excel.ColumnType.NUMERIC)
+    /** ID */
+    @Excel(name = "ID", cellType = Excel.ColumnType.NUMERIC)
     private Integer id;
 
     /** 公司编号 */

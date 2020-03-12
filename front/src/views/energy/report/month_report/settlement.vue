@@ -72,22 +72,36 @@
     <el-divider></el-divider>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
+      <el-popover placement="bottom" trigger="click">
+        <div style="text-align: right; margin: 0">
+          <el-button
+            icon="el-icon-download"
+            type="warning"
+            size="mini"
+            @click="handleExport(0)"
+          >导出全部数据</el-button>
+          <el-button
+            icon="el-icon-download"
+            type="warning"
+            size="mini"
+            @click="handleExport(1)"
+          >导出当前页数据</el-button>
+        </div>
         <el-button
           type="warning"
           icon="el-icon-download"
           size="mini"
-          @click="handleExport"
-          v-hasPermi="['energy:settlement:export']"
+          v-hasPermi="['energy:report_monthSettlement:export']"
+          slot="reference"
         >导出</el-button>
-      </el-col>
+      </el-popover>
     </el-row>
 
     <el-table v-loading="loading" :data="settlementList">
       <el-table-column label="序号" type="index" :index="indexMethod" width="50" />
       <el-table-column label="单位" align="center" prop="plantName" />
       <el-table-column label="水" align="center">
-        <el-table-column label="水数量" align="center" prop="currentWaterSumValue" />
+        <el-table-column label="水数量" align="center" prop="currentWaterDosage" />
         <el-table-column label="单价" align="center">
           <span>{{waterPrice}}</span>
         </el-table-column>
@@ -98,7 +112,7 @@
         <el-table-column label="耗水累计" align="center" prop="currentWaterSumValue" />
       </el-table-column>
       <el-table-column label="空气" align="center">
-        <el-table-column label="空气数量" align="center" prop="currentAirSumValue" />
+        <el-table-column label="空气数量" align="center" prop="currentAirDosage" />
         <el-table-column label="单价" align="center" prop="airPrice">
           <span>{{airPrice}}</span>
         </el-table-column>
@@ -106,10 +120,10 @@
           <template slot-scope="scope">{{airPrice * scope.row.currentAirSumValue}}</template>
         </el-table-column>
         <el-table-column label="上月累计" align="center" prop="preAirSumValue" />
-        <el-table-column label="耗水累计" align="center" prop="currentAirSumValue" />
+        <el-table-column label="空气累计" align="center" prop="currentAirSumValue" />
       </el-table-column>
       <el-table-column label="电" align="center">
-        <el-table-column label="电数量" align="center" prop="currentElectricitySumValue" />
+        <el-table-column label="电数量" align="center" prop="currentElectricityDosage" />
         <el-table-column label="单价" align="center" prop="electricityPrice">
           <span>{{electricityPrice}}</span>
         </el-table-column>
@@ -120,7 +134,7 @@
         <el-table-column label="耗电累计" align="center" prop="currentElectricitySumValue" />
       </el-table-column>
       <el-table-column label="蒸汽" align="center">
-        <el-table-column label="蒸汽数量" align="center" prop="currentSteamSumValue" />
+        <el-table-column label="蒸汽数量" align="center" prop="currentSteamDosage" />
         <el-table-column label="单价" align="center" prop="steamPrice">
           <span>{{steamPrice}}</span>
         </el-table-column>
@@ -133,10 +147,10 @@
       <el-table-column label="金额合计" align="center" prop="totalAmount">
         <template slot-scope="scope">
           {{
-          waterPrice * scope.row.currentWaterSumValue +
-          airPrice * scope.row.currentAirSumValue +
-          electricityPrice * scope.row.currentElectricitySumValue +
-          steamPrice * scope.row.currentSteamSumValue
+          (waterPrice * scope.row.currentWaterDosage +
+          airPrice * scope.row.currentAirDosage +
+          electricityPrice * scope.row.currentElectricityDosage +
+          steamPrice * scope.row.currentSteamDosage).toFixed(2)
           }}
         </template>
       </el-table-column>
@@ -165,7 +179,7 @@ export default {
       loading: true,
       // 总条数
       total: 0,
-      // 岗位表格数据
+      // 表格数据
       settlementList: [],
       queryPlantOptions: [],
       // 查询参数
@@ -252,16 +266,31 @@ export default {
         (this.queryParams.pageNum - 1) * this.queryParams.pageSize + index + 1
       )
     },
-    /** 查询岗位列表 */
+    /** 查询列表 */
     getList() {
       this.loading = true
       listMonthSettlement(this.queryParams).then(response => {
         let list = response.rows
         for (const index in list) {
-          const plantId = list[index].plantId
-          const plant = this.queryPlantOptions.find(p => p.id == plantId)
-          const plantName = plant.plantName
-          list[index].plantName = plantName
+          const currentAirSumValue = list[index].currentAirSumValue || 0
+          const preAirSumValue = list[index].preAirSumValue || 0
+          const currentAirDosage = currentAirSumValue - preAirSumValue
+          const currentElectricitySumValue =
+            list[index].currentElectricitySumValue || 0
+          const preElectricitySumValue = list[index].preElectricitySumValue || 0
+          const currentElectricityDosage = Number.parseFloat(
+            (currentElectricitySumValue - preElectricitySumValue).toFixed(2)
+          )
+          const currentWaterSumValue = list[index].currentWaterSumValue || 0
+          const preWaterSumValue = list[index].preWaterSumValue || 0
+          const currentWaterDosage = currentWaterSumValue - preWaterSumValue
+          const currentSteamSumValue = list[index].currentSteamSumValue || 0
+          const preSteamSumValue = list[index].preSteamSumValue || 0
+          const currentSteamDosage = currentSteamSumValue - preSteamSumValue
+          list[index].currentAirDosage = currentAirDosage
+          list[index].currentElectricityDosage = currentElectricityDosage
+          list[index].currentWaterDosage = currentWaterDosage
+          list[index].currentSteamDosage = currentSteamDosage
         }
         this.settlementList = list
         this.total = response.total
@@ -279,9 +308,17 @@ export default {
       this.handleQuery()
     },
     /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams
-      this.$confirm('是否确认导出所有岗位数据项?', '警告', {
+    handleExport(type) {
+      const queryParams = { ...this.queryParams }
+      if (type === 0) {
+        queryParams.pageNum = null
+      }
+      const { waterPrice, airPrice, electricityPrice, steamPrice } = this
+      queryParams.waterPrice = waterPrice
+      queryParams.airPrice = airPrice
+      queryParams.electricityPrice = electricityPrice
+      queryParams.steamPrice = steamPrice
+      this.$confirm('是否确认导出月报结算数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

@@ -155,15 +155,29 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
-        <el-button
-          type="warning"
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['enery:report_historyDetail:export']"
-        >导出</el-button>
-      </el-col>
+      <el-popover placement="bottom" trigger="click">
+          <div style="text-align: right; margin: 0">
+            <el-button
+              icon="el-icon-download"
+              type="warning"
+              size="mini"
+              @click="handleExport(0)"
+            >导出全部数据</el-button>
+            <el-button
+              icon="el-icon-download"
+              type="warning"
+              size="mini"
+              @click="handleExport(1)"
+            >导出当前页数据</el-button>
+          </div>
+          <el-button
+            type="warning"
+            icon="el-icon-download"
+            size="mini"
+            v-hasPermi="['enery:report_historyDetail:export']"
+            slot="reference"
+          >导出</el-button>
+        </el-popover>
     </el-row>
 
     <el-table border style="width:100%" v-loading="loading" :data="historyDetailList">
@@ -175,12 +189,12 @@
       </el-table-column>
       <el-table-column label="工厂名" align="center" prop="plantName" />
       <el-table-column label="建筑名" align="center" prop="buildingName" />
-      <el-table-column label="系统名" align="center" prop="systemName" />
       <el-table-column label="能源类型" align="center" prop="energyTypeName" />
       <el-table-column label="设备名" align="center" prop="deviceName" />
-      <el-table-column label="仪表编号" align="center" prop="deviceId" />
+      <el-table-column label="仪表编号" align="center" prop="meterCode" />
       <el-table-column label="数据位号" align="center" prop="tagName" />
       <el-table-column label="数据值" align="center" prop="tagValue" />
+      <el-table-column label="系统名" align="center" prop="systemName" />
       <el-table-column label="数据点描述" align="center" prop="description" />
     </el-table>
 
@@ -426,7 +440,7 @@ export default {
         (this.queryParams.pageNum - 1) * this.queryParams.pageSize + index + 1
       )
     },
-    /** 查询岗位列表 */
+    /** 查询列表 */
     getList() {
       this.loading = true
       listHistoryDetail(this.queryParams).then(response => {
@@ -445,10 +459,13 @@ export default {
       this.resetForm('queryForm')
       this.handleQuery()
     },
-    /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams
-      this.$confirm('是否确认导出所有岗位数据项?', '警告', {
+     /** 导出按钮操作 */
+    handleExport(type) {
+      const queryParams = { ...this.queryParams }
+      if (type === 0) {
+        queryParams.pageNum = null
+      }
+      this.$confirm('是否确认导出历史详细数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

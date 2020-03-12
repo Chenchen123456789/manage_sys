@@ -51,3 +51,11 @@ export function exportCompany(query) {
     params: query
   })
 }
+
+// 下载导入模板
+export function importCompanyTemplate() {
+  return request({
+    url: '/energy/company/importTemplate',
+    method: 'get'
+  })
+}

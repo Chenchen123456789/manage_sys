@@ -56,7 +56,7 @@
             JOIN O_2Plant C ON B.plant_id = C.id
             JOIN O_1Company D ON C.company_id = D.id
     </select>
-    <select id="selectByDeviceCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectByDeviceCode" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from O_4Device

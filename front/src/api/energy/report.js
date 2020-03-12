@@ -70,6 +70,13 @@ export function exportMonthSettlement(query) {
   })
 }
 
+export function queryYearTotal() {
+  return request({
+    url: '/energy/report/yearTotal',
+    method: 'get',
+  })
+}
+
 export function queryBuildingDosage(query) {
   return request({
     url: '/energy/report/buildingDosage/list',

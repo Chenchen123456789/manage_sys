@@ -52,4 +52,6 @@ public interface ReportMapper {
     List<Map<String, Object>> selectBuildingMainMPValue(@Param("buildingId") Integer buildingId);
 
     List<Map<String, Object>> selectHomePageChartSettingList();
+
+    Map<String,Object> selectYearTotal();
 }

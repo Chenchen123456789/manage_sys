@@ -27,7 +27,7 @@
 	JOIN O_2Plant B ON A.plant_id = B.id
 	JOIN O_1Company C ON B.company_id = C.id
     </select>
-    <select id="selectByBuildingCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectByBuildingCode" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List" />
         from O_3Building A

@@ -25,7 +25,7 @@
     join O_1Company B
     on A.company_id = B.id
   </select>
-  <select id="selectByPlantCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="selectByPlantCode" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from O_2Plant

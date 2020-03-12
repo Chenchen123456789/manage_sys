@@ -1,17 +1,18 @@
 <template>
   <div class="dashboard-editor-container">
-    <PanelGroup :panelGroupData="homePageChartSettingList" />
+    <PanelGroup :panelGroupData="{homePageChartSettingList, yearTotal}" />
     <el-row :gutter="32" class="second-part">
       <el-col
-        style="display: flex; flex-direction: column; align-items: center;justify-content: center;position: relative;"
+        class="el-coldash-board"
         :span="4"
-        v-for="(item, index) in [3,4,5,6,7,8]"
+        v-for="item in [4,5,6,7,8,9]"
+        V-bind:key="item"
         :xs="24"
       >
         <Dashboard
           :dashboardData="{dashboardDataList: groupedHomePageSettingData, placeholderId: item}"
         ></Dashboard>
-        <div style="position: absolute;bottom: 0;">{{getDashBoardDesc(item)}}</div>
+        <div style="position: absolute;top: 184px;">{{getDashBoardDesc(item)}}</div>
       </el-col>
     </el-row>
 
@@ -139,7 +140,8 @@ import PanelGroup from './PanelGroup'
 import Dashboard from './DashBorad'
 import {
   listHomePageChartSetting,
-  queryBuildingDosageforHomePage
+  queryBuildingDosageforHomePage,
+  queryYearTotal
 } from '@/api/energy/report'
 
 export default {
@@ -168,14 +170,46 @@ export default {
       yearDosageOfElectricity: [],
       yearDosageOfAir: [],
       yearDosageOfWater: [],
-      seqDosageData: {}
+      seqDosageData: {},
+      yearTotal: {}
     }
   },
   created() {
     this.getHomePageChartSettingList()
     this.getBuildingDosage()
+    this.getYearTotal()
   },
   methods: {
+    getYearTotal() {
+      queryYearTotal().then(res => {
+        const data = res.data
+        const currentAirSumValue = data.currentAirSumValue || 0
+        const preAirSumValue = data.preAirSumValue || 0
+
+        const currentElectricitySumValue = data.currentElectricitySumValue || 0
+        const preElectricitySumValue = data.preElectricitySumValue || 0
+
+        const currentWaterSumValue = data.currentWaterSumValue || 0
+        const preWaterSumValue = data.preWaterSumValue || 0
+
+        const currentSteamSumValue = data.currentSteamSumValue || 0
+        const preSteamSumValue = data.preSteamSumValue || 0
+
+        const currentSteamDosage = currentSteamSumValue - preSteamSumValue
+        const currentAirDosage = currentAirSumValue - preAirSumValue
+        const currentWaterDosage = currentWaterSumValue - preWaterSumValue
+        const currentElectricityDosage = Number.parseFloat(
+          (currentElectricitySumValue - preElectricitySumValue).toFixed(2)
+        )
+
+        this.yearTotal = {
+          currentSteamDosage,
+          currentAirDosage,
+          currentWaterDosage,
+          currentElectricityDosage
+        }
+      })
+    },
     getBuildingDosage() {
       queryBuildingDosageforHomePage().then(res => {
         const buildingDosage = res.data
@@ -298,12 +332,24 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.el-coldash-board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding-left: 0px;
+  padding-left: 0px !important;
+  padding-right: 0px !important;
+}
 .second-part {
   background: white;
   margin-bottom: 30px;
-  padding-bottom: 18px;
   margin-left: 0px !important;
   margin-right: 0px !important;
+  // display: flex;
+  // justify-content: space-between;
+  // align-items: center;
 }
 .third-part {
   margin-left: 0px !important;

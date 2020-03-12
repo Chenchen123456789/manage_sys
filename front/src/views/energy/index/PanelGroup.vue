@@ -126,8 +126,8 @@ export default {
   },
   props: {
     panelGroupData: {
-      type: Array,
-      default: []
+      type: Object,
+      default: null
     }
   },
   data() {
@@ -150,11 +150,17 @@ export default {
   },
   methods: {
     setValues(panelGroupData) {
-      if (panelGroupData.length > 0) {
-        this.lifeWaterPressure = panelGroupData[0].tagValue
-        this.fireWaterPressure = panelGroupData[1].tagValue
-        this.airCompressorPressure = panelGroupData[2].tagValue
+      const homePageChartSettingList = panelGroupData.homePageChartSettingList
+      if (homePageChartSettingList.length > 0) {
+        this.lifeWaterPressure = homePageChartSettingList[0].tagValue
+        this.fireWaterPressure = homePageChartSettingList[1].tagValue
+        this.airCompressorPressure = homePageChartSettingList[2].tagValue
       }
+
+      const yearTotal = panelGroupData.yearTotal
+      this.yearSumValueOfElectricity = yearTotal.currentElectricityDosage || 0
+      this.yearSumValueOfWater = yearTotal.currentWaterDosage || 0
+      this.yearSumValueOfAir = yearTotal.currentAirDosage || 0
     }
   }
 }
@@ -166,6 +172,14 @@ export default {
 
   .card-panel-col {
     margin-bottom: 32px;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+  .card-panel-col:first-child {
+    padding-left: 20px !important;
+  }
+  .card-panel-col:last-child {
+    padding-right: 20px !important;
   }
 
   .card-panel {

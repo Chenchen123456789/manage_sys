@@ -1,5 +1,5 @@
 <template>
-  <div :class="className" :style="{height:height,width:width}"></div>
+  <div :class="className" :style="{height:height,width:width,'min-width':'230px'}"></div>
 </template>
 
 <script>
@@ -22,7 +22,7 @@ export default {
     },
     height: {
       type: String,
-      default: '180px'
+      default: '225px'
     },
     dashboardData: {
       type: Object,
@@ -31,7 +31,7 @@ export default {
   },
   data() {
     return {
-      chart: null,
+      chart: null
     }
   },
   watch: {
@@ -63,14 +63,43 @@ export default {
           item => item.placeholderId === placeholderId
         ).item
         let resData = []
+        const max = Math.max(...resItem.map(item => item.tagValue))
         resData = resItem.map(item => {
-          return { value: item.tagValue }
+          return { name: item.description, value: item.tagValue }
         })
         this.chart.setOption({
           series: [
             {
-              type: 'gauge',
-              data: resData
+              data: resData,
+              // min: 0,
+              // max: max,
+              // center:['50%','40%'],
+              axisLine: {
+                // 坐标轴线
+                lineStyle: {
+                  // 属性lineStyle控制线条样式
+                  width: 5
+                }
+              },
+              splitLine: {
+                // 分隔线
+                length: 10, // 属性length控制线长
+                lineStyle: {
+                  // 属性lineStyle（详见lineStyle）控制线条样式
+                  color: 'auto'
+                }
+              },
+              axisTick: {
+                // 坐标轴小标记
+                // length: 15,        // 属性length控制线长
+                lineStyle: {
+                  // 属性lineStyle控制线条样式
+                  color: 'auto'
+                }
+              },
+              detail: {
+                fontSize: 20
+              }
             }
           ]
         })
@@ -79,24 +108,14 @@ export default {
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
       this.chart.setOption({
-        tooltip: {
-          trigger: 'axis',
-          axisPointer: {
-            // 坐标轴指示器，坐标轴触发有效
-            type: 'shadow' // 默认为直线，可选为：'line' | 'shadow'
-          }
-        },
-        grid: {
-          top: 10,
-          left: '2%',
-          right: '2%',
-          bottom: '3%',
-          containLabel: true
+         tooltip: {
+          trigger: 'item',
         },
         series: [
           {
+            // name: '读数',
             type: 'gauge',
-            data: [{value: 0}]
+            data: [{ value: 0 }]
           }
         ]
       })

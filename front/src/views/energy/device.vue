@@ -31,13 +31,29 @@
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="warning"
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['energy:device:export']"
-        >导出</el-button>
+        <el-popover placement="bottom" trigger="click">
+          <div style="text-align: right; margin: 0">
+            <el-button
+              icon="el-icon-download"
+              type="warning"
+              size="mini"
+              @click="handleExport(0)"
+            >导出全部数据</el-button>
+            <el-button
+              icon="el-icon-download"
+              type="warning"
+              size="mini"
+              @click="handleExport(1)"
+            >导出当前页数据</el-button>
+          </div>
+          <el-button
+            type="warning"
+            icon="el-icon-download"
+            size="mini"
+            v-hasPermi="['energy:device:export']"
+            slot="reference"
+          >导出</el-button>
+        </el-popover>
       </el-col>
     </el-row>
 
@@ -411,9 +427,12 @@ export default {
         .catch(function() {})
     },
     /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams
-      this.$confirm('是否确认导出所有设备数据项?', '警告', {
+    handleExport(type) {
+      const queryParams = { ...this.queryParams }
+      if (type === 0) {
+        queryParams.pageNum = null
+      }
+      this.$confirm('是否确认导出设备数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'

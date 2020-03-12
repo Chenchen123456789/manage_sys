@@ -51,3 +51,10 @@ export function exportDevice(query) {
     params: query
   })
 }
+// 下载导入模板
+export function importDeviceTemplate() {
+  return request({
+    url: '/energy/device/importTemplate',
+    method: 'get'
+  })
+}

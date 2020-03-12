@@ -32,12 +32,37 @@
       </el-col>
       <el-col :span="1.5">
         <el-button
-          type="warning"
-          icon="el-icon-download"
+          type="info"
+          icon="el-icon-upload2"
           size="mini"
-          @click="handleExport"
-          v-hasPermi="['energy:plant:export']"
-        >导出</el-button>
+          @click="handleImport"
+          v-hasPermi="['energy:plant:import']"
+        >导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-popover placement="bottom" trigger="click">
+          <div style="text-align: right; margin: 0">
+            <el-button
+              icon="el-icon-download"
+              type="warning"
+              size="mini"
+              @click="handleExport(0)"
+            >导出全部数据</el-button>
+            <el-button
+              icon="el-icon-download"
+              type="warning"
+              size="mini"
+              @click="handleExport(1)"
+            >导出当前页数据</el-button>
+          </div>
+          <el-button
+            type="warning"
+            icon="el-icon-download"
+            size="mini"
+            v-hasPermi="['energy:plant:export']"
+            slot="reference"
+          >导出</el-button>
+        </el-popover>
       </el-col>
     </el-row>
 
@@ -104,16 +129,29 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <ImportData :importData="{importType:'plant', upload}"></ImportData>
   </div>
 </template>
 
 <script>
-import { listPlant, getPlant, delPlant, addPlant, updatePlant, exportPlant } from "@/api/energy/plant";
-import { listCompany } from "@/api/energy/company";
+import {
+  listPlant,
+  getPlant,
+  delPlant,
+  addPlant,
+  updatePlant,
+  exportPlant
+} from '@/api/energy/plant'
+import { listCompany } from '@/api/energy/company'
+import ImportData from '../components/importData'
 
 export default {
-  name: "Plant",
-  data () {
+  name: 'Plant',
+  components: {
+    ImportData
+  },
+  data() {
     return {
       // 遮罩层
       loading: true,
@@ -129,154 +167,175 @@ export default {
       plantList: [],
       companyOptions: [],
       // 弹出层标题
-      title: "",
+      title: '',
       // 是否显示弹出层
       open: false,
+      upload: {
+        title: '',
+        open: false
+      },
       // 查询参数
       queryParams: {
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 10
       },
       // 表单参数
       form: {},
       // 表单校验
       rules: {
         companyId: [
-          { required: true, message: "公司不能为空", trigger: "blur" }
+          { required: true, message: '公司不能为空', trigger: 'blur' }
         ],
         plantName: [
-          { required: true, message: "工厂名称不能为空", trigger: "blur" }
+          { required: true, message: '工厂名称不能为空', trigger: 'blur' }
         ],
         plantCode: [
-          { required: true, message: "工厂编号不能为空", trigger: "blur" }
+          { required: true, message: '工厂编号不能为空', trigger: 'blur' }
         ]
       }
-    };
+    }
   },
-  created () {
+  created() {
     this.getList()
     this.getCompanyOptions()
   },
   methods: {
-    getCompanyOptions () {
+    getCompanyOptions() {
       listCompany().then(res => {
         this.companyOptions = res.rows
       })
     },
-    indexMethod (index) {
-      return ((this.queryParams.pageNum - 1) * this.queryParams.pageSize) + index + 1
+    indexMethod(index) {
+      return (
+        (this.queryParams.pageNum - 1) * this.queryParams.pageSize + index + 1
+      )
     },
     /** 查询工厂列表 */
-    getList () {
-      this.loading = true;
+    getList() {
+      this.loading = true
       listPlant(this.queryParams).then(response => {
-        this.plantList = response.rows;
-        this.total = response.total;
-        this.loading = false;
-      });
+        this.plantList = response.rows
+        this.total = response.total
+        this.loading = false
+      })
     },
     // 取消按钮
-    cancel () {
-      this.open = false;
-      this.reset();
+    cancel() {
+      this.open = false
+      this.reset()
     },
     // 表单重置
-    reset () {
+    reset() {
       this.form = {
         id: undefined,
         plantCode: undefined,
         plantName: undefined,
-        plantDescription: undefined,
-      };
-      this.resetForm("form");
+        plantDescription: undefined
+      }
+      this.resetForm('form')
     },
     /** 搜索按钮操作 */
-    handleQuery () {
-      this.queryParams.pageNum = 1;
-      this.getList();
+    handleQuery() {
+      this.queryParams.pageNum = 1
+      this.getList()
     },
     /** 重置按钮操作 */
-    resetQuery () {
-      this.resetForm("queryForm");
-      this.handleQuery();
+    resetQuery() {
+      this.resetForm('queryForm')
+      this.handleQuery()
     },
     // 多选框选中数据
-    handleSelectionChange (selection) {
+    handleSelectionChange(selection) {
       this.ids = selection.map(item => item.id)
       this.single = selection.length != 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
-    handleAdd () {
-      this.reset();
-      this.open = true;
-      this.title = "添加工厂";
+    handleAdd() {
+      this.reset()
+      this.open = true
+      this.title = '添加工厂'
     },
     /** 修改按钮操作 */
-    handleUpdate (row) {
-      this.reset();
+    handleUpdate(row) {
+      this.reset()
       const id = row.id
       getPlant(id).then(response => {
-        this.form = response.data;
-        this.open = true;
-        this.title = "修改工厂";
-      });
+        this.form = response.data
+        this.open = true
+        this.title = '修改工厂'
+      })
     },
     /** 提交按钮 */
-    submitForm: function () {
-      this.$refs["form"].validate(valid => {
+    submitForm: function() {
+      this.$refs['form'].validate(valid => {
         if (valid) {
           if (this.form.id != undefined) {
             updatePlant(this.form).then(response => {
               if (response.code === 200) {
-                this.msgSuccess("修改成功");
-                this.open = false;
-                this.getList();
+                this.msgSuccess('修改成功')
+                this.open = false
+                this.getList()
               } else {
-                this.msgError(response.msg);
+                this.msgError(response.msg)
               }
-            });
+            })
           } else {
             addPlant(this.form).then(response => {
               if (response.code === 200) {
-                this.msgSuccess("新增成功");
-                this.open = false;
-                this.getList();
+                this.msgSuccess('新增成功')
+                this.open = false
+                this.getList()
               } else {
-                this.msgError(response.msg);
+                this.msgError(response.msg)
               }
-            });
+            })
           }
         }
-      });
+      })
     },
     /** 删除按钮操作 */
-    handleDelete (row) {
-      const ids = row.id || this.ids;
-      this.$confirm('是否确认删除,删除后不能恢复?', "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(function () {
-        return delPlant(ids);
-      }).then(() => {
-        this.getList();
-        this.msgSuccess("删除成功");
-      }).catch(function () { });
+    handleDelete(row) {
+      const ids = row.id || this.ids
+      this.$confirm('是否确认删除,删除后不能恢复?', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(function() {
+          return delPlant(ids)
+        })
+        .then(() => {
+          this.getList()
+          this.msgSuccess('删除成功')
+        })
+        .catch(function() {})
     },
     /** 导出按钮操作 */
-    handleExport () {
-      const queryParams = this.queryParams;
-      this.$confirm('是否确认导出所有工厂数据项?', "警告", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
-      }).then(function () {
-        return exportPlant(queryParams);
-      }).then(response => {
-        this.download(response.msg);
-      }).catch(function () { });
+    handleExport(type) {
+      const queryParams = { ...this.queryParams }
+      if (type === 0) {
+        queryParams.pageNum = null
+      }
+      this.$confirm('是否确认导出工厂数据项?', '警告', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(function() {
+          return exportPlant(queryParams)
+        })
+        .then(response => {
+          this.download(response.msg)
+        })
+        .catch(function() {})
+    },
+    handleImport() {
+      this.upload = {
+        title: '工厂导入',
+        open: true
+      }
     }
   }
-};
+}
 </script>

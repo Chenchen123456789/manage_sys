@@ -102,13 +102,29 @@
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
-        <el-button
-          type="warning"
-          icon="el-icon-download"
-          size="mini"
-          @click="handleExport"
-          v-hasPermi="['energy:measuringPoint:export']"
-        >导出</el-button>
+        <el-popover placement="bottom" trigger="click">
+          <div style="text-align: right; margin: 0">
+            <el-button
+              icon="el-icon-download"
+              type="warning"
+              size="mini"
+              @click="handleExport(0)"
+            >导出全部数据</el-button>
+            <el-button
+              icon="el-icon-download"
+              type="warning"
+              size="mini"
+              @click="handleExport(1)"
+            >导出当前页数据</el-button>
+          </div>
+          <el-button
+            type="warning"
+            icon="el-icon-download"
+            size="mini"
+            v-hasPermi="['energy:measuringPoint:export']"
+            slot="reference"
+          >导出</el-button>
+        </el-popover>
       </el-col>
     </el-row>
 
@@ -163,6 +179,9 @@
     <!-- 添加或修改测点对话框 -->
     <el-dialog :title="title" @close="handleDialogClose" :visible.sync="open" width="500px">
       <el-form ref="form" :model="form" :rules="rules" label-width="80px">
+        <el-form-item style="width:300px" label="测点名称" prop="tagName">
+          <el-input v-model="form.tagName" placeholder="请输入测点名称" />
+        </el-form-item>
         <el-form-item label="公司" prop="companyId">
           <el-select
             clearable
@@ -238,20 +257,47 @@
             ></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="测点名称" prop="tagName">
-          <el-input v-model="form.tagName" placeholder="请输入测点名称" />
+        <el-form-item label="能源类型" prop="energyTypeId">
+          <el-select clearable v-model="form.energyTypeId" placeholder="请选择">
+            <el-option
+              v-for="item in formEnergyTypeOptions"
+              :key="item.energyTypeId"
+              :label="item.energyTypeName"
+              :value="item.energyTypeId"
+            ></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="测点厂家" prop="measuringPointCompany">
-          <el-input v-model="form.measuringPointCompany" placeholder="请输入测点厂家" />
+        <el-form-item label="信号类型" prop="signalTypeId">
+          <el-select clearable v-model="form.signalTypeId" placeholder="请选择">
+            <el-option
+              v-for="item in formSignalTypeOptions"
+              :key="item.signalTypeId"
+              :label="item.signalTypeName"
+              :value="item.signalTypeId"
+            ></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="测点规格" prop="measuringPointSpec">
-          <el-input v-model="form.measuringPointSpec" placeholder="请输入测点规格" />
+         <el-form-item label="系统" prop="systemId">
+          <el-select clearable v-model="form.systemId" placeholder="请选择">
+            <el-option
+              v-for="item in formSystemOptions"
+              :key="item.systemId"
+              :label="item.systemName"
+              :value="item.systemId"
+            ></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="安装地点" prop="location">
-          <el-input v-model="form.location" placeholder="请输入安装地点" />
+        <el-form-item label="状态" prop="disable">
+          <el-select clearable v-model="form.disable" placeholder="请选择">
+            <el-option :key="1" label="可用" :value="1"></el-option>
+            <el-option :key="0" label="禁用" :value="0"></el-option>
+          </el-select>
         </el-form-item>
-        <el-form-item label="测点参数" prop="measuringPointParam">
-          <el-input v-model="form.commParam" placeholder="请输入通讯参数" />
+        <el-form-item label="总量点" prop="totalFlag">
+          <el-input-number v-model="form.totalFlag" placeholder="请输入总量点" />
+        </el-form-item>
+        <el-form-item label="主参数" prop="mainTag">
+          <el-input-number v-model="form.mainTag" placeholder="请输入主参数" />
         </el-form-item>
         <el-form-item label="描述" prop="description">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
@@ -279,6 +325,12 @@ import { listPlant } from '@/api/energy/plant'
 import { listBuilding } from '@/api/energy/building'
 import { listDevice } from '@/api/energy/device'
 import { listMeter } from '@/api/energy/meter'
+import {
+  listClass,
+  listEnergyType,
+  listSignalType,
+  listSystem
+} from '@/api/energy/report'
 
 export default {
   name: 'MeasuringPoint',
@@ -311,6 +363,10 @@ export default {
       formPlantOptions: [],
       formBuildingOptions: [],
       formDeviceOptions: [],
+      formClassOptions: [],
+      formSignalTypeOptions: [],
+      formSystemOptions: [],
+      formEnergyTypeOptions: [],
       // 弹出层标题
       title: '',
       // 是否显示弹出层
@@ -343,7 +399,7 @@ export default {
         meterId: [{ required: true, message: '仪表不能为空', trigger: 'blur' }],
         tagName: [
           { required: true, message: '测点名称不能为空', trigger: 'blur' }
-        ],
+        ]
       }
     }
   },
@@ -354,8 +410,31 @@ export default {
     this.getBuildingOptions()
     this.getDeviceOptions()
     this.getMeterCodeOptions()
+    this.getSignalTypeOptions()
+    this.getSystemOptions()
+    this.getEnergyTypeOptions()
   },
   methods: {
+    getClassOptions() {
+      listClass().then(res => {
+        this.formClassOptions = res.rows
+      })
+    },
+    getSignalTypeOptions() {
+      listSignalType().then(res => {
+        this.formSignalTypeOptions = res.rows
+      })
+    },
+    getSystemOptions() {
+      listSystem().then(res => {
+        this.formSystemOptions = res.rows
+      })
+    },
+    getEnergyTypeOptions() {
+      listEnergyType().then(res => {
+        this.formEnergyTypeOptions = res.rows
+      })
+    },
     changeQueryPlantOptions(value) {
       if (value === '') {
         this.queryBuildingOptions = this.buildingOptions
@@ -512,7 +591,7 @@ export default {
         this.form.meterId = null
       }
     },
-    changeFormMeterOptions() {
+    changeFormMeterOptions(value) {
       if (value === '') {
       } else {
         const meter = this.meterOptions.find(item => item.id == value)
@@ -670,8 +749,11 @@ export default {
         .catch(function() {})
     },
     /** 导出按钮操作 */
-    handleExport() {
-      const queryParams = this.queryParams
+    handleExport(type) {
+      const queryParams = { ...this.queryParams }
+      if (type === 0) {
+        queryParams.pageNum = null
+      }
       this.$confirm('是否确认导出所有测点数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',

@@ -51,3 +51,11 @@ export function exportBuilding(query) {
     params: query
   })
 }
+
+// 下载导入模板
+export function importBuildingTemplate() {
+  return request({
+    url: '/energy/building/importTemplate',
+    method: 'get'
+  })
+}

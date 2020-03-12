@@ -15,13 +15,14 @@ import lombok.experimental.Accessors;
 public class Plant extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    /** 序号 */
-    @Excel(name = "序号", cellType = Excel.ColumnType.NUMERIC)
+    /** ID */
+    @Excel(name = "ID", cellType = Excel.ColumnType.NUMERIC)
     private Integer id;
 
+    @Excel(name = "公司ID",  cellType = Excel.ColumnType.NUMERIC)
     private Integer companyId;
 
-    @Excel(name = "公司名称",  cellType = Excel.ColumnType.STRING)
+    @Excel(name = "公司名称",  cellType = Excel.ColumnType.STRING, type = Excel.Type.EXPORT)
     private String companyName;
 
     @Excel(name = "工厂编号",  cellType = Excel.ColumnType.STRING)

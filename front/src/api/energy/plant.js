@@ -51,3 +51,11 @@ export function exportPlant(query) {
     params: query
   })
 }
+
+// 下载导入模板
+export function importPlantTemplate() {
+  return request({
+    url: '/energy/plant/importTemplate',
+    method: 'get'
+  })
+}

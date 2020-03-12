@@ -1,12 +1,21 @@
 package com.eim.project.energy.service;
 
+import com.eim.common.exception.CustomException;
+import com.eim.common.utils.SecurityUtils;
+import com.eim.common.utils.StringUtils;
 import com.eim.framework.aspectj.lang.annotation.DataSource;
 import com.eim.framework.aspectj.lang.enums.DataSourceType;
+import com.eim.framework.web.domain.AjaxResult;
 import com.eim.project.energy.entity.Company;
 import com.eim.project.energy.mapper.CompanyMapper;
+import com.eim.project.system.domain.SysUser;
+import com.eim.project.system.service.impl.SysUserServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -15,6 +24,7 @@ import java.util.List;
 @Service
 @DataSource(value = DataSourceType.SLAVE)
 public class CompanyService {
+
     @Autowired
     private CompanyMapper companyMapper;
 
@@ -27,14 +37,6 @@ public class CompanyService {
     }
 
     public int batchDeleteByIds(Integer[] ids) {
-//        for (Integer id : ids)
-//        {
-//            SysPost post = selectPostById(postId);
-//            if (countUserPostById(postId) > 0)
-//            {
-//                throw new CustomException(String.format("%1$s已分配,不能删除", post.getPostName()));
-//            }
-//        }
         return companyMapper.deleteByIds(ids);
     }
 

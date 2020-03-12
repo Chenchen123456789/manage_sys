@@ -51,3 +51,11 @@ export function exportMeasuringPoint(query) {
     params: query
   })
 }
+
+// 下载导入模板
+export function importMeasuringPointTemplate() {
+  return request({
+    url: '/energy/measuringPoint/importTemplate',
+    method: 'get'
+  })
+}

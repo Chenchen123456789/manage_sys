@@ -92,7 +92,7 @@
             </if>
         </where>
     </select>
-    <select id="selectByMeterCode" parameterType="java.lang.String" resultMap="BaseResultMap">
+    <select id="selectByMeterCode" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from O_5Meter
