@@ -26,7 +26,7 @@ public class MeasuringPoint extends BaseEntity {
 
     private Integer deviceId;
 
-    @Excel(name = "仪表ID", cellType = Excel.ColumnType.NUMERIC, type = Excel.Type.EXPORT)
+    @Excel(name = "仪表ID", cellType = Excel.ColumnType.NUMERIC, type = Excel.Type.IMPORT)
     private Integer meterId;
 
     @Excel(name = "公司名称", cellType = Excel.ColumnType.STRING, type = Excel.Type.EXPORT)

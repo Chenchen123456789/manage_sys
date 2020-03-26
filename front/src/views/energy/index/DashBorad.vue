@@ -65,57 +65,89 @@ export default {
         let resData = []
         const max = Math.max(...resItem.map(item => item.tagValue))
         resData = resItem.map(item => {
-          return { name: item.description, value: item.tagValue }
+          return { value: item.tagValue }
         })
-        this.chart.setOption({
-          series: [
-            {
-              data: resData,
-              // min: 0,
-              // max: max,
-              // center:['50%','40%'],
-              axisLine: {
-                // 坐标轴线
-                lineStyle: {
-                  // 属性lineStyle控制线条样式
-                  width: 5
-                }
-              },
-              splitLine: {
-                // 分隔线
-                length: 10, // 属性length控制线长
-                lineStyle: {
-                  // 属性lineStyle（详见lineStyle）控制线条样式
-                  color: 'auto'
-                }
-              },
-              axisTick: {
-                // 坐标轴小标记
-                // length: 15,        // 属性length控制线长
-                lineStyle: {
-                  // 属性lineStyle控制线条样式
-                  color: 'auto'
-                }
-              },
-              detail: {
-                fontSize: 20
+        const seriesData = []
+        let index = 3
+        let colorIndex = 0
+        const colorArray = ['green', 'purple', '#FF6347', '#FFD700', 'red']
+        for (const item of resData) {
+          const seriesItem = {}
+          seriesItem = {
+            type: 'gauge',
+            data: [item],
+            axisLine: {
+              lineStyle: {
+                width: 5
               }
+            },
+            splitLine: {
+              length: 10,
+              lineStyle: {
+                color: 'auto'
+              }
+            },
+            axisTick: {
+              lineStyle: {
+                color: 'auto'
+              }
+            },
+            itemStyle: { color: colorArray[colorIndex] },
+            detail: {
+              offsetCenter: ['0%', `${index * 10}%`],
+              fontSize: 16,
+              color: colorArray[colorIndex]
             }
-          ]
+          }
+          seriesData.push(seriesItem)
+          index = index + 2
+          colorIndex++
+        }
+        this.chart.setOption({
+          series: seriesData
         })
       }
     },
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
       this.chart.setOption({
-         tooltip: {
-          trigger: 'item',
+        tooltip: {
+          trigger: 'item'
         },
         series: [
           {
             // name: '读数',
             type: 'gauge',
-            data: [{ value: 0 }]
+            data: [{ value: 0 }],
+            // min: 0,
+            // max: max,
+            // center:['50%','40%'],
+            axisLine: {
+              // 坐标轴线
+              lineStyle: {
+                // 属性lineStyle控制线条样式
+                width: 5
+              }
+            },
+            splitLine: {
+              // 分隔线
+              length: 10, // 属性length控制线长
+              lineStyle: {
+                // 属性lineStyle（详见lineStyle）控制线条样式
+                color: 'auto'
+              }
+            },
+            axisTick: {
+              // 坐标轴小标记
+              // length: 15,        // 属性length控制线长
+              lineStyle: {
+                // 属性lineStyle控制线条样式
+                color: 'auto'
+              }
+            },
+            detail: {
+              fontSize: 20
+            }
           }
         ]
       })

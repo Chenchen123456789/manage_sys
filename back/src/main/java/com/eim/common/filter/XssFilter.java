@@ -1,4 +1,4 @@
-package com.eim.common.xss;
+package com.eim.common.filter;
 
 import java.io.IOException;
 import java.util.ArrayList;

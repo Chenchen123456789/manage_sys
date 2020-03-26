@@ -1,4 +1,4 @@
-package com.eim.common.xss;
+package com.eim.common.filter;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -94,7 +94,7 @@ public class XssHttpServletRequestWrapper extends HttpServletRequestWrapper
     /**
      * 是否是Json请求
      * 
-     * @param request
+     * @param
      */
     public boolean isJsonRequest()
     {

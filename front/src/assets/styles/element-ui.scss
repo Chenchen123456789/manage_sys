@@ -81,3 +81,8 @@
 .el-table th.gutter{
   display: table-cell!important;
 }
+
+// to fix el-date-picker css style
+.el-range-separator {
+  box-sizing: content-box;
+}

@@ -2,7 +2,13 @@
   <div class="app-container">
     <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="68px">
       <el-form-item label="单位名称" prop="plantId">
-        <el-select v-model="queryParams.plantId" placeholder="请选择" clearable size="small">
+        <el-select
+          @change="changeQueryPlantOptions"
+          v-model="queryParams.plantId"
+          placeholder="请选择"
+          clearable
+          size="small"
+        >
           <el-option
             v-for="item in queryPlantOptions"
             :key="item.id"
@@ -16,14 +22,14 @@
           v-model="queryParams.queryTime"
           type="month"
           placeholder="选择月"
-          clearable
+          :clearable="false"
           size="small"
           @change="changeQueryTime"
         ></el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="info" icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -47,7 +53,7 @@
           type="warning"
           icon="el-icon-download"
           size="mini"
-          v-hasPermi="['energy:monthDosageOfWater:export']"
+          v-hasPermi="['energy:report_monthDosageOfWater:export']"
           slot="reference"
         >导出</el-button>
       </el-popover>
@@ -119,6 +125,14 @@ export default {
     this.getPlantOptions()
   },
   methods: {
+    changeQueryPlantOptions(value) {
+      
+      if (value == '') {
+        console.log(value)
+        this.queryParams.plantId = undefined
+         console.log(this.queryParams)
+      }
+    },
     getPlantOptions() {
       listPlant().then(res => {
         this.queryPlantOptions = res.rows

@@ -51,7 +51,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="info" icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -84,6 +84,15 @@
           @click="handleDelete"
           v-hasPermi="['energy:meter:remove']"
         >删除</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          icon="el-icon-upload2"
+          size="mini"
+          @click="handleImport"
+          v-hasPermi="['energy:meter:import']"
+        >导入</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-popover placement="bottom" trigger="click">
@@ -244,6 +253,7 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+    <ImportData :importData="{importType:'meter', upload}"></ImportData>
   </div>
 </template>
 
@@ -260,9 +270,13 @@ import { listCompany } from '@/api/energy/company'
 import { listPlant } from '@/api/energy/plant'
 import { listBuilding } from '@/api/energy/building'
 import { listDevice } from '@/api/energy/device'
+import ImportData from '../components/importData'
 
 export default {
   name: 'Meter',
+  components:{
+    ImportData
+  },
   data() {
     return {
       // 遮罩层
@@ -275,6 +289,10 @@ export default {
       multiple: true,
       // 总条数
       total: 0,
+      upload: {
+        title: '',
+        open: false
+      },
       // 仪表表格数据
       meterList: [],
       companyOptions: [],
@@ -600,6 +618,13 @@ export default {
           this.download(response.msg)
         })
         .catch(function() {})
+    },
+    /** 导入按钮操作 */
+    handleImport() {
+      this.upload = {
+        title: '仪表导入',
+        open: true
+      }
     }
   }
 }

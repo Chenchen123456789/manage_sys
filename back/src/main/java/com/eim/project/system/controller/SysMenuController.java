@@ -2,6 +2,9 @@ package com.eim.project.system.controller;
 
 import java.util.List;
 
+import com.eim.common.utils.ServletUtils;
+import com.eim.framework.security.LoginUser;
+import com.eim.framework.security.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -33,13 +36,18 @@ public class SysMenuController extends BaseController {
     @Autowired
     private ISysMenuService menuService;
 
+    @Autowired
+    private TokenService tokenService;
+
     /**
      * 获取菜单列表
      */
     @PreAuthorize("@ss.hasPermi('system:menu:list')")
     @GetMapping("/list")
     public AjaxResult list(SysMenu menu) {
-        List<SysMenu> menus = menuService.selectMenuList(menu);
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+        Long userId = loginUser.getUser().getUserId();
+        List<SysMenu> menus = menuService.selectMenuList(menu, userId);
         return AjaxResult.success(menuService.buildMenuTree(menus));
     }
 
@@ -56,8 +64,10 @@ public class SysMenuController extends BaseController {
      * 获取菜单下拉树列表
      */
     @GetMapping("/treeselect")
-    public AjaxResult treeselect(SysMenu dept) {
-        List<SysMenu> menus = menuService.selectMenuList(dept);
+    public AjaxResult treeselect(SysMenu menu) {
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+        Long userId = loginUser.getUser().getUserId();
+        List<SysMenu> menus = menuService.selectMenuList(menu, userId);
         return AjaxResult.success(menuService.buildMenuTreeSelect(menus));
     }
 
@@ -66,7 +76,12 @@ public class SysMenuController extends BaseController {
      */
     @GetMapping(value = "/roleMenuTreeselect/{roleId}")
     public AjaxResult roleMenuTreeselect(@PathVariable("roleId") Long roleId) {
-        return AjaxResult.success(menuService.selectMenuListByRoleId(roleId));
+        LoginUser loginUser = tokenService.getLoginUser(ServletUtils.getRequest());
+        List<SysMenu> menus = menuService.selectMenuList(loginUser.getUser().getUserId());
+        AjaxResult ajax = AjaxResult.success();
+        ajax.put("checkedKeys", menuService.selectMenuListByRoleId(roleId));
+        ajax.put("menus", menuService.buildMenuTreeSelect(menus));
+        return ajax;
     }
 
     /**

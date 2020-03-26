@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.eim.project.system.domain.SysUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.eim.common.constant.UserConstants;
@@ -38,14 +39,36 @@ public class SysMenuServiceImpl implements ISysMenuService {
     private SysRoleMenuMapper roleMenuMapper;
 
     /**
+     * 根据用户查询系统菜单列表
+     *
+     * @param userId 用户ID
+     * @return 菜单列表
+     */
+    @Override
+    public List<SysMenu> selectMenuList(Long userId)
+    {
+        return selectMenuList(new SysMenu(), userId);
+    }
+
+    /**
      * 查询系统菜单列表
      *
      * @param menu 菜单信息
      * @return 菜单列表
      */
     @Override
-    public List<SysMenu> selectMenuList(SysMenu menu) {
-        List<SysMenu> menuList = menuMapper.selectMenuList(menu);
+    public List<SysMenu> selectMenuList(SysMenu menu, Long userId) {
+        List<SysMenu> menuList = null;
+        // 管理员显示所有菜单信息
+        if (SysUser.isAdmin(userId))
+        {
+            menuList = menuMapper.selectMenuList(menu);
+        }
+        else
+        {
+            menu.getParams().put("userId", userId);
+            menuList = menuMapper.selectMenuListByUserId(menu);
+        }
         return menuList;
     }
 
@@ -68,9 +91,9 @@ public class SysMenuServiceImpl implements ISysMenuService {
     }
 
     /**
-     * 根据用户名称查询菜单
+     * 根据用户ID查询菜单
      *
-     * @param 'username' 用户名称
+     * @param userId 用户名称
      * @return 菜单列表
      */
     @Override

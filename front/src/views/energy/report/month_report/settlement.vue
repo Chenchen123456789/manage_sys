@@ -23,7 +23,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="info" icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
     <el-divider></el-divider>
@@ -106,7 +106,7 @@
           <span>{{waterPrice}}</span>
         </el-table-column>
         <el-table-column label="金额" align="center" prop="waterAmount">
-          <template slot-scope="scope">{{waterPrice * scope.row.currentWaterSumValue}}</template>
+          <template slot-scope="scope">{{(waterPrice * scope.row.currentWaterDosage).toFixed(2)}}</template>
         </el-table-column>
         <el-table-column label="上月累计" align="center" prop="preWaterSumValue" />
         <el-table-column label="耗水累计" align="center" prop="currentWaterSumValue" />
@@ -117,7 +117,7 @@
           <span>{{airPrice}}</span>
         </el-table-column>
         <el-table-column label="金额" align="center" prop="airAmount">
-          <template slot-scope="scope">{{airPrice * scope.row.currentAirSumValue}}</template>
+          <template slot-scope="scope">{{(airPrice * scope.row.currentAirDosage).toFixed(2)}}</template>
         </el-table-column>
         <el-table-column label="上月累计" align="center" prop="preAirSumValue" />
         <el-table-column label="空气累计" align="center" prop="currentAirSumValue" />
@@ -128,7 +128,7 @@
           <span>{{electricityPrice}}</span>
         </el-table-column>
         <el-table-column label="金额" align="center" prop="electricityAmount">
-          <template slot-scope="scope">{{electricityPrice * scope.row.currentElectricitySumValue}}</template>
+          <template slot-scope="scope">{{(electricityPrice * scope.row.currentElectricityDosage).toFixed(2)}}</template>
         </el-table-column>
         <el-table-column label="上月累计" align="center" prop="preElectricitySumValue" />
         <el-table-column label="耗电累计" align="center" prop="currentElectricitySumValue" />
@@ -139,7 +139,7 @@
           <span>{{steamPrice}}</span>
         </el-table-column>
         <el-table-column label="金额" align="center" prop="steamAmount">
-          <template slot-scope="scope">{{steamPrice * scope.row.currentSteamSumValue}}</template>
+          <template slot-scope="scope">{{(steamPrice * scope.row.currentSteamDosage).toFixed(2)}}</template>
         </el-table-column>
         <el-table-column label="上月累计" align="center" prop="preSteamSumValue" />
         <el-table-column label="蒸汽累计" align="center" prop="currentSteamSumValue" />

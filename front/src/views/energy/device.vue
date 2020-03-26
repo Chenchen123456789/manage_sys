@@ -31,6 +31,15 @@
         >删除</el-button>
       </el-col>
       <el-col :span="1.5">
+        <el-button
+          type="info"
+          icon="el-icon-upload2"
+          size="mini"
+          @click="handleImport"
+          v-hasPermi="['energy:device:import']"
+        >导入</el-button>
+      </el-col>
+      <el-col :span="1.5">
         <el-popover placement="bottom" trigger="click">
           <div style="text-align: right; margin: 0">
             <el-button
@@ -181,6 +190,8 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <ImportData :importData="{importType:'device', upload}"></ImportData>
   </div>
 </template>
 
@@ -196,9 +207,13 @@ import {
 import { listCompany } from '@/api/energy/company'
 import { listPlant } from '@/api/energy/plant'
 import { listBuilding } from '@/api/energy/building'
+import ImportData from '../components/importData'
 
 export default {
   name: 'Device',
+  components: {
+    ImportData
+  },
   data() {
     return {
       // 遮罩层
@@ -211,6 +226,10 @@ export default {
       multiple: true,
       // 总条数
       total: 0,
+      upload: {
+        title: '',
+        open: false
+      },
       // 设备表格数据
       deviceList: [],
       companyOptions: [],
@@ -444,6 +463,13 @@ export default {
           this.download(response.msg)
         })
         .catch(function() {})
+    },
+    /** 导入按钮操作 */
+    handleImport() {
+      this.upload = {
+        title: '设备导入',
+        open: true
+      }
     }
   }
 }

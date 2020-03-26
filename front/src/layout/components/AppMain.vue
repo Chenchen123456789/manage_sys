@@ -1,7 +1,8 @@
 <template>
   <section class="app-main">
     <transition name="fade-transform" mode="out-in">
-      <keep-alive :include="cachedViews">
+      <!-- <keep-alive :include="cachedViews"> -->
+      <keep-alive>
         <router-view v-if="!$route.meta.iframeSrc" :key="key" />
       </keep-alive>
     </transition>
@@ -12,7 +13,7 @@
         :myIframeId="'iframe' + index"
         v-show="$route.path === item.path"
         :src="item.meta.iframeSrc"
-      > </iframe-component>
+      ></iframe-component>
     </transition-group>
   </section>
 </template>
@@ -26,13 +27,13 @@ export default {
     IframeComponent
   },
   computed: {
-    cachedViews () {
+    cachedViews() {
       return this.$store.state.tagsView.cachedViews
     },
-    key () {
+    key() {
       return this.$route.path
     },
-    iframeViews () {
+    iframeViews() {
       return this.$store.state.tagsView.iframeViews
     }
   }

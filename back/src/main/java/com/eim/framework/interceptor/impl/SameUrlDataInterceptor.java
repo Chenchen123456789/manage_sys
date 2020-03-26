@@ -2,8 +2,15 @@ package com.eim.framework.interceptor.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import com.eim.common.filter.RepeatedlyRequestWrapper;
+import com.eim.common.utils.StringUtils;
+import com.eim.common.utils.http.HttpHelper;
+import com.eim.framework.redis.RedisCache;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSONObject;
 import com.eim.framework.interceptor.RepeatSubmitInterceptor;
@@ -21,7 +28,10 @@ public class SameUrlDataInterceptor extends RepeatSubmitInterceptor
 
     public final String REPEAT_TIME = "repeatTime";
 
-    public final String SESSION_REPEAT_KEY = "repeatData";
+    public final String CACHE_REPEAT_KEY = "repeatData";
+
+    @Autowired
+    private RedisCache redisCache;
 
     /**
      * 间隔时间，单位:秒 默认10秒
@@ -39,8 +49,14 @@ public class SameUrlDataInterceptor extends RepeatSubmitInterceptor
     @Override
     public boolean isRepeatSubmit(HttpServletRequest request)
     {
-        // 本次参数及系统时间
-        String nowParams = JSONObject.toJSONString(request.getParameterMap());
+        RepeatedlyRequestWrapper repeatedlyRequest = (RepeatedlyRequestWrapper) request;
+        String nowParams = HttpHelper.getBodyString(repeatedlyRequest);
+
+        // body参数为空，获取Parameter的数据
+        if (StringUtils.isEmpty(nowParams))
+        {
+            nowParams = JSONObject.toJSONString(request.getParameterMap());
+        }
         Map<String, Object> nowDataMap = new HashMap<String, Object>();
         nowDataMap.put(REPEAT_PARAMS, nowParams);
         nowDataMap.put(REPEAT_TIME, System.currentTimeMillis());
@@ -48,8 +64,7 @@ public class SameUrlDataInterceptor extends RepeatSubmitInterceptor
         // 请求地址（作为存放session的key值）
         String url = request.getRequestURI();
 
-        HttpSession session = request.getSession();
-        Object sessionObj = session.getAttribute(SESSION_REPEAT_KEY);
+        Object sessionObj = redisCache.getCacheObject(CACHE_REPEAT_KEY);
         if (sessionObj != null)
         {
             Map<String, Object> sessionMap = (Map<String, Object>) sessionObj;
@@ -62,9 +77,9 @@ public class SameUrlDataInterceptor extends RepeatSubmitInterceptor
                 }
             }
         }
-        Map<String, Object> sessionMap = new HashMap<String, Object>();
-        sessionMap.put(url, nowDataMap);
-        session.setAttribute(SESSION_REPEAT_KEY, sessionMap);
+        Map<String, Object> cacheMap = new HashMap<String, Object>();
+        cacheMap.put(url, nowDataMap);
+        redisCache.setCacheObject(CACHE_REPEAT_KEY, cacheMap, intervalTime, TimeUnit.SECONDS);
         return false;
     }
 

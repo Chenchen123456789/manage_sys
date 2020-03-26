@@ -23,7 +23,11 @@
           @change="changeQueryBuildingOptions"
           v-model="queryParams.buildingId"
           placeholder="请选择建筑"
+          :disabled="buildingDisabled"
+          v-on:click.native="clickBuilding"
           size="small"
+          multiple
+          collapse-tags
         >
           <el-option
             v-for="item in queryBuildingOptions"
@@ -40,6 +44,10 @@
           v-model="queryParams.deviceId"
           placeholder="请选择设备"
           size="small"
+          :disabled="deviceDisabled"
+          v-on:click.native="clickDevice"
+          multiple
+          collapse-tags
         >
           <el-option
             v-for="item in queryDeviceOptions"
@@ -56,6 +64,10 @@
           v-model="queryParams.meterId"
           placeholder="请选择仪表编号"
           size="small"
+          :disabled="meterDisabled"
+          v-on:click.native="clickMeter"
+          multiple
+          collapse-tags
         >
           <el-option
             v-for="item in queryMeterOptions"
@@ -70,14 +82,14 @@
           v-model="queryParams.queryTime"
           type="month"
           placeholder="选择月"
-          clearable
+          :clearable="false"
           size="small"
           @change="changeQueryTime"
         ></el-date-picker>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="info" icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -104,7 +116,7 @@
           v-hasPermi="['energy:report_monthDosageOfElectricity:export']"
           slot="reference"
         >导出</el-button>
-      </el-popover> 
+      </el-popover>
     </el-row>
 
     <el-table show-summary v-loading="loading" :data="monthDosageOfElectricityList">
@@ -135,7 +147,10 @@
 </template>
 
 <script>
-import { listMonthDosageOfElectricity, exportMonthDosageOfElectricity } from '@/api/energy/report'
+import {
+  listMonthDosageOfElectricity,
+  exportMonthDosageOfElectricity
+} from '@/api/energy/report'
 import { listPlant } from '@/api/energy/plant'
 import { listBuilding } from '@/api/energy/building'
 import { listDevice } from '@/api/energy/device'
@@ -160,14 +175,17 @@ export default {
       queryDeviceOptions: [],
       queryMeterOptions: [],
       dataTime: '数据时间',
+      buildingDisabled: true,
+      deviceDisabled: true,
+      meterDisabled: true,
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
         plantId: undefined,
-        buildingId: undefined,
-        deviceId: undefined,
-        meterId: undefined,
+        buildingId: [],
+        deviceId: [],
+        meterId: [],
         queryTime: new Date(
           new Date().getFullYear() +
             '-' +
@@ -184,17 +202,53 @@ export default {
     this.getDeviceOptions()
     this.getMeterCodeOptions()
   },
+  watch: {
+    'queryParams.plantId'(val) {
+      if (val) {
+        this.buildingDisabled = false
+      } else {
+        this.buildingDisabled = true
+      }
+    },
+    'queryParams.buildingId'(val) {
+      if (val && val.length > 0) {
+        this.deviceDisabled = false
+      } else {
+        this.deviceDisabled = true
+      }
+    },
+    'queryParams.deviceId'(val) {
+      if (val && val.length > 0) {
+        this.meterDisabled = false
+      } else {
+        this.meterDisabled = true
+      }
+    }
+  },
   methods: {
+    clickBuilding() {
+      if (this.buildingDisabled) {
+        this.$message.warning('请先选择工厂')
+      }
+    },
+    clickDevice() {
+      if (this.deviceDisabled) {
+        this.$message.warning('请先选择建筑')
+      }
+    },
+    clickMeter() {
+      if (this.meterDisabled) {
+        this.$message.warning('请先选择设备')
+      }
+    },
     changeQueryPlantOptions(value) {
+      this.queryParams.buildingId = this.queryParams.deviceId = this.queryParams.meterId = []
       if (value === '') {
+        this.queryParams.plantId = undefined
         this.queryBuildingOptions = this.buildingOptions
         this.queryDeviceOptions = this.deviceOptions
         this.queryMeterOptions = this.meterOptions
       } else {
-        const temp = this.queryParams
-        temp.buildingId = temp.deviceId = temp.meterId = null
-        const plant = this.plantOptions.find(item => item.id == value)
-        this.queryParams = { ...temp }
         this.queryBuildingOptions = this.buildingOptions.filter(
           item => item.plantId == value
         )
@@ -207,53 +261,32 @@ export default {
       }
     },
     changeQueryBuildingOptions(value) {
-      if (value === '') {
+      this.queryParams.deviceId = this.queryParams.meterId = []
+      if (value.length === 0) {
         this.queryDeviceOptions = this.deviceOptions
         this.queryMeterOptions = this.meterOptions
       } else {
-        const building = this.buildingOptions.find(item => item.id == value)
-        const plantId = building.plantId || null
-        const temp = this.queryParams
-        temp.plantId = plantId
-        temp.deviceId = temp.meterId = null
-        this.queryParams = { ...temp }
-        this.queryDeviceOptions = this.deviceOptions.filter(
-          item => item.buildingId == value
+        this.queryDeviceOptions = this.deviceOptions.filter(item =>
+          value.includes(item.buildingId)
         )
-        this.queryMeterOptions = this.meterOptions.filter(
-          item => item.buildingId == value
+        this.queryMeterOptions = this.meterOptions.filter(item =>
+          value.includes(item.buildingId)
         )
       }
     },
     changeQueryDeviceOptions(value) {
-      if (value === '') {
+      this.queryParams.meterId = []
+      if (value.length === 0) {
         this.queryMeterOptions = this.meterOptions
       } else {
-        const device = this.deviceOptions.find(item => item.id == value)
-        const plantId = device.plantId || null
-        const buildingId = device.buildingId || null
-        const temp = this.queryParams
-        temp.plantId = plantId
-        temp.buildingId = buildingId
-        temp.meterId = null
-        this.queryParams = { ...temp }
-        this.queryMeterOptions = this.meterOptions.filter(
-          item => item.deviceId == value
+        this.queryMeterOptions = this.meterOptions.filter(item =>
+          value.includes(item.deviceId)
         )
       }
     },
     changeQueryMeterCodeOptions(value) {
-      if (value === '') {
+      if (value.length === 0) {
       } else {
-        const meter = this.meterOptions.find(item => item.id == value)
-        const plantId = meter.plantId || null
-        const buildingId = meter.buildingId || null
-        const deviceId = meter.deviceId
-        const temp = this.queryParams
-        temp.plantId = plantId
-        temp.buildingId = buildingId
-        temp.deviceId = deviceId
-        this.queryParams = { ...temp }
       }
     },
     changeQueryTime(value) {

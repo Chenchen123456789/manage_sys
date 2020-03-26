@@ -1,9 +1,10 @@
 package com.eim.project.tool.gen.service;
 
 import java.util.List;
+
+import com.eim.common.core.text.Convert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.eim.common.utils.text.Convert;
 import com.eim.project.tool.gen.domain.GenTableColumn;
 import com.eim.project.tool.gen.mapper.GenTableColumnMapper;
 
@@ -21,7 +22,7 @@ public class GenTableColumnServiceImpl implements IGenTableColumnService
 	/**
      * 查询业务字段列表
      * 
-     * @param genTableColumn 业务字段编号
+     * @param tableId 业务字段编号
      * @return 业务字段集合
      */
 	@Override

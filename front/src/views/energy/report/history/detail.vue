@@ -1,5 +1,6 @@
 <template>
   <div class="app-container">
+    <router-view />
     <el-form :model="queryParams" ref="queryForm" :inline="true" label-width="68px">
       <el-form-item label="查询类型" prop="queryTypeId">
         <el-select v-model="queryParams.queryTypeId" placeholder="请选择" size="small">
@@ -86,7 +87,11 @@
           @change="changeQueryBuildingOptions"
           v-model="queryParams.buildingId"
           placeholder="请选择建筑"
+          :disabled="buildingDisabled"
+          v-on:click.native="clickBuilding"
           size="small"
+          multiple
+          collapse-tags
         >
           <el-option
             v-for="item in queryBuildingOptions"
@@ -103,6 +108,10 @@
           v-model="queryParams.deviceId"
           placeholder="请选择设备"
           size="small"
+          :disabled="deviceDisabled"
+          v-on:click.native="clickDevice"
+          multiple
+          collapse-tags
         >
           <el-option
             v-for="item in queryDeviceOptions"
@@ -119,6 +128,10 @@
           v-model="queryParams.meterId"
           placeholder="请选择仪表编号"
           size="small"
+          :disabled="meterDisabled"
+          v-on:click.native="clickMeter"
+          multiple
+          collapse-tags
         >
           <el-option
             v-for="item in queryMeterOptions"
@@ -150,46 +163,46 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="info" icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
     <el-row :gutter="10" class="mb8">
       <el-popover placement="bottom" trigger="click">
-          <div style="text-align: right; margin: 0">
-            <el-button
-              icon="el-icon-download"
-              type="warning"
-              size="mini"
-              @click="handleExport(0)"
-            >导出全部数据</el-button>
-            <el-button
-              icon="el-icon-download"
-              type="warning"
-              size="mini"
-              @click="handleExport(1)"
-            >导出当前页数据</el-button>
-          </div>
+        <div style="text-align: right; margin: 0">
           <el-button
-            type="warning"
             icon="el-icon-download"
+            type="warning"
             size="mini"
-            v-hasPermi="['enery:report_historyDetail:export']"
-            slot="reference"
-          >导出</el-button>
-        </el-popover>
+            @click="handleExport(0)"
+          >导出全部数据</el-button>
+          <el-button
+            icon="el-icon-download"
+            type="warning"
+            size="mini"
+            @click="handleExport(1)"
+          >导出当前页数据</el-button>
+        </div>
+        <el-button
+          type="warning"
+          icon="el-icon-download"
+          size="mini"
+          v-hasPermi="['energy:report_historyDetail:export']"
+          slot="reference"
+        >导出</el-button>
+      </el-popover>
     </el-row>
 
     <el-table border style="width:100%" v-loading="loading" :data="historyDetailList">
       <el-table-column label="序号" type="index" :index="indexMethod" width="50" />
-      <el-table-column label="时间" align="center" prop="dataTime" width="100">
+      <el-table-column label="时间" align="center" prop="dataTime" width="160">
         <template slot-scope="scope">
           <span>{{ parseTime(scope.row.dataTime) }}</span>
         </template>
       </el-table-column>
       <el-table-column label="工厂名" align="center" prop="plantName" />
       <el-table-column label="建筑名" align="center" prop="buildingName" />
-      <el-table-column label="能源类型" align="center" prop="energyTypeName" />
+      <el-table-column label="能源类型" align="center" prop="energyTypeName" width="80"  />
       <el-table-column label="设备名" align="center" prop="deviceName" />
       <el-table-column label="仪表编号" align="center" prop="meterCode" />
       <el-table-column label="数据位号" align="center" prop="tagName" />
@@ -251,6 +264,9 @@ export default {
       queryEnergyTypeOptions: [],
       querySignalTypeOptions: [],
       querySystemOptions: [],
+      buildingDisabled: true,
+      deviceDisabled: true,
+      meterDisabled: true,
       // 查询参数
       queryParams: {
         pageNum: 1,
@@ -259,11 +275,10 @@ export default {
         queryTime: new Date(new Date().getFullYear() + '-01-01 00:00:00'),
         companyId: undefined,
         plantId: undefined,
-        companyId: undefined,
         plantId: undefined,
-        buildingId: undefined,
-        deviceId: undefined,
-        meterId: undefined,
+        buildingId: [],
+        deviceId: [],
+        meterId: [],
         systemId: undefined,
         energyTypeId: undefined
       }
@@ -281,6 +296,29 @@ export default {
     this.getSignalTypeOptions()
     this.getSystemOptions()
   },
+  watch: {
+    'queryParams.plantId'(val) {
+      if (val) {
+        this.buildingDisabled = false
+      } else {
+        this.buildingDisabled = true
+      }
+    },
+    'queryParams.buildingId'(val) {
+      if (val && val.length > 0) {
+        this.deviceDisabled = false
+      } else {
+        this.deviceDisabled = true
+      }
+    },
+    'queryParams.deviceId'(val) {
+      if (val && val.length > 0) {
+        this.meterDisabled = false
+      } else {
+        this.meterDisabled = true
+      }
+    }
+  },
   methods: {
     changeQueryTimeOfHour(value) {
       if (value) {
@@ -288,15 +326,14 @@ export default {
       }
     },
     changeQueryCompanyOptions(value) {
+      this.queryParams.plantId = null
+      this.queryParams.buildingId = this.queryParams.deviceId = this.queryParams.meterId = []
       if (value === '') {
         this.queryPlantOptions = this.plantOptions
         this.queryBuildingOptions = this.buildingOptions
         this.queryDeviceOptions = this.deviceOptions
         this.queryMeterOptions = this.meterOptions
       } else {
-        const temp = this.queryParams
-        temp.plantId = temp.buildingId = temp.deviceId = temp.meterId = null
-        this.queryParams = { ...temp }
         this.queryPlantOptions = this.plantOptions.filter(
           item => item.companyId == value
         )
@@ -311,18 +348,29 @@ export default {
         )
       }
     },
+    clickBuilding() {
+      if (this.buildingDisabled) {
+        this.$message.warning('请先选择工厂')
+      }
+    },
+    clickDevice() {
+      if (this.deviceDisabled) {
+        this.$message.warning('请先选择建筑')
+      }
+    },
+    clickMeter() {
+      if (this.meterDisabled) {
+        this.$message.warning('请先选择设备')
+      }
+    },
     changeQueryPlantOptions(value) {
+      this.queryParams.buildingId = this.queryParams.deviceId = this.queryParams.meterId = []
       if (value === '') {
+        this.queryParams.plantId = undefined
         this.queryBuildingOptions = this.buildingOptions
         this.queryDeviceOptions = this.deviceOptions
         this.queryMeterOptions = this.meterOptions
       } else {
-        const temp = this.queryParams
-        temp.buildingId = temp.deviceId = temp.meterId = null
-        const plant = this.plantOptions.find(item => item.id == value)
-        const companyId = plant.companyId
-        temp.companyId = companyId
-        this.queryParams = { ...temp }
         this.queryBuildingOptions = this.buildingOptions.filter(
           item => item.plantId == value
         )
@@ -335,59 +383,32 @@ export default {
       }
     },
     changeQueryBuildingOptions(value) {
-      if (value === '') {
+      this.queryParams.deviceId = this.queryParams.meterId = []
+      if (value.length === 0) {
         this.queryDeviceOptions = this.deviceOptions
         this.queryMeterOptions = this.meterOptions
       } else {
-        const building = this.buildingOptions.find(item => item.id == value)
-        const companyId = building.companyId
-        const plantId = building.plantId || null
-        const temp = this.queryParams
-        temp.companyId = companyId
-        temp.plantId = plantId
-        temp.deviceId = temp.meterId = null
-        this.queryParams = { ...temp }
-        this.queryDeviceOptions = this.deviceOptions.filter(
-          item => item.buildingId == value
+        this.queryDeviceOptions = this.deviceOptions.filter(item =>
+          value.includes(item.buildingId)
         )
-        this.queryMeterOptions = this.meterOptions.filter(
-          item => item.buildingId == value
+        this.queryMeterOptions = this.meterOptions.filter(item =>
+          value.includes(item.buildingId)
         )
       }
     },
     changeQueryDeviceOptions(value) {
-      if (value === '') {
+      this.queryParams.meterId = []
+      if (value.length === 0) {
         this.queryMeterOptions = this.meterOptions
       } else {
-        const device = this.deviceOptions.find(item => item.id == value)
-        const companyId = device.companyId
-        const plantId = device.plantId || null
-        const buildingId = device.buildingId || null
-        const temp = this.queryParams
-        temp.companyId = companyId
-        temp.plantId = plantId
-        temp.buildingId = buildingId
-        temp.meterId = null
-        this.queryParams = { ...temp }
-        this.queryMeterOptions = this.meterOptions.filter(
-          item => item.deviceId == value
+        this.queryMeterOptions = this.meterOptions.filter(item =>
+          value.includes(item.deviceId)
         )
       }
     },
     changeQueryMeterCodeOptions(value) {
-      if (value === '') {
+      if (value.length === 0) {
       } else {
-        const meter = this.meterOptions.find(item => item.id == value)
-        const companyId = meter.companyId
-        const plantId = meter.plantId || null
-        const buildingId = meter.buildingId || null
-        const deviceId = meter.deviceId
-        const temp = this.queryParams
-        temp.companyId = companyId
-        temp.plantId = plantId
-        temp.buildingId = buildingId
-        temp.deviceId = deviceId
-        this.queryParams = { ...temp }
       }
     },
     getCompanyOptions() {
@@ -459,7 +480,7 @@ export default {
       this.resetForm('queryForm')
       this.handleQuery()
     },
-     /** 导出按钮操作 */
+    /** 导出按钮操作 */
     handleExport(type) {
       const queryParams = { ...this.queryParams }
       if (type === 0) {

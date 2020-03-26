@@ -67,7 +67,7 @@
       </el-form-item>
       <el-form-item>
         <el-button type="primary" icon="el-icon-search" size="mini" @click="handleQuery">搜索</el-button>
-        <el-button icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
+        <el-button type="info" icon="el-icon-refresh" size="mini" @click="resetQuery">重置</el-button>
       </el-form-item>
     </el-form>
 
@@ -100,6 +100,15 @@
           @click="handleDelete"
           v-hasPermi="['energy:measuringPoint:remove']"
         >删除</el-button>
+      </el-col>
+      <el-col :span="1.5">
+        <el-button
+          type="info"
+          icon="el-icon-upload2"
+          size="mini"
+          @click="handleImport"
+          v-hasPermi="['energy:measuringPoint:import']"
+        >导入</el-button>
       </el-col>
       <el-col :span="1.5">
         <el-popover placement="bottom" trigger="click">
@@ -145,7 +154,7 @@
       <el-table-column label="信号类型" align="center" prop="signalTypeName" />
       <el-table-column label="系统名称" align="center" prop="systemName" />
       <el-table-column label="测点描述" align="center" prop="description" />
-      <el-table-column label="总量点" align="center" prop="total_flag" />
+      <el-table-column label="总量点" align="center" prop="totalFlag" />
       <el-table-column label="主参数" align="center" prop="mainTag" />
       <el-table-column label="状态" align="center" prop="disable" />
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -277,7 +286,7 @@
             ></el-option>
           </el-select>
         </el-form-item>
-         <el-form-item label="系统" prop="systemId">
+        <el-form-item label="系统" prop="systemId">
           <el-select clearable v-model="form.systemId" placeholder="请选择">
             <el-option
               v-for="item in formSystemOptions"
@@ -289,15 +298,21 @@
         </el-form-item>
         <el-form-item label="状态" prop="disable">
           <el-select clearable v-model="form.disable" placeholder="请选择">
-            <el-option :key="1" label="可用" :value="1"></el-option>
-            <el-option :key="0" label="禁用" :value="0"></el-option>
+            <el-option :key="0" label="可用" :value="0"></el-option>
+            <el-option :key="1" label="不可用" :value="1"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="总量点" prop="totalFlag">
-          <el-input-number v-model="form.totalFlag" placeholder="请输入总量点" />
+          <el-select clearable v-model="form.totalFlag" placeholder="请选择">
+            <el-option :key="0" label="是" :value="0"></el-option>
+            <el-option :key="1" label="否" :value="1"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="主参数" prop="mainTag">
-          <el-input-number v-model="form.mainTag" placeholder="请输入主参数" />
+          <el-select clearable v-model="form.mainTag" placeholder="请选择">
+            <el-option :key="0" label="是" :value="0"></el-option>
+            <el-option :key="1" label="否" :value="1"></el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="描述" prop="description">
           <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
@@ -308,6 +323,8 @@
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
+
+    <ImportData :importData="{importType:'measuringPoint', upload}"></ImportData>
   </div>
 </template>
 
@@ -325,6 +342,8 @@ import { listPlant } from '@/api/energy/plant'
 import { listBuilding } from '@/api/energy/building'
 import { listDevice } from '@/api/energy/device'
 import { listMeter } from '@/api/energy/meter'
+import ImportData from '../components/importData'
+
 import {
   listClass,
   listEnergyType,
@@ -334,6 +353,9 @@ import {
 
 export default {
   name: 'MeasuringPoint',
+  components: {
+    ImportData
+  },
   data() {
     return {
       // 遮罩层
@@ -346,6 +368,10 @@ export default {
       multiple: true,
       // 总条数
       total: 0,
+      upload: {
+        title: '',
+        open: false
+      },
       // 测点表格数据
       measuringPointList: [],
       companyOptions: [],
@@ -645,7 +671,33 @@ export default {
     getList() {
       this.loading = true
       listMeasuringPoint(this.queryParams).then(response => {
-        this.measuringPointList = response.rows
+        const list = response.rows
+        for (const index in list) {
+          let disable = list[index].disable
+          let totalFlag = list[index].totalFlag
+          let mainTag = list[index].mainTag
+          if (disable == 0) {
+            disable = '可用'
+          } else {
+            disable = '不可用'
+          }
+
+          if (totalFlag == 0) {
+            totalFlag = '是'
+          } else {
+            totalFlag = '否'
+          }
+
+          if (mainTag == 0) {
+            mainTag = '是'
+          } else {
+            mainTag = '否'
+          }
+          list[index].disable = disable
+          list[index].totalFlag = totalFlag
+          list[index].mainTag = mainTag
+        }
+        this.measuringPointList = list
         this.total = response.total
         this.loading = false
       })
@@ -698,7 +750,14 @@ export default {
       this.reset()
       const id = row.id
       getMeasuringPoint(id).then(response => {
-        this.form = response.data
+        const data = response.data
+        if (data.totalFlag != null) {
+          data.totalFlag = Number(data.totalFlag)
+        }
+        if (data.mainTag != null) {
+          data.mainTag = Number(data.mainTag)
+        }
+        this.form = data
         this.open = true
         this.title = '修改测点'
       })
@@ -766,6 +825,13 @@ export default {
           this.download(response.msg)
         })
         .catch(function() {})
+    },
+    /** 导入按钮操作 */
+    handleImport() {
+      this.upload = {
+        title: '测点导入',
+        open: true
+      }
     }
   }
 }

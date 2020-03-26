@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <el-col :span="10" :xs="24">
-        <el-card class="box-card">
+      <el-col :span="12" :xs="24">
+        <el-card id="bc_card1" style="height: 375px;" class="box-card">
           <div slot="header" class="clearfix">
             <span>能耗指标 {{this.selectedBuildingName}}</span>
           </div>
@@ -12,29 +12,32 @@
             </div>
           </div>
         </el-card>
-        <el-card style="overflow: auto; max-height: 209px;" class="box-card my-card">
+        <el-card id="bc_card2" style="overflow: auto;height:212px" class="box-card my-card">
           <div slot="header" class="clearfix">
             <span>建筑设备 {{this.selectedBuildingName}}</span>
           </div>
           <div>
             <div class="text-center">
-              <el-table v-loading="loading" :data="filterDeviceList">
-                <el-table-column label="序号" align="center" type="index" />
+              <el-table border style="width:100%" v-loading="loading" :data="filterDeviceList">
+                <el-table-column label="序号" align="center" type="index" width="50" />
                 <el-table-column label="建筑名称" align="center" prop="buildingName" />
-                <el-table-column label="设备编号" align="center" prop="deviceCode" />
-                <el-table-column label="设备名称" align="center" prop="deviceName">
-                  <template slot-scope="scope">
-                    <el-link type="primary">{{scope.row.deviceName}}</el-link>
-                  </template>
-                </el-table-column>
-                <el-table-column label="设备描述" align="center" prop="description" />
+                <el-table-column label="设备编号" align="center" prop="deviceCode" width="50" />
+                <el-table-column label="设备名称" align="center" prop="deviceName"></el-table-column>
+                <el-table-column label="设备描述" align="center" prop="deviceDescription" />
               </el-table>
             </div>
           </div>
         </el-card>
       </el-col>
-      <el-col :span="14" :xs="24">
-        <el-card>
+      <el-col :span="12" :xs="24">
+        <el-card
+          id="bc_card3"
+          class="img-card"
+          body-style="min-height: 554px;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;"
+        >
           <div slot="header" class="clearfix">
             <span>建筑分布 生产三厂</span>
           </div>
@@ -93,13 +96,17 @@
     </el-row>
     <el-row :gutter="20">
       <el-col :span="24" :xs="24">
-        <el-card class="box-card my-card">
+        <el-card class="box-card my-card" style="min-height: 200px">
           <div slot="header" class="clearfix">
             <span>设备主要参数 {{this.selectedBuildingName}}</span>
           </div>
           <div>
             <div class="text-center" style="display:flex">
-              <BuildingMainTagValueChart v-for="item in mainTagValueList" :itemData="item"></BuildingMainTagValueChart>
+              <BuildingMainTagValueChart
+                v-for="(item,index) in mainTagValueList"
+                v-bind:key="index"
+                :itemData="item"
+              ></BuildingMainTagValueChart>
             </div>
           </div>
         </el-card>
@@ -117,6 +124,7 @@ import {
   listBuildingDistribution,
   listBuildingMainMPValue
 } from '@/api/energy/report'
+import screenfull from 'screenfull'
 
 export default {
   components: {
@@ -149,7 +157,26 @@ export default {
     this.getDeviceList()
     this.getBuildingDistributionList()
   },
+  mounted: function() {
 
+    screenfull.on('change', function(){
+      if (screenfull.isFullscreen) {
+          const bc_card1 = document.getElementById('bc_card1')
+          const bc_card2 = document.getElementById('bc_card2')
+          const bc_card3 = document.getElementById('bc_card3')
+          const bc_card1Height = bc_card1.clientHeight
+          const bc_card2Height = bc_card2.clientHeight
+          const bc_card3Height = bc_card3.clientHeight
+          console.log(
+            bc_card1Height + '=== ' + bc_card2Height + '===' + bc_card3Height
+          )
+      }
+    })
+
+    const that = this
+    window.onresize = function resizeFunction() {
+    }
+  },
   methods: {
     getBuildingDistributionList() {
       listBuildingDistribution().then(res => {

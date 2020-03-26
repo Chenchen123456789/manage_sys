@@ -5,6 +5,8 @@ import java.util.List;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import com.eim.framework.aspectj.lang.annotation.Excel;
@@ -196,6 +198,7 @@ public class SysUser extends BaseEntity
         this.avatar = avatar;
     }
 
+    @JsonProperty
     public String getPassword()
     {
         return password;
