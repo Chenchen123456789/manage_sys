@@ -12,7 +12,7 @@
             </div>
           </div>
         </el-card>
-        <el-card id="bc_card2" style="overflow: auto;height:212px" class="box-card my-card">
+        <el-card id="bc_card2" style="overflow: auto;height:274px" class="box-card my-card">
           <div slot="header" class="clearfix">
             <span>建筑设备 {{this.selectedBuildingName}}</span>
           </div>

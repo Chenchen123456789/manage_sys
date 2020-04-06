@@ -25,17 +25,14 @@ import Layout from '@/layout'
  */
 
 // 公共路由
-export const constantRoutes = [
-  {
+export const constantRoutes = [{
     path: '/redirect',
     component: Layout,
     hidden: true,
-    children: [
-      {
-        path: '/redirect/:path(.*)',
-        component: () => import('@/views/redirect')
-      }
-    ]
+    children: [{
+      path: '/redirect/:path(.*)',
+      component: () => import('@/views/redirect')
+    }]
   },
   {
     path: '/login',
@@ -70,45 +67,62 @@ export const constantRoutes = [
     component: Layout,
     hidden: true,
     redirect: 'noredirect',
-    children: [
-      {
-        path: 'profile',
-        component: () => import('@/views/system/user/profile/index'),
-        name: 'Profile',
-        meta: { title: '个人中心', icon: 'user' }
+    children: [{
+      path: 'profile',
+      component: () => import('@/views/system/user/profile/index'),
+      name: 'Profile',
+      meta: {
+        title: '个人中心',
+        icon: 'user'
       }
-    ]
+    }]
   },
   {
     path: '/dict',
     component: Layout,
     hidden: true,
-    children: [
-      {
-        path: 'type/data/:dictId(\\d+)',
-        component: () => import('@/views/system/dict/data'),
-        name: 'Data',
-        meta: { title: '字典数据', icon: '' }
+    children: [{
+      path: 'type/data/:dictId(\\d+)',
+      component: () => import('@/views/system/dict/data'),
+      name: 'Data',
+      meta: {
+        title: '字典数据',
+        icon: ''
       }
-    ]
+    }]
+  },
+  {
+    path: '/job',
+    component: Layout,
+    hidden: true,
+    children: [{
+      path: 'log',
+      component: () => import('@/views/monitor/job/log'),
+      name: 'JobLog',
+      meta: {
+        title: '调度日志'
+      }
+    }]
   },
   {
     path: '/gen',
     component: Layout,
     hidden: true,
-    children: [
-      {
-        path: 'edit',
-        component: () => import('@/views/tool/gen/editTable'),
-        name: 'GenEdit',
-        meta: { title: '修改生成配置' }
+    children: [{
+      path: 'edit',
+      component: () => import('@/views/tool/gen/editTable'),
+      name: 'GenEdit',
+      meta: {
+        title: '修改生成配置'
       }
-    ]
+    }]
   }
 ]
 
 export default new Router({
   mode: 'history', // 去掉url中的#
-  scrollBehavior: () => ({ y: 0 }),
+  scrollBehavior: () => ({
+    y: 0
+  }),
   routes: constantRoutes
 })
