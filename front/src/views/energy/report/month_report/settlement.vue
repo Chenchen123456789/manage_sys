@@ -97,7 +97,7 @@
       </el-popover>
     </el-row>
 
-    <el-table v-loading="loading" :data="settlementList">
+    <el-table size="mini" v-loading="loading" :data="settlementList">
       <el-table-column label="序号" type="index" :index="indexMethod" width="50" />
       <el-table-column label="单位" align="center" prop="plantName" />
       <el-table-column label="水" align="center">

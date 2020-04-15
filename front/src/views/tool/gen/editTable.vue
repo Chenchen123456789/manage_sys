@@ -5,7 +5,7 @@
         <basic-info-form ref="basicInfo" :info="info" />
       </el-tab-pane>
       <el-tab-pane label="字段信息" name="cloum">
-        <el-table :data="cloumns" :max-height="tableHeight">
+        <el-table size="mini" :data="cloumns" :max-height="tableHeight">
           <el-table-column label="序号" type="index" min-width="5%" />
           <el-table-column
             label="字段列名"

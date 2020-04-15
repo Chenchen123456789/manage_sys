@@ -18,7 +18,7 @@
           </div>
           <div>
             <div class="text-center">
-              <el-table border style="width:100%" v-loading="loading" :data="filterDeviceList">
+              <el-table size="mini" border style="width:100%" v-loading="loading" :data="filterDeviceList">
                 <el-table-column label="序号" align="center" type="index" width="50" />
                 <el-table-column label="建筑名称" align="center" prop="buildingName" />
                 <el-table-column label="设备编号" align="center" prop="deviceCode" width="50" />

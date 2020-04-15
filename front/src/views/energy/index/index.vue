@@ -6,7 +6,7 @@
         class="el-coldash-board"
         :span="4"
         v-for="item in [4,5,6,7,8,9]"
-        V-bind:key="item"
+        :key="item"
         :xs="24"
       >
         <Dashboard

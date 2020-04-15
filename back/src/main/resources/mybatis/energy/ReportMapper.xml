@@ -350,59 +350,138 @@
     </select>
     <select id="selectMonthDosageOfElectricity" parameterType="map" resultType="map">
         SELECT
-        a.plant_id plantId,
-        a.plant_name plantName,
-        a.building_id buildingId,
-        a.building_name buildingName,
-        a.device_id deviceId,
-        a.device_name deviceName,
-        a.meter_id meterId,
-        a.meter_name meterName,
-        a.meter_code meterCode,
-        a.tag_name tagName,
-        a.meter_spec meterSpec,
-        a.meter_location meterLocation,
-        b.DataTime dataTime,
-        b.FValue fValue,
-        b.PValue pValue,
-        b.GValue gValue
+            plant_id plantId,
+            plant_name plantName,
+            building_name buildingName,
+            device_name deviceName,
+            meter_code meterCode,
+            meter_location meterLocation,
+            meter_spec meterSpec,
+            T.TagName tagName,
+            T.currentMonthValue,
+            T.preMonthValue,
+            T.fValue,
+            T.pValue,
+            T.gValue
         FROM
-        Variable_Info a,
-        T_DayDataJFPG b
-        <where>
-            a.tag_name = b.TagName
-            AND a.[disable] != 1
-            AND a.total_flag = 1
-            AND a.energy_type_name = '电'
-            AND CONVERT ( VARCHAR ( 7 ), b.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
-
+            Variable_Info VI,
+            (
+            SELECT
+                M.TagName,
+                currentMonthValue,
+                preMonthValue,
+                fValue,
+                gValue,
+                pValue
+            FROM
+                (
+                SELECT
+                    X.TagName,
+                    ISNULL( Y.TagValue, 0 ) currentMonthValue
+                FROM
+                    ( SELECT DISTINCT TagName FROM T_DayData ) X
+                    LEFT JOIN (
+                    SELECT
+                        TagName,
+                        TagValue
+                    FROM
+                        T_DayData A
+                    WHERE
+                        DataTime = (
+                        SELECT MAX
+                            ( DataTime )
+                        FROM
+                            T_DayData B
+                        WHERE
+                            A.TagName = B.TagName
+                            AND CONVERT ( VARCHAR ( 7 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
+                        )
+                    ) Y ON X.TagName = Y.TagName
+                ) M
+                JOIN (
+                SELECT
+                    X.TagName,
+                    ISNULL( Y.TagValue, 0 ) preMonthValue
+                FROM
+                    ( SELECT DISTINCT TagName FROM T_DayData ) X
+                    LEFT JOIN (
+                    SELECT
+                        TagName,
+                        TagValue
+                    FROM
+                        T_DayData A
+                    WHERE
+                        DataTime = (
+                        SELECT MAX
+                            ( DataTime )
+                        FROM
+                            T_DayData B
+                        WHERE
+                            A.TagName = B.TagName
+                            AND CONVERT ( VARCHAR ( 7 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 7 ), dateadd( MONTH,- 1, #{queryTime} ), 120 )
+                        )
+                    ) Y ON X.TagName = Y.TagName
+                ) N ON M.TagName = N.TagName
+                JOIN (
+                SELECT
+                    X.TagName,
+                    ISNULL( Y.FValue, 0 ) fValue,
+                    ISNULL( Y.PValue, 0 ) pValue,
+                    ISNULL( Y.GValue, 0 ) gValue
+                FROM
+                    ( SELECT DISTINCT TagName FROM T_DayData ) X
+                    LEFT JOIN (
+                    SELECT
+                        TagName,
+                        FValue,
+                        PValue,
+                        GValue
+                    FROM
+                        T_DayDataJFPG A
+                    WHERE
+                        DataTime = (
+                        SELECT MAX
+                            ( DataTime )
+                        FROM
+                            T_DayData B
+                        WHERE
+                            A.TagName = B.TagName
+                            AND CONVERT ( VARCHAR ( 7 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
+                        )
+                    ) Y ON X.TagName = Y.TagName
+                ) O ON O.TagName = M.TagName
+            ) T
+        WHERE
+            T.TagName = VI.tag_name
+            AND VI.[disable] != 1
+            AND VI.total_flag = 1
+            AND VI.energy_type_name = '电'
             <if test="plantId !=null">
-                AND a.plant_id = #{plantId, jdbcType=INTEGER}
+                AND VI.plant_id = #{plantId, jdbcType=INTEGER}
             </if>
             <if test="buildingId !=null and buildingId.size>0">
-                AND a.building_id in
+                AND VI.building_id in
                 <foreach item="item" index="index" collection="buildingId"
                          open="(" separator="," close=")">
                     #{item}
                 </foreach>
             </if>
             <if test="deviceId !=null and deviceId.size>0">
-                AND a.device_id in
+                AND VI.device_id in
                 <foreach item="item" index="index" collection="deviceId"
                          open="(" separator="," close=")">
                     #{item}
                 </foreach>
             </if>
             <if test="meterId !=null and meterId.size>0">
-                AND a.meter_id in
+                AND VI.meter_id in
                 <foreach item="item" index="index" collection="meterId"
                          open="(" separator="," close=")">
                     #{item}
                 </foreach>
             </if>
-        </where>
         ORDER BY
-        a.building_name ASC
+            building_name ASC
     </select>
     <select id="selectMonthSettlement" parameterType="map" resultType="map">
         SELECT

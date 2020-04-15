@@ -121,7 +121,7 @@
       </el-col>
     </el-row>
 
-    <el-table v-loading="loading" :data="meterList" @selection-change="handleSelectionChange">
+    <el-table size="mini" v-loading="loading" :data="meterList" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" align="center" />
       <el-table-column label="序号" type="index" :index="indexMethod" width="50" />
       <el-table-column label="公司名称" align="center" prop="companyName" />

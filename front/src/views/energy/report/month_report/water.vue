@@ -59,7 +59,7 @@
       </el-popover>
     </el-row>
 
-    <el-table show-summary v-loading="loading" :data="monthDosageOfWaterList">
+    <el-table size="mini"  show-summary v-loading="loading" :data="monthDosageOfWaterList">
       <el-table-column label="序号" type="index" :index="indexMethod" width="50" />
       <el-table-column label="单位" align="center" prop="plantName" />
       <el-table-column label="测点名" align="center" prop="tagName" />

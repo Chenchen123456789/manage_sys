@@ -119,7 +119,7 @@
       </el-popover>
     </el-row>
 
-    <el-table show-summary v-loading="loading" :data="monthDosageOfElectricityList">
+    <el-table size="mini" show-summary v-loading="loading" :data="monthDosageOfElectricityList">
       <el-table-column label="序号" type="index" :index="indexMethod" width="50" />
       <el-table-column label="单位名称" align="center" prop="plantName" />
       <el-table-column label="建筑名称" align="center" prop="buildingName" />
@@ -323,7 +323,7 @@ export default {
     getList() {
       this.loading = true
       listMonthDosageOfElectricity(this.queryParams).then(response => {
-        this.MonthDosageOfElectricityList = response.rows
+        this.monthDosageOfElectricityList = response.rows
         this.total = response.total
         this.loading = false
       })

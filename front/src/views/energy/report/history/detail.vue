@@ -193,7 +193,7 @@
       </el-popover>
     </el-row>
 
-    <el-table border style="width:100%" v-loading="loading" :data="historyDetailList">
+    <el-table size="mini" border style="width:100%" v-loading="loading" :data="historyDetailList">
       <el-table-column label="序号" type="index" :index="indexMethod" width="50" />
       <el-table-column label="时间" align="center" prop="dataTime" width="160">
         <template slot-scope="scope">
