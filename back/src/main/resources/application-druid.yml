@@ -20,7 +20,7 @@ spring:
                 username: sa
 #                password: saP@$$w0rd
                 password: P@$$w0rd
-#                password: root
+#               password: root
                 driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
             # 初始连接数
             initialSize: 5
