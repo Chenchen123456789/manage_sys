@@ -105,6 +105,19 @@ export const constantRoutes = [{
     }]
   },
   {
+    path: '/video',
+    component: Layout,
+    hidden: true,
+    children: [{
+      path: 'videoPreview/:id',
+      component: () => import('@/views/energy/video/videoPreview'),
+      name: '摄像头预览',
+      meta: {
+        title: '摄像头预览'
+      }
+    }]
+  },
+  {
     path: '/gen',
     component: Layout,
     hidden: true,
