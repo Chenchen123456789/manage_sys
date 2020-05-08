@@ -43,7 +43,7 @@ public class CompanyController extends BaseController {
     @Autowired
     private TokenService tokenService;
 
-    @PreAuthorize("@ss.hasPermi('energy:company:list')")
+//    @PreAuthorize("@ss.hasPermi('energy:company:list')")
     @GetMapping("/list")
     public TableDataInfo selectCompanyList(Company company) {
         startPage();

@@ -82,12 +82,13 @@ export default {
               }
             },
             splitLine: {
-              length: 10,
+              length: 13,
               lineStyle: {
                 color: 'auto'
               }
             },
             axisTick: {
+              length: 10,
               lineStyle: {
                 color: 'auto'
               }

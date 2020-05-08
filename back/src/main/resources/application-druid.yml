@@ -7,20 +7,19 @@ spring:
             master:
                 url: jdbc:mysql://localhost:3306/ry-vue?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
                 username: root
-                password: admin@123root
-#               password: root
+#               password: admin@123root
+                password: root
                 driverClassName: com.mysql.cj.jdbc.Driver
 
             # 从库数据源
             slave:
                 # 从数据源开关/默认关闭
                 enabled: true
-                url: jdbc:sqlserver://localhost:1433;DatabaseName=energy
-#               url: jdbc:sqlserver://192.192.192.150:1433;DatabaseName=energy
                 username: sa
-                password: saP@$$w0rd
-#               password: P@$$w0rd
-#               password: root
+#               url: jdbc:sqlserver://localhost:1433;DatabaseName=energy
+#               password: saP@$$w0rd
+                url: jdbc:sqlserver://172.16.3.107:1433;DatabaseName=energy
+                password: P@$$w0rd                     
                 driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
             # 初始连接数
             initialSize: 5

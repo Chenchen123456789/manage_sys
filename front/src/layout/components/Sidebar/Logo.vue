@@ -27,7 +27,7 @@ export default {
   },
   data() {
     return {
-      title: defaultSettings.title || '后台管理系统',
+      title: defaultSettings.title || '公用工程管理系统',
       logo: logoImg
     }
   }

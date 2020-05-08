@@ -43,7 +43,7 @@ public class MeasuringPointController extends BaseController {
     @Autowired
     private TokenService tokenService;
 
-    @PreAuthorize("@ss.hasPermi('energy:measuringPoint:list')")
+//    @PreAuthorize("@ss.hasPermi('energy:measuringPoint:list')")
     @GetMapping("/list")
     public TableDataInfo selectMeasuringPointList(MeasuringPoint measuringPoint) {
         startPage();

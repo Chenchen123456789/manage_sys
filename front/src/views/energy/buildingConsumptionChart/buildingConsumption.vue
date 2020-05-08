@@ -96,7 +96,7 @@
     </el-row>
     <el-row :gutter="20">
       <el-col :span="24" :xs="24">
-        <el-card class="box-card my-card" style="min-height: 200px">
+        <el-card class="box-card my-card main-tag" style="min-height: 200px">
           <div slot="header" class="clearfix">
             <span>设备主要参数 {{this.selectedBuildingName}}</span>
           </div>
@@ -268,6 +268,11 @@ export default {
 }
 </script>
 <style lang="scss" >
+.main-tag{
+  .el-card__body{
+    padding-bottom: 0px;
+  }
+}
 .my-card {
   margin-top: 10px;
 }

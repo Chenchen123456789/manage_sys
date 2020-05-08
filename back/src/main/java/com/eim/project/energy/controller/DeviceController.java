@@ -44,7 +44,7 @@ public class DeviceController extends BaseController {
     @Autowired
     private TokenService tokenService;
 
-    @PreAuthorize("@ss.hasPermi('energy:device:list')")
+//    @PreAuthorize("@ss.hasPermi('energy:device:list')")
     @GetMapping("/list")
     public TableDataInfo selectDeviceList(Device device) {
         startPage();

@@ -40,7 +40,7 @@ public class PlantController extends BaseController {
     @Autowired
     private TokenService tokenService;
 
-    @PreAuthorize("@ss.hasPermi('energy:plant:list')")
+//    @PreAuthorize("@ss.hasPermi('energy:plant:list')")
     @GetMapping("/list")
     public TableDataInfo selectPlantList(Plant plant) {
         startPage();

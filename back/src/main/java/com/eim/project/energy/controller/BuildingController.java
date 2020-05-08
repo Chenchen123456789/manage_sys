@@ -40,7 +40,7 @@ public class BuildingController extends BaseController {
     @Autowired
     private TokenService tokenService;
 
-    @PreAuthorize("@ss.hasPermi('energy:building:list')")
+//    @PreAuthorize("@ss.hasPermi('energy:building:list')")
     @GetMapping("/list")
     public TableDataInfo selectBuildingList(Building building) {
         startPage();

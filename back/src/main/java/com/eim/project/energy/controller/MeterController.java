@@ -43,7 +43,7 @@ public class MeterController extends BaseController {
     @Autowired
     private TokenService tokenService;
 
-    @PreAuthorize("@ss.hasPermi('energy:meter:list')")
+//    @PreAuthorize("@ss.hasPermi('energy:meter:list')")
     @GetMapping("/list")
     public TableDataInfo selectMeterList(Meter meter) {
         startPage();
