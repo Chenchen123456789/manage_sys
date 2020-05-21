@@ -17,6 +17,8 @@ export function parseTime(time, pattern) {
 	} else {
 		if ((typeof time === 'string') && (/^[0-9]+$/.test(time))) {
 			time = parseInt(time)
+		} else if (typeof time === 'string') {
+			time = time.replace(new RegExp(/-/gm), '/');
 		}
 		if ((typeof time === 'number') && (time.toString().length === 10)) {
 			time = time * 1000
@@ -57,8 +59,8 @@ export function addDateRange(params, dateRange) {
 	search.beginTime = "";
 	search.endTime = "";
 	if (null != dateRange && '' != dateRange) {
-		search.beginTime = this.dateRange[0];
-		search.endTime = this.dateRange[1];
+		search.beginTime = dateRange[0];
+		search.endTime = dateRange[1];
 	}
 	return search;
 }

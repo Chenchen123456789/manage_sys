@@ -151,7 +151,7 @@
       <el-table-column label="仪表名称" align="center" prop="meterName" />
       <el-table-column label="测点名称" align="center" prop="tagName" />
       <el-table-column label="能源类型" align="center" prop="energyTypeName" />
-      <el-table-column label="信号类型" align="center" prop="signalTypeName" />
+      <el-table-column label="数据分类" align="center" prop="signalTypeName" />
       <el-table-column label="系统名称" align="center" prop="systemName" />
       <el-table-column label="测点描述" align="center" prop="description" />
       <el-table-column label="总量点" align="center" prop="totalFlag" />
@@ -186,137 +186,264 @@
     />
 
     <!-- 添加或修改测点对话框 -->
-    <el-dialog :title="title" @close="handleDialogClose" :visible.sync="open" width="500px">
-      <el-form ref="form" :model="form" :rules="rules" label-width="80px">
-        <el-form-item style="width:300px" label="测点名称" prop="tagName">
-          <el-input v-model="form.tagName" placeholder="请输入测点名称" />
-        </el-form-item>
-        <el-form-item label="公司" prop="companyId">
-          <el-select
-            clearable
-            @change="changeFormCompanyOptions"
-            v-model="form.companyId"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="item in formCompanyOptions"
-              :key="item.id"
-              :label="item.companyName"
-              :value="item.id"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="工厂" prop="plantId">
-          <el-select
-            clearable
-            @change="changeFormPlantOptions"
-            v-model="form.plantId"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="item in formPlantOptions"
-              :key="item.id"
-              :label="item.plantName"
-              :value="item.id"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="建筑" prop="buildingId">
-          <el-select
-            clearable
-            @change="changeFormBuildingOptions"
-            v-model="form.buildingId"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="item in formBuildingOptions"
-              :key="item.id"
-              :label="item.buildingName"
-              :value="item.id"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="设备" prop="deviceId">
-          <el-select
-            clearable
-            @change="changeFormDeviceOptions"
-            v-model="form.deviceId"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="item in formDeviceOptions"
-              :key="item.id"
-              :label="item.deviceName"
-              :value="item.id"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="仪表" prop="meterId">
-          <el-select
-            clearable
-            @change="changeFormMeterOptions"
-            v-model="form.meterId"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="item in formMeterOptions"
-              :key="item.id"
-              :label="item.meterCode"
-              :value="item.id"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="能源类型" prop="energyTypeId">
-          <el-select clearable v-model="form.energyTypeId" placeholder="请选择">
-            <el-option
-              v-for="item in formEnergyTypeOptions"
-              :key="item.energyTypeId"
-              :label="item.energyTypeName"
-              :value="item.energyTypeId"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="信号类型" prop="signalTypeId">
-          <el-select clearable v-model="form.signalTypeId" placeholder="请选择">
-            <el-option
-              v-for="item in formSignalTypeOptions"
-              :key="item.signalTypeId"
-              :label="item.signalTypeName"
-              :value="item.signalTypeId"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="系统" prop="systemId">
-          <el-select clearable v-model="form.systemId" placeholder="请选择">
-            <el-option
-              v-for="item in formSystemOptions"
-              :key="item.systemId"
-              :label="item.systemName"
-              :value="item.systemId"
-            ></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="状态" prop="disable">
-          <el-select clearable v-model="form.disable" placeholder="请选择">
-            <el-option :key="0" label="可用" :value="0"></el-option>
-            <el-option :key="1" label="不可用" :value="1"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="总量点" prop="totalFlag">
-          <el-select clearable v-model="form.totalFlag" placeholder="请选择">
-            <el-option :key="0" label="是" :value="0"></el-option>
-            <el-option :key="1" label="否" :value="1"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="主参数" prop="mainTag">
-          <el-select clearable v-model="form.mainTag" placeholder="请选择">
-            <el-option :key="0" label="是" :value="0"></el-option>
-            <el-option :key="1" label="否" :value="1"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="描述" prop="description">
-          <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
-        </el-form-item>
+    <el-dialog :title="title" @close="handleDialogClose" :visible.sync="open" width="800px">
+      <el-form ref="form" :model="form" :rules="rules" label-width="100px">
+        <el-row>
+          <el-col :span="12">
+            <el-form-item style="width:318px" label="测点名称" prop="tagName">
+              <el-input v-model="form.tagName" placeholder="请输入测点名称" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="状态" prop="disable">
+              <el-select clearable v-model="form.disable" placeholder="请选择">
+                <el-option :key="0" label="可用" :value="0"></el-option>
+                <el-option :key="1" label="不可用" :value="1"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="22">
+            <el-form-item label="描述" prop="description">
+              <el-input v-model="form.description" type="textarea" placeholder="请输入内容" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="公司" prop="companyId">
+              <el-select
+                clearable
+                @change="changeFormCompanyOptions"
+                v-model="form.companyId"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="item in formCompanyOptions"
+                  :key="item.id"
+                  :label="item.companyName"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="工厂" prop="plantId">
+              <el-select
+                clearable
+                @change="changeFormPlantOptions"
+                v-model="form.plantId"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="item in formPlantOptions"
+                  :key="item.id"
+                  :label="item.plantName"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="建筑" prop="buildingId">
+              <el-select
+                clearable
+                @change="changeFormBuildingOptions"
+                v-model="form.buildingId"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="item in formBuildingOptions"
+                  :key="item.id"
+                  :label="item.buildingName"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="设备" prop="deviceId">
+              <el-select
+                clearable
+                @change="changeFormDeviceOptions"
+                v-model="form.deviceId"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="item in formDeviceOptions"
+                  :key="item.id"
+                  :label="item.deviceName"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="仪表" prop="meterId">
+              <el-select
+                clearable
+                @change="changeFormMeterOptions"
+                v-model="form.meterId"
+                placeholder="请选择"
+              >
+                <el-option
+                  v-for="item in formMeterOptions"
+                  :key="item.id"
+                  :label="item.meterCode"
+                  :value="item.id"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="系统" prop="systemId">
+              <el-select clearable v-model="form.systemId" placeholder="请选择">
+                <el-option
+                  v-for="item in formSystemOptions"
+                  :key="item.systemId"
+                  :label="item.systemName"
+                  :value="item.systemId"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="能源类型" prop="energyTypeId">
+              <el-select clearable v-model="form.energyTypeId" placeholder="请选择">
+                <el-option
+                  v-for="item in formEnergyTypeOptions"
+                  :key="item.energyTypeId"
+                  :label="item.energyTypeName"
+                  :value="item.energyTypeId"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="数据分类" prop="signalTypeId">
+              <el-select clearable v-model="form.signalTypeId" placeholder="请选择">
+                <el-option
+                  v-for="item in formSignalTypeOptions"
+                  :key="item.signalTypeId"
+                  :label="item.signalTypeName"
+                  :value="item.signalTypeId"
+                ></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="总量点" prop="totalFlag">
+              <el-select clearable v-model="form.totalFlag" placeholder="请选择">
+                <el-option :key="0" label="是" :value="0"></el-option>
+                <el-option :key="1" label="否" :value="1"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="主参数" prop="mainTag">
+              <el-select clearable v-model="form.mainTag" placeholder="请选择">
+                <el-option :key="0" label="是" :value="0"></el-option>
+                <el-option :key="1" label="否" :value="1"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="报警类型" prop="alarmTag">
+              <el-select clearable v-model="form.alarmTag" placeholder="请选择">
+                <el-option :key="0" label="不报警" :value="0"></el-option>
+                <el-option :key="1" label="模拟量" :value="1"></el-option>
+                <el-option :key="2" label="开关量" :value="2"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="报警等级" prop="alarmLevel">
+              <el-select clearable v-model="form.alarmLevel" placeholder="请选择">
+                <el-option :key="0" label="普通" :value="1"></el-option>
+                <el-option :key="1" label="一般" :value="2"></el-option>
+                <el-option :key="2" label="紧急" :value="3"></el-option>
+                <el-option :key="3" label="特急" :value="4"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="12">
+            <el-form-item v-if="form.alarmTag == 1" label="报警LL值" prop="alarmLLValue">
+              <el-input-number :precision="4" v-model="form.alarmLLValue" placeholder="请输入" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item v-if="form.alarmTag == 1" label="报警L值" prop="alarmLValue">
+              <el-input-number :precision="4" v-model="form.alarmLValue" placeholder="请输入" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="12">
+            <el-form-item v-if="form.alarmTag == 1" label="报警H值" prop="alarmHValue">
+              <el-input-number :precision="4" v-model="form.alarmHValue" placeholder="请输入" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item v-if="form.alarmTag == 1" label="报警HH值" prop="alarmHHValue">
+              <el-input-number :precision="4" v-model="form.alarmHHValue" placeholder="请输入" />
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col :span="12">
+            <el-form-item v-if="form.alarmTag == 2" label="报警方式" prop="alarmDigitalValue">
+              <el-select clearable v-model="form.alarmDigitalValue" placeholder="请选择">
+                <el-option :key="0" label="0报警" :value="0"></el-option>
+                <el-option :key="1" label="1报警" :value="1"></el-option>
+                <el-option :key="2" label="0、1都报警" :value="2"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+           <el-col :span="12">
+            <el-form-item
+              v-if="form.alarmTag == 2"
+              label="为0报警说明"
+              prop="alarmDigitalZeroDescription"
+              style="width:318px"
+            >
+              <el-input v-model="form.alarmDigitalZeroDescription" placeholder="请输入" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item
+              v-if="form.alarmTag == 2"
+              label="为1报警说明"
+              prop="alarmDigitalOneDescription"
+              style="width:318px"
+            >
+              <el-input v-model="form.alarmDigitalOneDescription" placeholder="请输入" />
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button type="primary" @click="submitForm">确 定</el-button>
@@ -356,7 +483,7 @@ export default {
   components: {
     ImportData
   },
-  data() {
+  data () {
     return {
       // 遮罩层
       loading: true,
@@ -407,7 +534,10 @@ export default {
         meterId: undefined
       },
       // 表单参数
-      form: {},
+      form: {
+        alarmDigitalValue: 0,
+        alarmHHValue: null
+      },
       // 表单校验
       rules: {
         companyId: [
@@ -429,7 +559,7 @@ export default {
       }
     }
   },
-  created() {
+  created () {
     this.getList()
     this.getCompanyOptions()
     this.getPlantOptions()
@@ -441,27 +571,27 @@ export default {
     this.getEnergyTypeOptions()
   },
   methods: {
-    getClassOptions() {
+    getClassOptions () {
       listClass().then(res => {
         this.formClassOptions = res.rows
       })
     },
-    getSignalTypeOptions() {
+    getSignalTypeOptions () {
       listSignalType().then(res => {
         this.formSignalTypeOptions = res.rows
       })
     },
-    getSystemOptions() {
+    getSystemOptions () {
       listSystem().then(res => {
         this.formSystemOptions = res.rows
       })
     },
-    getEnergyTypeOptions() {
+    getEnergyTypeOptions () {
       listEnergyType().then(res => {
         this.formEnergyTypeOptions = res.rows
       })
     },
-    changeQueryPlantOptions(value) {
+    changeQueryPlantOptions (value) {
       if (value === '') {
         this.queryBuildingOptions = this.buildingOptions
         this.queryDeviceOptions = this.deviceOptions
@@ -482,7 +612,7 @@ export default {
         )
       }
     },
-    changeQueryBuildingOptions(value) {
+    changeQueryBuildingOptions (value) {
       if (value === '') {
         this.queryDeviceOptions = this.deviceOptions
         this.queryMeterOptions = this.meterOptions
@@ -501,7 +631,7 @@ export default {
         )
       }
     },
-    changeQueryDeviceOptions(value) {
+    changeQueryDeviceOptions (value) {
       if (value === '') {
         this.queryMeterOptions = this.meterOptions
       } else {
@@ -518,7 +648,7 @@ export default {
         )
       }
     },
-    changeQueryMeterCodeOptions(value) {
+    changeQueryMeterCodeOptions (value) {
       if (value === '') {
       } else {
         const meter = this.meterOptions.find(item => item.id == value)
@@ -532,7 +662,7 @@ export default {
         this.queryParams = { ...temp }
       }
     },
-    changeFormCompanyOptions(value) {
+    changeFormCompanyOptions (value) {
       if (value === '') {
         this.formPlantOptions = this.plantOptions
         this.formBuildingOptions = this.buildingOptions
@@ -556,7 +686,7 @@ export default {
         )
       }
     },
-    changeFormPlantOptions(value) {
+    changeFormPlantOptions (value) {
       if (value === '') {
         this.formBuildingOptions = this.buildingOptions
         this.formDeviceOptions = this.deviceOptions
@@ -579,7 +709,7 @@ export default {
         )
       }
     },
-    changeFormBuildingOptions(value) {
+    changeFormBuildingOptions (value) {
       if (value === '') {
         this.formDeviceOptions = this.deviceOptions
         this.formMeterOptions = this.meterOptions
@@ -601,7 +731,7 @@ export default {
         )
       }
     },
-    changeFormDeviceOptions(value) {
+    changeFormDeviceOptions (value) {
       if (value === '') {
         this.formMeterOptions = this.meterOptions
       } else {
@@ -617,7 +747,7 @@ export default {
         this.form.meterId = null
       }
     },
-    changeFormMeterOptions(value) {
+    changeFormMeterOptions (value) {
       if (value === '') {
       } else {
         const meter = this.meterOptions.find(item => item.id == value)
@@ -633,42 +763,42 @@ export default {
         this.form = { ...temp }
       }
     },
-    getCompanyOptions() {
+    getCompanyOptions () {
       listCompany().then(res => {
         this.companyOptions = this.formCompanyOptions = res.rows
       })
     },
-    getMeterCodeOptions() {
+    getMeterCodeOptions () {
       listMeter().then(res => {
         this.queryMeterOptions = this.formMeterOptions = this.meterOptions =
           res.rows
       })
     },
-    getPlantOptions() {
+    getPlantOptions () {
       listPlant().then(res => {
         this.plantOptions = this.queryPlantOptions = this.formPlantOptions =
           res.rows
       })
     },
-    getBuildingOptions() {
+    getBuildingOptions () {
       listBuilding().then(res => {
         this.buildingOptions = this.queryBuildingOptions = this.formBuildingOptions =
           res.rows
       })
     },
-    getDeviceOptions() {
+    getDeviceOptions () {
       listDevice().then(res => {
         this.deviceOptions = this.queryDeviceOptions = this.formDeviceOptions =
           res.rows
       })
     },
-    indexMethod(index) {
+    indexMethod (index) {
       return (
         (this.queryParams.pageNum - 1) * this.queryParams.pageSize + index + 1
       )
     },
     /** 查询测点列表 */
-    getList() {
+    getList () {
       this.loading = true
       listMeasuringPoint(this.queryParams).then(response => {
         const list = response.rows
@@ -703,11 +833,11 @@ export default {
       })
     },
     // 取消按钮
-    cancel() {
+    cancel () {
       this.open = false
       this.reset()
     },
-    handleDialogClose() {
+    handleDialogClose () {
       this.formCompanyOptions = this.companyOptions
       this.formPlantOptions = this.plantOptions
       this.formBuildingOptions = this.buildingOptions
@@ -715,7 +845,7 @@ export default {
       this.formMeterOptions = this.meterOptions
     },
     // 表单重置
-    reset() {
+    reset () {
       this.form = {
         id: undefined,
         tagName: undefined,
@@ -724,29 +854,29 @@ export default {
       this.resetForm('form')
     },
     /** 搜索按钮操作 */
-    handleQuery() {
+    handleQuery () {
       this.queryParams.pageNum = 1
       this.getList()
     },
     /** 重置按钮操作 */
-    resetQuery() {
+    resetQuery () {
       this.resetForm('queryForm')
       this.handleQuery()
     },
     // 多选框选中数据
-    handleSelectionChange(selection) {
+    handleSelectionChange (selection) {
       this.ids = selection.map(item => item.id)
       this.single = selection.length != 1
       this.multiple = !selection.length
     },
     /** 新增按钮操作 */
-    handleAdd() {
+    handleAdd () {
       this.reset()
       this.open = true
       this.title = '添加测点'
     },
     /** 修改按钮操作 */
-    handleUpdate(row) {
+    handleUpdate (row) {
       this.reset()
       const id = row.id
       getMeasuringPoint(id).then(response => {
@@ -763,7 +893,7 @@ export default {
       })
     },
     /** 提交按钮 */
-    submitForm: function() {
+    submitForm: function () {
       this.$refs['form'].validate(valid => {
         if (valid) {
           if (this.form.id != undefined) {
@@ -791,24 +921,24 @@ export default {
       })
     },
     /** 删除按钮操作 */
-    handleDelete(row) {
+    handleDelete (row) {
       const ids = row.id || this.ids
       this.$confirm('是否确认删除,删除后不能恢复?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
-        .then(function() {
+        .then(function () {
           return delMeasuringPoint(ids)
         })
         .then(() => {
           this.getList()
           this.msgSuccess('删除成功')
         })
-        .catch(function() {})
+        .catch(function () { })
     },
     /** 导出按钮操作 */
-    handleExport(type) {
+    handleExport (type) {
       const queryParams = { ...this.queryParams }
       if (type === 0) {
         queryParams.pageNum = null
@@ -818,16 +948,16 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       })
-        .then(function() {
+        .then(function () {
           return exportMeasuringPoint(queryParams)
         })
         .then(response => {
           this.download(response.msg)
         })
-        .catch(function() {})
+        .catch(function () { })
     },
     /** 导入按钮操作 */
-    handleImport() {
+    handleImport () {
       this.upload = {
         title: '测点导入',
         open: true

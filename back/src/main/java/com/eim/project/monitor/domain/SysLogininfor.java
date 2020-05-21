@@ -4,6 +4,7 @@ import java.util.Date;
 import com.eim.framework.aspectj.lang.annotation.Excel;
 import com.eim.framework.aspectj.lang.annotation.Excel.ColumnType;
 import com.eim.framework.web.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * 系统访问记录表 sys_logininfor
@@ -47,6 +48,7 @@ public class SysLogininfor extends BaseEntity
     private String msg;
 
     /** 访问时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "访问时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date loginTime;
 

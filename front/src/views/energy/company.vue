@@ -292,18 +292,16 @@ export default {
     /** 导出按钮操作 */
     handleExport(type) {
       const queryParams = { ...this.queryParams }
+      if (type === 0) {
+        queryParams.pageNum = null
+      }
       this.$confirm('是否确认导出公司数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(function() {
-          if (type === 0) {
-            return exportCompany()
-          }
-          if (type === 1) {
             return exportCompany(queryParams)
-          }
         })
         .then(response => {
           this.download(response.msg)

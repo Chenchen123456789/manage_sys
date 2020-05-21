@@ -4,6 +4,7 @@ import java.util.Date;
 import com.eim.framework.aspectj.lang.annotation.Excel;
 import com.eim.framework.aspectj.lang.annotation.Excel.ColumnType;
 import com.eim.framework.web.domain.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  * 操作日志记录表 oper_log
@@ -78,6 +79,7 @@ public class SysOperLog extends BaseEntity
     private String errorMsg;
 
     /** 操作时间 */
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Excel(name = "操作时间", width = 30, dateFormat = "yyyy-MM-dd HH:mm:ss")
     private Date operTime;
 

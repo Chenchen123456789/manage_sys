@@ -29,7 +29,7 @@ export default {
       default: {}
     }
   },
-  data() {
+  data () {
     return {
       chart: null
     }
@@ -37,17 +37,17 @@ export default {
   watch: {
     dashboardData: {
       deep: true,
-      handler(val) {
+      handler (val) {
         this.setChartData(val)
       }
     }
   },
-  mounted() {
+  mounted () {
     this.$nextTick(() => {
       this.initChart()
     })
   },
-  beforeDestroy() {
+  beforeDestroy () {
     if (!this.chart) {
       return
     }
@@ -55,7 +55,7 @@ export default {
     this.chart = null
   },
   methods: {
-    setChartData(dashboardData) {
+    setChartData (dashboardData) {
       const placeholderId = dashboardData.placeholderId
       const dashboardDataList = dashboardData.dashboardDataList
       if (dashboardDataList.length > 0) {
@@ -63,9 +63,19 @@ export default {
           item => item.placeholderId === placeholderId
         ).item
         let resData = []
-        const max = Math.max(...resItem.map(item => item.tagValue))
+        let maxValue = Math.max(...resItem.map(item => item.tagValue))
+        if (maxValue <= 1) {
+          maxValue = 1
+        } else if (maxValue > 1 && maxValue <= 10) {
+          maxValue = 10
+        } else if (maxValue > 10 && maxValue <= 100) {
+          maxValue = 100
+        } else if (maxValue > 100) {
+          let number2 = Math.ceil(maxValue / 100);
+          maxValue = number2 * 100
+        }
         resData = resItem.map(item => {
-          return { value: item.tagValue }
+          return { value: item.tagValue, name:item.tagName }
         })
         const seriesData = []
         let index = 3
@@ -75,7 +85,10 @@ export default {
           const seriesItem = {}
           seriesItem = {
             type: 'gauge',
-            data: [item],
+            name: item.name,
+            max: maxValue,
+            // splitNumber: 10,
+            data: [{value: item.value}],
             axisLine: {
               lineStyle: {
                 width: 5
@@ -109,7 +122,7 @@ export default {
         })
       }
     },
-    initChart() {
+    initChart () {
       this.chart = echarts.init(this.$el, 'macarons')
       this.chart.setOption({
         tooltip: {
@@ -121,7 +134,7 @@ export default {
             type: 'gauge',
             data: [{ value: 0 }],
             // min: 0,
-            // max: max,
+            // max: maxValue,
             // center:['50%','40%'],
             axisLine: {
               // 坐标轴线

@@ -48,6 +48,7 @@ const mutations = {
     state.iframeViews = state.iframeViews.filter(item => item.path === view.path)
   },
   DEL_OTHERS_CACHED_VIEWS: (state, view) => {
+    const index = state.cachedViews.indexOf(view.name)
     if (index > -1) {
       state.cachedViews = state.cachedViews.slice(index, index + 1)
     } else {

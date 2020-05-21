@@ -344,7 +344,7 @@ export default {
 }
 .second-part {
   background: white;
-  margin-bottom: 30px;
+  margin-bottom: 18px;
   margin-left: 0px !important;
   margin-right: 0px !important;
   // display: flex;
@@ -354,7 +354,7 @@ export default {
 .third-part {
   margin-left: 0px !important;
   margin-right: 0px !important;
-  margin-bottom: 30px;
+  margin-bottom: 18px;
   background: white;
   .el-col:first-child {
     padding-left: 0px !important;
@@ -381,7 +381,7 @@ export default {
 .dashboard-editor-container {
   min-height: 100vh;
   max-height: 100%;
-  padding: 32px;
+  padding: 20px;
   background-color: rgb(240, 242, 245);
   position: relative;
 

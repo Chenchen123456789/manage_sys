@@ -36,10 +36,21 @@
         <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
         <result column="update_by" jdbcType="NVARCHAR" property="updateBy"/>
         <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="alarm_tag" jdbcType="INTEGER" property="alarmTag"/>
+        <result column="alarm_ll_value" jdbcType="DOUBLE" property="alarmLLValue"/>
+        <result column="alarm_l_value" jdbcType="DOUBLE" property="alarmLValue"/>
+        <result column="alarm_h_value" jdbcType="DOUBLE" property="alarmHValue"/>
+        <result column="alarm_hh_value" jdbcType="DOUBLE" property="alarmHHValue"/>
+        <result column="alarm_digital_value" jdbcType="INTEGER" property="alarmDigitalValue"/>
+        <result column="alarm_level" jdbcType="INTEGER" property="alarmLevel"/>
+        <result column="alarm_digital_zero_description" jdbcType="NVARCHAR" property="alarmDigitalZeroDescription"/>
+        <result column="alarm_digital_one_description" jdbcType="NVARCHAR" property="alarmDigitalOneDescription"/>
     </resultMap>
     <sql id="Base_Column_List">
     id, tag_name, device_tag, description, unit, range_min, range_max, total_flag, main_tag, 
-    note, [disable], class_id, energy_type_id, signal_type_id, system_id, meter_id, [location], 
+    note, [disable], class_id, energy_type_id, signal_type_id, system_id, meter_id, [location],
+    alarm_tag,alarm_ll_value,alarm_l_value,alarm_h_value,alarm_hh_value,alarm_digital_value,alarm_level,
+    alarm_digital_zero_description, alarm_digital_one_description,
     create_by, create_time, update_by, update_time
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -66,7 +77,16 @@
           A.create_by,
           A.create_time,
           A.update_by,
-          A.update_time
+          A.update_time,
+          alarm_tag,
+          alarm_ll_value,
+          alarm_l_value,
+          alarm_h_value,
+          alarm_hh_value,
+          alarm_digital_value,
+          alarm_level,
+          alarm_digital_zero_description,
+          alarm_digital_one_description
       FROM
           S2_Variable A
           JOIN O_5Meter B ON A.meter_id = B.id
@@ -108,7 +128,16 @@
         A.create_by,
         A.create_time,
         A.update_by,
-        A.update_time
+        A.update_time,
+        alarm_tag,
+        alarm_ll_value,
+        alarm_l_value,
+        alarm_h_value,
+        alarm_hh_value,
+        alarm_digital_value,
+        alarm_level,
+        alarm_digital_zero_description,
+        alarm_digital_one_description
         FROM
         S2_Variable A
         JOIN O_5Meter B ON A.meter_id = B.id
@@ -158,7 +187,9 @@
       note, [disable], class_id, 
       energy_type_id, signal_type_id, system_id, 
       meter_id, [location], create_by, 
-      create_time, update_by, update_time
+      create_time, update_by, update_time,alarm_tag,
+      alarm_ll_value, alarm_l_value, alarm_h_value, alarm_hh_value,alarm_digital_value,alarm_level,
+      alarm_digital_zero_description, alarm_digital_one_description
       )
     values (#{id,jdbcType=INTEGER}, #{tagName,jdbcType=NVARCHAR}, #{deviceTag,jdbcType=NVARCHAR}, 
       #{description,jdbcType=NVARCHAR}, #{unit,jdbcType=NVARCHAR}, #{rangeMin,jdbcType=NVARCHAR}, 
@@ -166,7 +197,11 @@
       #{note,jdbcType=NVARCHAR}, #{disable,jdbcType=INTEGER}, #{classId,jdbcType=INTEGER}, 
       #{energyTypeId,jdbcType=INTEGER}, #{signalTypeId,jdbcType=INTEGER}, #{systemId,jdbcType=INTEGER}, 
       #{meterId,jdbcType=INTEGER}, #{location,jdbcType=NVARCHAR}, #{createBy,jdbcType=NVARCHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=NVARCHAR}, #{updateTime,jdbcType=TIMESTAMP}
+      #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=NVARCHAR}, #{updateTime,jdbcType=TIMESTAMP},
+      #{alarmTag,jdbcType=INTEGER}, #{alarmLLValue,jdbcType=DOUBLE}, #{alarmLValue,jdbcType=DOUBLE},
+      #{alarmHValue,jdbcType=DOUBLE}, #{alarmHHValue,jdbcType=DOUBLE},  #{alarmDigitalValue,jdbcType=INTEGER},
+      #{alarmLevel,jdbcType=INTEGER}, #{alarmDigitalZeroDescription,jdbcType=NVARCHAR},
+      #{alarmDigitalOneDescription,jdbcType=NVARCHAR}
       )
   </insert>
     <insert id="insertSelective" parameterType="com.eim.project.energy.entity.MeasuringPoint">
@@ -235,6 +270,33 @@
             <if test="updateTime != null">
                 update_time,
             </if>
+            <if test="alarmTag != null">
+                alarm_tag,
+            </if>
+            <if test="alarmLLValue != null">
+                alarm_ll_value,
+            </if>
+            <if test="alarmLValue != null">
+                alarm_l_value,
+            </if>
+            <if test="alarmHValue != null">
+                alarm_h_value,
+            </if>
+            <if test="alarmHHValue != null">
+                alarm_hh_value,
+            </if>
+            <if test="alarmDigitalValue != null">
+                alarm_digital_value,
+            </if>
+            <if test="alarmLevel != null">
+                alarm_level,
+            </if>
+            <if test="alarmDigitalZeroDescription != null">
+                alarm_digital_zero_description,
+            </if>
+            <if test="alarmDigitalOneDescription != null">
+                alarm_digital_one_description
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -299,6 +361,33 @@
             </if>
             <if test="updateTime != null">
                 #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="alarmTag != null">
+                #{alarmTag,jdbcType=INTEGER},
+            </if>
+            <if test="alarmLLValue != null">
+                #{alarmLLValue,jdbcType=DOUBLE},
+            </if>
+            <if test="alarmLValue != null">
+                #{alarmLValue,jdbcType=DOUBLE},
+            </if>
+            <if test="alarmHValue != null">
+                #{alarmHValue,jdbcType=DOUBLE},
+            </if>
+            <if test="alarmHHValue != null">
+                #{alarmHHValue,jdbcType=DOUBLE},
+            </if>
+            <if test="alarmDigitalValue != null">
+                #{alarmDigitalValue,jdbcType=INTEGER},
+            </if>
+            <if test="alarmLevel != null">
+                #{alarmLevel,jdbcType=INTEGER},
+            </if>
+            <if test="alarmDigitalZeroDescription != null">
+                #{alarmDigitalZeroDescription,jdbcType=NVARCHAR},
+            </if>
+            <if test="alarmDigitalOneDescription != null">
+                #{alarmDigitalOneDescription,jdbcType=NVARCHAR}
             </if>
         </trim>
     </insert>
@@ -365,6 +454,33 @@
             <if test="updateTime != null">
                 update_time = #{updateTime,jdbcType=TIMESTAMP},
             </if>
+            <if test="alarmTag != null">
+                alarm_tag = #{alarmTag,jdbcType=INTEGER},
+            </if>
+            <if test="alarmLLValue != null">
+                alarm_ll_value = #{alarmLLValue,jdbcType=DOUBLE},
+            </if>
+            <if test="alarmLValue != null">
+                alarm_l_value = #{alarmLValue,jdbcType=DOUBLE},
+            </if>
+            <if test="alarmHValue != null">
+                alarm_h_value = #{alarmHValue,jdbcType=DOUBLE},
+            </if>
+            <if test="alarmHHValue != null">
+                alarm_hh_value = #{alarmHHValue,jdbcType=DOUBLE},
+            </if>
+            <if test="alarmDigitalValue != null">
+                alarm_digital_value = #{alarmDigitalValue,jdbcType=INTEGER},
+            </if>
+            <if test="alarmLevel != null">
+                alarm_level = #{alarmLevel,jdbcType=INTEGER},
+            </if>
+            <if test="alarmDigitalZeroDescription != null">
+                alarm_digital_zero_description = #{alarmDigitalZeroDescription,jdbcType=NVARCHAR},
+            </if>
+            <if test="alarmDigitalOneDescription != null">
+                alarm_digital_one_description = #{alarmDigitalOneDescription,jdbcType=NVARCHAR}
+            </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
@@ -389,7 +505,16 @@
       create_by = #{createBy,jdbcType=NVARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=NVARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      alarm_tag = #{alarmTag,jdbcType=INTEGER},
+      alarm_ll_value = #{alarmLLValue,jdbcType=DOUBLE},
+      alarm_l_value = #{alarmLValue,jdbcType=DOUBLE},
+      alarm_h_value = #{alarmHValue,jdbcType=DOUBLE},
+      alarm_hh_value = #{alarmHHValue,jdbcType=DOUBLE},
+      alarm_digital_value = #{alarmDigitalValue,jdbcType=INTEGER},
+      alarm_level = #{alarmLevel,jdbcType=INTEGER},
+      alarm_digital_zero_description = #{alarmDigitalZeroDescription,jdbcType=NVARCHAR},
+      alarm_digital_one_description = #{alarmDigitalOneDescription,jdbcType=NVARCHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

@@ -126,11 +126,8 @@ export default {
   },
   methods: {
     changeQueryPlantOptions(value) {
-      
       if (value == '') {
-        console.log(value)
         this.queryParams.plantId = undefined
-         console.log(this.queryParams)
       }
     },
     getPlantOptions() {

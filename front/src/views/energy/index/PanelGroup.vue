@@ -2,8 +2,8 @@
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
       <div class="card-panel">
-        <div class="card-panel-icon-wrapper icon-people">
-          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
+        <div class="card-panel-icon-wrapper icon-electricity">
+          <svg-icon icon-class="electricity" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
@@ -21,8 +21,8 @@
     </el-col>
     <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
       <div class="card-panel">
-        <div class="card-panel-icon-wrapper icon-message">
-          <svg-icon icon-class="message" class-name="card-panel-icon" />
+        <div class="card-panel-icon-wrapper icon-water">
+          <svg-icon icon-class="water" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
@@ -40,8 +40,8 @@
     </el-col>
     <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
       <div class="card-panel">
-        <div class="card-panel-icon-wrapper icon-money">
-          <svg-icon icon-class="money" class-name="card-panel-icon" />
+        <div class="card-panel-icon-wrapper icon-air">
+          <svg-icon icon-class="air" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
@@ -59,8 +59,8 @@
     </el-col>
     <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
       <div class="card-panel">
-        <div class="card-panel-icon-wrapper icon-shopping">
-          <svg-icon icon-class="shopping" class-name="card-panel-icon" />
+        <div class="card-panel-icon-wrapper icon-lifeWater">
+          <svg-icon icon-class="lifeWater" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
@@ -78,8 +78,8 @@
     </el-col>
     <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
       <div class="card-panel">
-        <div class="card-panel-icon-wrapper icon-shopping">
-          <svg-icon icon-class="shopping" class-name="card-panel-icon" />
+        <div class="card-panel-icon-wrapper icon-fireWater">
+          <svg-icon icon-class="fireWater" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
@@ -97,8 +97,8 @@
     </el-col>
     <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
       <div class="card-panel">
-        <div class="card-panel-icon-wrapper icon-shopping">
-          <svg-icon icon-class="shopping" class-name="card-panel-icon" />
+        <div class="card-panel-icon-wrapper icon-airPressure">
+          <svg-icon icon-class="airPressure" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
@@ -152,9 +152,9 @@ export default {
     setValues(panelGroupData) {
       const homePageChartSettingList = panelGroupData.homePageChartSettingList
       if (homePageChartSettingList.length > 0) {
-        this.lifeWaterPressure = homePageChartSettingList[0].tagValue
-        this.fireWaterPressure = homePageChartSettingList[1].tagValue
-        this.airCompressorPressure = homePageChartSettingList[2].tagValue
+        this.lifeWaterPressure = homePageChartSettingList.find(item=> item.placeholderId == 1).tagValue
+        this.fireWaterPressure = homePageChartSettingList.find(item=> item.placeholderId == 2).tagValue
+        this.airCompressorPressure = homePageChartSettingList.find(item=> item.placeholderId == 3).tagValue
       }
 
       const yearTotal = panelGroupData.yearTotal
@@ -168,10 +168,10 @@ export default {
 
 <style lang="scss" scoped>
 .panel-group {
-  margin-top: 18px;
+  margin-top: -2px;
 
   .card-panel-col {
-    margin-bottom: 32px;
+    margin-bottom: 18px;
     padding-left: 8px !important;
     padding-right: 8px !important;
   }
@@ -184,7 +184,6 @@ export default {
 
   .card-panel {
     height: 108px;
-    cursor: pointer;
     font-size: 12px;
     position: relative;
     overflow: hidden;
@@ -196,42 +195,8 @@ export default {
     align-items: center;
     justify-content: space-evenly;
 
-    &:hover {
-      .card-panel-icon-wrapper {
-        color: #fff;
-      }
-
-      .icon-people {
-        background: #40c9c6;
-      }
-
-      .icon-message {
-        background: #36a3f7;
-      }
-
-      .icon-money {
-        background: #f4516c;
-      }
-
-      .icon-shopping {
-        background: #34bfa3;
-      }
-    }
-
-    .icon-people {
+    .icon-electricity {
       color: #40c9c6;
-    }
-
-    .icon-message {
-      color: #36a3f7;
-    }
-
-    .icon-money {
-      color: #f4516c;
-    }
-
-    .icon-shopping {
-      color: #34bfa3;
     }
 
     .card-panel-icon-wrapper {

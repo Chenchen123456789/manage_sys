@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eim.project.energy.mapper.AlarmLogMapper">
+    <resultMap id="BaseResultMap" type="com.eim.project.energy.entity.AlarmLog">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="tag_name" jdbcType="NVARCHAR" property="tagName"/>
+        <result column="tag_value" jdbcType="DOUBLE" property="tagValue"/>
+        <result column="description" jdbcType="NVARCHAR" property="description"/>
+        <result column="alarm_time" jdbcType="TIMESTAMP" property="alarmTime"/>
+        <result column="ack_time" jdbcType="TIMESTAMP" property="ackTime"/>
+        <result column="ack_user" jdbcType="NVARCHAR" property="ackUser"/>
+        <result column="status" jdbcType="NVARCHAR" property="status"/>
+        <result column="area" jdbcType="NVARCHAR" property="area"/>
+        <result column="level" jdbcType="NVARCHAR" property="level"/>
+        <result column="ack_status" jdbcType="INTEGER" property="ackStatus"/>
+        <result column="bg_color" jdbcType="NVARCHAR" property="bgColor"/>
+        <result column="restore_time" jdbcType="TIMESTAMP" property="restoreTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, tag_name, tag_value, description, alarm_time, ack_time, ack_user, [status], area, ack_status, bg_color,
+    restore_time, [level]
+  </sql>
+    <select id="selectMeasuringPointByTagName" resultType="map">
+        SELECT * FROM Variable_Info WHERE tag_name = #{tagName, jdbcType=NVARCHAR}
+    </select>
+    <select id="selectMeasuringPointList" resultType="map">
+        SELECT id, tag_name tagName FROM S2_Variable where alarm_tag = 1 or alarm_tag = 2
+    </select>
+    <select id="selectAlarmLogList" parameterType="map" resultMap="BaseResultMap">
+        select *
+        from alarm_log
+        <where>
+            <if test="beginTime != null">
+                alarm_time &gt;= #{beginTime ,jdbcType=TIMESTAMP}
+            </if>
+            <if test="endTime != null">
+                AND alarm_time &lt;= #{endTime, jdbcType=TIMESTAMP}
+            </if>
+            <if test="queryTagName!=null and queryTagName.size>0">
+                AND tag_name in
+                <foreach item="item" index="index" collection="queryTagName"
+                         open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        ORDER BY
+        CASE
+        bg_color
+        WHEN 'green' THEN 2 ELSE 1
+        END,
+        alarm_time DESC
+    </select>
+    <select id="selectUnAckAlarmLog" resultType="java.lang.Integer">
+        SELECT COUNT(0) FROM  alarm_log WHERE ack_status = 0
+    </select>
+    <select id="selectAlarmLogByTagName" parameterType="java.lang.String" resultMap="BaseResultMap">
+        SELECT TOP
+            1 *
+        FROM
+            alarm_log
+        WHERE
+            tag_name = #{tagName,jdbcType=NVARCHAR}
+        ORDER BY
+            id DESC
+    </select>
+    <select id="selectAlarmTagValueList" resultType="map">
+        SELECT
+            tagname tagName,
+            tagvalue tagValue,
+            alarm_tag alarmTag,
+            alarm_ll_value alarmLLValue,
+            alarm_l_value alarmLValue,
+            alarm_h_value alarmHValue,
+            alarm_hh_value alarmHHValue,
+            alarm_digital_value alarmDigitalValue,
+            alarm_level alarmLevel,
+            A.description,
+            A.alarm_digital_zero_description alarmDigitalZeroDescription,
+            A.alarm_digital_one_description alarmDigitalOneDescription
+        FROM
+            S2_Variable A
+            JOIN RTable B ON A.tag_name = B.tagname
+        WHERE
+            alarm_tag = 1
+            OR alarm_tag = 2
+    </select>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from alarm_log
+        where id = #{id,jdbcType=BIGINT}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from alarm_log
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.eim.project.energy.entity.AlarmLog">
+    insert into alarm_log (id, tag_name, tag_value, 
+      description, alarm_time, ack_time, 
+      ack_user, [status], area, ack_status,
+      bg_color, restore_time, [level])
+    values (#{id,jdbcType=BIGINT}, #{tagName,jdbcType=NVARCHAR}, #{tagValue,jdbcType=DOUBLE},
+      #{description,jdbcType=NVARCHAR}, #{alarmTime,jdbcType=TIMESTAMP}, #{ackTime,jdbcType=TIMESTAMP},
+      #{ackUser,jdbcType=NVARCHAR}, #{status,jdbcType=NVARCHAR}, #{area,jdbcType=NVARCHAR},
+       #{ack_status,jdbcType=INTEGER}, #{bgColor,jdbcType=NVARCHAR}), #{restoreTime,jdbcType=TIMESTAMP},
+      #{level,jdbcType=NVARCHAR})
+  </insert>
+    <insert id="insertSelective" parameterType="com.eim.project.energy.entity.AlarmLog">
+        insert into alarm_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="tagName != null">
+                tag_name,
+            </if>
+            <if test="tagValue != null">
+                tag_value,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="alarmTime != null">
+                alarm_time,
+            </if>
+            <if test="ackTime != null">
+                ack_time,
+            </if>
+            <if test="ackUser != null">
+                ack_user,
+            </if>
+            <if test="status != null">
+                [status],
+            </if>
+            <if test="area != null">
+                area,
+            </if>
+            <if test="level != null">
+                [level],
+            </if>
+            <if test="ackStatus != null">
+                ack_status,
+            </if>
+            <if test="bgColor != null">
+                bg_color,
+            </if>
+            <if test="restoreTime != null">
+                restore_time
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="tagName != null">
+                #{tagName,jdbcType=NVARCHAR},
+            </if>
+            <if test="tagValue != null">
+                #{tagValue,jdbcType=DOUBLE},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=NVARCHAR},
+            </if>
+            <if test="alarmTime != null">
+                #{alarmTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="ackTime != null">
+                #{ackTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="ackUser != null">
+                #{ackUser,jdbcType=NVARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=NVARCHAR},
+            </if>
+            <if test="area != null">
+                #{area,jdbcType=NVARCHAR},
+            </if>
+            <if test="level != null">
+                #{level,jdbcType=NVARCHAR},
+            </if>
+            <if test="ackStatus != null">
+                #{ackStatus,jdbcType=INTEGER},
+            </if>
+            <if test="bgColor != null">
+                #{bgColor,jdbcType=NVARCHAR}
+            </if>
+            <if test="restoreTime != null">
+                #{restoreTime,jdbcType=TIMESTAMP}
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective">
+        update alarm_log
+        SET bg_color = ( CASE bg_color WHEN 'purple' THEN 'green' when 'green' then 'green' ELSE 'blue' END ),
+        ack_status = 1,
+        ack_time = GETDATE( ),
+        <if test="ackUser!=null">
+            ack_user = #{ackUser, jdbcType=NVARCHAR}
+        </if>
+        where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.eim.project.energy.entity.AlarmLog">
+    update alarm_log
+    set tag_name = #{tagName,jdbcType=NVARCHAR},
+      tag_value = #{tagValue,jdbcType=DOUBLE},
+      description = #{description,jdbcType=NVARCHAR},
+      alarm_time = #{alarmTime,jdbcType=TIMESTAMP},
+      ack_time = #{ackTime,jdbcType=TIMESTAMP},
+      ack_user = #{ackUser,jdbcType=NVARCHAR},
+      [status] = #{status,jdbcType=NVARCHAR},
+      area = #{area,jdbcType=NVARCHAR},
+      [level] = #{level,jdbcType=NVARCHAR},
+      ack_status = #{ackStatus,jdbcType=INTEGER},
+      bg_color = #{bgColor,jdbcType=NVARCHAR},
+      restore_time = #{restoreTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <update id="updateCurrentAlarmLogList" parameterType="string">
+        UPDATE alarm_log
+        SET bg_color = ( CASE ack_status WHEN 0 THEN 'purple' ELSE 'green' END ),
+         restore_time = getdate()
+        WHERE
+            tag_name = #{tagName,jdbcType=NVARCHAR}
+            AND bg_color != 'green'
+            AND bg_color != 'purple'
+    </update>
+</mapper>

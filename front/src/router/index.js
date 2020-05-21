@@ -31,22 +31,22 @@ export const constantRoutes = [{
     hidden: true,
     children: [{
       path: '/redirect/:path(.*)',
-      component: () => import('@/views/redirect')
+      component: (resolve) => require(['@/views/redirect'], resolve)
     }]
   },
   {
     path: '/login',
-    component: () => import('@/views/login'),
+    component: (resolve) => require(['@/views/login'], resolve),
     hidden: true
   },
   {
     path: '/404',
-    component: () => import('@/views/error/404'),
+    component: (resolve) => require(['@/views/error/404'], resolve),
     hidden: true
   },
   {
     path: '/401',
-    component: () => import('@/views/error/401'),
+    component: (resolve) => require(['@/views/error/401'], resolve),
     hidden: true
   },
   // {
@@ -56,7 +56,7 @@ export const constantRoutes = [{
   //   children: [
   //     {
   //       path: 'index',
-  //       component: () => import('@/views/index'),
+  //       component: (resolve) => require(['@/views/index'], resolve),
   //       name: '首页',
   //       meta: { title: '首页', icon: 'dashboard', noCache: true, affix: true }
   //     }
@@ -69,7 +69,7 @@ export const constantRoutes = [{
     redirect: 'noredirect',
     children: [{
       path: 'profile',
-      component: () => import('@/views/system/user/profile/index'),
+      component: (resolve) => require(['@/views/system/user/profile/index'], resolve),
       name: 'Profile',
       meta: {
         title: '个人中心',
@@ -83,7 +83,7 @@ export const constantRoutes = [{
     hidden: true,
     children: [{
       path: 'type/data/:dictId(\\d+)',
-      component: () => import('@/views/system/dict/data'),
+      component: (resolve) => require(['@/views/system/dict/data'], resolve),
       name: 'Data',
       meta: {
         title: '字典数据',
@@ -97,7 +97,7 @@ export const constantRoutes = [{
     hidden: true,
     children: [{
       path: 'log',
-      component: () => import('@/views/monitor/job/log'),
+      component: (resolve) => require(['@/views/monitor/job/log'], resolve),
       name: 'JobLog',
       meta: {
         title: '调度日志'
@@ -110,7 +110,7 @@ export const constantRoutes = [{
     hidden: true,
     children: [{
       path: 'videoPreview/:id',
-      component: () => import('@/views/energy/video/videoPreview'),
+      component: (resolve) => require(['@/views/energy/video/videoPreview'], resolve),
       name: '摄像头预览',
       meta: {
         title: '摄像头预览'
@@ -123,7 +123,7 @@ export const constantRoutes = [{
     hidden: true,
     children: [{
       path: 'edit',
-      component: () => import('@/views/tool/gen/editTable'),
+      component: (resolve) => require(['@/views/tool/gen/editTable'], resolve),
       name: 'GenEdit',
       meta: {
         title: '修改生成配置'

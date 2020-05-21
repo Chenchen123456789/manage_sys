@@ -12,6 +12,11 @@ const service = axios.create({
   // 超时
   timeout: 10000,
   transformRequest: [function (data) {
+    //是否为图片上传
+    if(data instanceof FormData){
+      return data
+    }
+    //处理请求中时区问题
     Date.prototype.toISOString = function () {
       return moment(this).format('YYYY-MM-DD HH:mm:ss')
     }

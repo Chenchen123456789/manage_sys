@@ -81,10 +81,10 @@ public class MeasuringPoint extends BaseEntity {
     @Excel(name = "能源类型", cellType = Excel.ColumnType.STRING, type = Excel.Type.EXPORT)
     private String energyTypeName;
 
-    @Excel(name = "信号类型ID", cellType = Excel.ColumnType.NUMERIC)
+    @Excel(name = "数据分类ID", cellType = Excel.ColumnType.NUMERIC)
     private Integer signalTypeId;
 
-    @Excel(name = "信号类型", cellType = Excel.ColumnType.STRING, type = Excel.Type.EXPORT)
+    @Excel(name = "数据分类", cellType = Excel.ColumnType.STRING, type = Excel.Type.EXPORT)
     private String signalTypeName;
 
     @Excel(name = "系统ID", cellType = Excel.ColumnType.NUMERIC)
@@ -93,6 +93,31 @@ public class MeasuringPoint extends BaseEntity {
     @Excel(name = "系统名称", cellType = Excel.ColumnType.STRING, type = Excel.Type.EXPORT)
     private String systemName;
 
+    @Excel(name = "报警类型", cellType = Excel.ColumnType.NUMERIC)
+    private Integer alarmTag;
+
     private String location;
+
+    @Excel(name = "报警LL值", cellType = Excel.ColumnType.NUMERIC)
+    private Double alarmLLValue;
+
+    @Excel(name = "报警L值", cellType = Excel.ColumnType.NUMERIC)
+    private Double alarmLValue;
+
+    @Excel(name = "报警H值", cellType = Excel.ColumnType.NUMERIC)
+    private Double alarmHValue;
+
+    @Excel(name = "报警HH值", cellType = Excel.ColumnType.NUMERIC)
+    private Double alarmHHValue;
+
+    @Excel(name = "开关量报警方式", cellType = Excel.ColumnType.NUMERIC)
+    private Integer alarmDigitalValue;
+
+    @Excel(name = "报警等级", cellType = Excel.ColumnType.NUMERIC)
+    private Integer alarmLevel;
+
+    private String alarmDigitalZeroDescription;
+
+    private String alarmDigitalOneDescription;
 }
 

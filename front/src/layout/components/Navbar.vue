@@ -1,11 +1,18 @@
 <template>
   <div class="navbar">
-    <hamburger id="hamburger-container" :is-active="sidebar.opened" class="hamburger-container" @toggleClick="toggleSideBar" />
+    <hamburger
+      id="hamburger-container"
+      :is-active="sidebar.opened"
+      class="hamburger-container"
+      @toggleClick="toggleSideBar"
+    />
 
     <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
 
     <div class="right-menu">
       <template v-if="device!=='mobile'">
+        <Alarm v-if="alarmLogStatus" class="right-menu-item" />
+
         <search id="header-search" class="right-menu-item" />
 
         <screenfull id="screenfull" class="right-menu-item hover-effect" />
@@ -13,22 +20,21 @@
         <el-tooltip content="布局大小" effect="dark" placement="bottom">
           <size-select id="size-select" class="right-menu-item hover-effect" />
         </el-tooltip>
-
       </template>
 
       <el-dropdown class="avatar-container right-menu-item hover-effect" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar" class="user-avatar">
+          <img :src="avatar" class="user-avatar" />
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown">
           <router-link to="/user/profile">
             <el-dropdown-item>个人中心</el-dropdown-item>
           </router-link>
-          <el-dropdown-item>
-            <span @click="setting = true">布局设置</span>
+         <el-dropdown-item @click.native="setting = true">
+            <span>布局设置</span>
           </el-dropdown-item>
-           <el-dropdown-item divided @click.native="logout">
+          <el-dropdown-item divided @click.native="logout">
             <span>退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
@@ -44,6 +50,7 @@ import Hamburger from '@/components/Hamburger'
 import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
+import Alarm from '@/components/Alarm'
 
 export default {
   components: {
@@ -52,6 +59,25 @@ export default {
     Screenfull,
     SizeSelect,
     Search,
+    Alarm
+  },
+  data () {
+    return {
+      alarmLogStatus: false
+    }
+  },
+  mounted () {
+    const addRoutes = this.$store.state.permission.addRoutes
+    const energy = addRoutes.find(item => item.name == 'Energy')
+    if (energy) {
+      const children = energy.children
+      if (children && children.length > 0) {
+        const alarmLog = children.find(item => item.name == 'AlarmLog')
+        if (alarmLog) {
+          this.alarmLogStatus = true
+        }
+      }
+    }
   },
   computed: {
     ...mapGetters([
@@ -60,10 +86,10 @@ export default {
       'device'
     ]),
     setting: {
-      get() {
+      get () {
         return this.$store.state.settings.showSettings
       },
-      set(val) {
+      set (val) {
         this.$store.dispatch('settings/changeSetting', {
           key: 'showSettings',
           value: val
@@ -72,10 +98,10 @@ export default {
     }
   },
   methods: {
-    toggleSideBar() {
+    toggleSideBar () {
       this.$store.dispatch('app/toggleSideBar')
     },
-    async logout() {
+    async logout () {
       this.$confirm('确定注销并退出系统吗？', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -96,18 +122,18 @@ export default {
   overflow: hidden;
   position: relative;
   background: #fff;
-  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
 
   .hamburger-container {
     line-height: 46px;
     height: 100%;
     float: left;
     cursor: pointer;
-    transition: background .3s;
-    -webkit-tap-highlight-color:transparent;
+    transition: background 0.3s;
+    -webkit-tap-highlight-color: transparent;
 
     &:hover {
-      background: rgba(0, 0, 0, .025)
+      background: rgba(0, 0, 0, 0.025);
     }
   }
 
@@ -139,10 +165,10 @@ export default {
 
       &.hover-effect {
         cursor: pointer;
-        transition: background .3s;
+        transition: background 0.3s;
 
         &:hover {
-          background: rgba(0, 0, 0, .025)
+          background: rgba(0, 0, 0, 0.025);
         }
       }
     }

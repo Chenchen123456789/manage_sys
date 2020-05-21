@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import com.eim.common.utils.spring.SpringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -82,7 +84,7 @@ public class SysRoleServiceImpl implements ISysRoleService
      */
     public List<SysRole> selectRoleAll()
     {
-        return roleMapper.selectRoleAll();
+        return SpringUtils.getAopProxy(this).selectRoleList(new SysRole());
     }
 
     /**
