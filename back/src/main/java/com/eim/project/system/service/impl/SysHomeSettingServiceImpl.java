@@ -22,11 +22,11 @@ public class SysHomeSettingServiceImpl {
         return  sysHomeSettingMapper.updateHomeSetting(sysHomeSetting);
     }
 
-    public int selectTempCount(){
+    public String selectTempCount(){
         return sysHomeSettingMapper.selectTempCount();
     }
 
-    public int updateTempCount(int countNumber) {
+    public int updateTempCount(String countNumber) {
         return sysHomeSettingMapper.updateTempCount(countNumber);
     }
 }

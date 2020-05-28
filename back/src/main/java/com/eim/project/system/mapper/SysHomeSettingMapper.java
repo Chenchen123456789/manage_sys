@@ -13,7 +13,7 @@ public interface SysHomeSettingMapper {
 
     public int updateHomeSetting(SysHomeSetting sysHomeSetting);
 
-    int selectTempCount();
+    String selectTempCount();
 
-    int updateTempCount(int countNumber);
+    int updateTempCount(String countNumber);
 }

@@ -87,10 +87,19 @@ public class SysLoginController {
             byte[] decodedData = RSAUtils.decryptByPrivateKey(fileEncodeData, LicenseConst.privateKey);
             JSONObject jsonObject = JSONObject.parseObject(new String(decodedData));
             if (jsonObject == null) {
+                String countNumberStr = "";
                 int countNumber = 0;
                 if (LicenseConst.tryCountNumber == -1) {
-                    countNumber = sysHomeSettingService.selectTempCount();
-//                    LicenseConst.tryCountNumber = countNumber;
+                    countNumberStr = sysHomeSettingService.selectTempCount();
+                    if ("".equals(countNumberStr) || countNumberStr == null) {
+                        countNumber = 0;
+                    } else {
+                        try {
+                            countNumber = Integer.parseInt(new String(Base64Utils.decode(countNumberStr)));
+                        } catch (Exception e) {
+                            countNumber = 90;
+                        }
+                    }
                 }
                 if (countNumber >= 100) {
                     map.put("licenseStatus", "false");
@@ -101,10 +110,14 @@ public class SysLoginController {
                 } else {
                     if (LicenseConst.tryCountNumber < 0) {
                         countNumber++;
-                        sysHomeSettingService.updateTempCount(countNumber);
+                        String decodeCountNumberStr = Base64Utils.encode(String.valueOf(countNumber).getBytes());
+                        sysHomeSettingService.updateTempCount(decodeCountNumberStr);
                         LicenseConst.tryCountNumber = 1;
                     }
                     stopSystem(60 * 60 * 1000);
+                    map.put("licenseStatus", "false");
+                    map.put("licenseMsg", "试用模式，1小时候后服务将停止");
+                    return map;
                 }
             } else {
                 String decodedCpuId = (String) jsonObject.getOrDefault("cpuId", "");

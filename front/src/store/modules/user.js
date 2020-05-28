@@ -40,7 +40,7 @@ const user = {
         login(username, password, code, uuid).then(res => {
           setToken(res.token)
           commit('SET_TOKEN', res.token)
-          Message.warning({message:res.licenseMsg})
+          res.licenseStatus == "false" && Message.warning({message:res.licenseMsg})
           resolve()
         }).catch(error => {
           reject(error)
