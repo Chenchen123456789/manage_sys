@@ -31,4 +31,6 @@ public interface MeasuringPointMapper {
     int deleteByIds(Integer[] ids);
 
     MeasuringPoint selectByTagName(String tagName);
+
+    int selectMeasuringPointCount();
 }

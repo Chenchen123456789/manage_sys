@@ -1,5 +1,6 @@
 import { login, logout, getInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
+import { Message } from 'element-ui';
 
 const user = {
   state: {
@@ -39,6 +40,7 @@ const user = {
         login(username, password, code, uuid).then(res => {
           setToken(res.token)
           commit('SET_TOKEN', res.token)
+          Message.warning({message:res.licenseMsg})
           resolve()
         }).catch(error => {
           reject(error)

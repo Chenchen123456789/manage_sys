@@ -19,6 +19,9 @@ public class ResourcesConfig implements WebMvcConfigurer
     @Autowired
     private RepeatSubmitInterceptor repeatSubmitInterceptor;
 
+//    @Autowired
+//    private RegisterCodeInterceptor registerCodeInterceptor;
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry)
     {
@@ -37,5 +40,6 @@ public class ResourcesConfig implements WebMvcConfigurer
     public void addInterceptors(InterceptorRegistry registry)
     {
         registry.addInterceptor(repeatSubmitInterceptor).addPathPatterns("/**");
+//        registry.addInterceptor(registerCodeInterceptor).addPathPatterns("/login");
     }
 }

@@ -21,4 +21,12 @@ public class SysHomeSettingServiceImpl {
     public int updateHomeSetting(SysHomeSetting sysHomeSetting){
         return  sysHomeSettingMapper.updateHomeSetting(sysHomeSetting);
     }
+
+    public int selectTempCount(){
+        return sysHomeSettingMapper.selectTempCount();
+    }
+
+    public int updateTempCount(int countNumber) {
+        return sysHomeSettingMapper.updateTempCount(countNumber);
+    }
 }

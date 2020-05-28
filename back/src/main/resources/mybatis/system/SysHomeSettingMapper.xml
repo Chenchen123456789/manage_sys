@@ -14,6 +14,17 @@
         <result property="component" column="component"/>
     </resultMap>
 
+    <select id="selectTempCount" resultType="java.lang.Integer">
+        SELECT A.no_license_start_count FROM temp_count A LIMIT 1
+    </select>
+
+    <update id="updateTempCount">
+        UPDATE temp_count A
+        SET A.no_license_start_count = #{countNumber, jdbcType = INTEGER}
+        WHERE
+            id =1
+    </update>
+
     <select id="getHomeSettingDetail" resultMap="SysHomeSettingResult">
         select * from  sys_home_setting limit 1
     </select>

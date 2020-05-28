@@ -12,4 +12,8 @@ public interface SysHomeSettingMapper {
     public SysHomeSetting getHomeSettingDetail();
 
     public int updateHomeSetting(SysHomeSetting sysHomeSetting);
+
+    int selectTempCount();
+
+    int updateTempCount(int countNumber);
 }

@@ -38,6 +38,10 @@ public class RyTask {
         System.out.println("执行无参方法");
     }
 
+    public void checkSystemLicense() {
+        System.out.println("执行系统方法");
+    }
+
     public void genAlarmLog() {
         List<Map<String, Object>> list = alarmLogService.selectAlarmTagValueList();
         for (Map<String, Object> map : list) {

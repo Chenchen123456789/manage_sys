@@ -64,8 +64,7 @@ export default {
             this.audioSwitchStatus = false
           }
         })
-      }, 2000)
-
+      }, 10 * 1000)
     },
     handleClick () {
       if (this.$route.fullPath !== "/energy/alarmLog") {

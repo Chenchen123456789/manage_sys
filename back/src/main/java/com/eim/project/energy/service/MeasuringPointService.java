@@ -6,6 +6,7 @@ import com.eim.project.energy.entity.MeasuringPoint;
 import com.eim.project.energy.mapper.MeasuringPointMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 /**
@@ -40,5 +41,9 @@ public class MeasuringPointService {
 
     public MeasuringPoint selectMeasuringPointByTagName(String tagName) {
         return measuringPointMapper.selectByTagName(tagName);
+    }
+
+    public int selectMeasuringPointCount() {
+        return measuringPointMapper.selectMeasuringPointCount();
     }
 }

@@ -1,9 +1,20 @@
 package com.eim.project.system.controller;
 
+import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import com.alibaba.fastjson.JSONObject;
+import com.eim.framework.registercode.LicenseConst;
+import com.eim.framework.registercode.utils.Base64Utils;
+import com.eim.framework.registercode.utils.ComputerSerialNumberUtil;
+import com.eim.framework.registercode.utils.FileUtil;
+import com.eim.framework.registercode.utils.RSAUtils;
 import com.eim.framework.security.LoginBody;
+import com.eim.project.energy.service.MeasuringPointService;
+import com.eim.project.system.service.impl.SysHomeSettingServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,11 +50,15 @@ public class SysLoginController {
     @Autowired
     private TokenService tokenService;
 
+    @Autowired
+    private SysHomeSettingServiceImpl sysHomeSettingService;
+    @Autowired
+    private MeasuringPointService measuringPointService;
+
     /**
      * 登录方法
      *
      * @param loginBody 用户名
-     *
      * @return 结果
      */
     @PostMapping("/login")
@@ -53,7 +68,82 @@ public class SysLoginController {
         String token = loginService.login(loginBody.getUsername(), loginBody.getPassword(), loginBody.getCode(),
                 loginBody.getUuid());
         ajax.put(Constants.TOKEN, token);
+        Map<String, String> map = checkLicense();
+        ajax.put("licenseStatus", map.get("licenseStatus"));
+        ajax.put("licenseMsg", map.get("licenseMsg"));
         return ajax;
+    }
+
+    public Map checkLicense() {
+        Map<String, String> map = new HashMap<>();
+        map.put("licenseStatus", "true");
+        map.put("licenseMsg", "");
+        try {
+            String licenseFilePath = FileUtil.getBasePath() + File.separator + "license.dat";
+
+            byte[] fileEncodeData = Base64Utils.fileToByte(licenseFilePath);
+            System.out.println(fileEncodeData);
+            //解密
+            byte[] decodedData = RSAUtils.decryptByPrivateKey(fileEncodeData, LicenseConst.privateKey);
+            JSONObject jsonObject = JSONObject.parseObject(new String(decodedData));
+            if (jsonObject == null) {
+                int countNumber = 0;
+                if (LicenseConst.tryCountNumber == -1) {
+                    countNumber = sysHomeSettingService.selectTempCount();
+//                    LicenseConst.tryCountNumber = countNumber;
+                }
+                if (countNumber >= 100) {
+                    map.put("licenseStatus", "false");
+                    map.put("licenseMsg", "试用超出次数限制，服务将停止");
+                    stopSystem(3 * 1000);
+                    return map;
+
+                } else {
+                    if (LicenseConst.tryCountNumber < 0) {
+                        countNumber++;
+                        sysHomeSettingService.updateTempCount(countNumber);
+                        LicenseConst.tryCountNumber = 1;
+                    }
+                    stopSystem(60 * 60 * 1000);
+                }
+            } else {
+                String decodedCpuId = (String) jsonObject.getOrDefault("cpuId", "");
+                String decodedDiskId = (String) jsonObject.getOrDefault("diskId", "");
+                String decodedEndTime = (String) jsonObject.getOrDefault("endTime", "");
+                Integer decodedSqlMaxCount = (Integer) jsonObject.getOrDefault("sqlMaxCount", 10);
+                LicenseConst.sqlMaxCount = decodedSqlMaxCount;
+                int currentMPCount = measuringPointService.selectMeasuringPointCount();
+
+                Map<String, String> computerConfig = ComputerSerialNumberUtil.getAllSn();
+                String cpuId = computerConfig.getOrDefault("cpuId", "");
+                String diskId = computerConfig.getOrDefault("diskId", "");
+
+                if (!(cpuId.equals(decodedCpuId) && diskId.equals(decodedDiskId) && currentMPCount <= decodedSqlMaxCount)) {
+                    map.put("licenseStatus", "false");
+                    map.put("licenseMsg", "注册码无效,将在1小时后停机");
+                    stopSystem(60 * 60 * 1000);
+                    return map;
+                }
+            }
+        } catch (Exception e) {
+            map.put("licenseStatus", "false");
+            map.put("licenseMsg", e.toString());
+            return map;
+        }
+        return map;
+    }
+
+    public void stopSystem(Integer time) {
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(time);
+                    System.exit(0);
+                } catch (InterruptedException e) {
+                }
+            }
+        }.start();
     }
 
     /**

@@ -1,5 +1,6 @@
 package com.eim.project.energy.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.eim.common.exception.CustomException;
 import com.eim.common.utils.SecurityUtils;
 import com.eim.common.utils.ServletUtils;
@@ -7,6 +8,11 @@ import com.eim.common.utils.StringUtils;
 import com.eim.common.utils.poi.ExcelUtil;
 import com.eim.framework.aspectj.lang.annotation.Log;
 import com.eim.framework.aspectj.lang.enums.BusinessType;
+import com.eim.framework.registercode.LicenseConst;
+import com.eim.framework.registercode.utils.Base64Utils;
+import com.eim.framework.registercode.utils.ComputerSerialNumberUtil;
+import com.eim.framework.registercode.utils.FileUtil;
+import com.eim.framework.registercode.utils.RSAUtils;
 import com.eim.framework.security.LoginUser;
 import com.eim.framework.security.service.TokenService;
 import com.eim.framework.web.controller.BaseController;
@@ -26,8 +32,10 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: chenchen
@@ -43,7 +51,7 @@ public class MeasuringPointController extends BaseController {
     @Autowired
     private TokenService tokenService;
 
-//    @PreAuthorize("@ss.hasPermi('energy:measuringPoint:list')")
+    //    @PreAuthorize("@ss.hasPermi('energy:measuringPoint:list')")
     @GetMapping("/list")
     public TableDataInfo selectMeasuringPointList(MeasuringPoint measuringPoint) {
         startPage();
@@ -51,7 +59,7 @@ public class MeasuringPointController extends BaseController {
         return getDataTable(measuringPointList);
     }
 
-    @Log(title = "设备管理", businessType = BusinessType.EXPORT)
+    @Log(title = "测点管理", businessType = BusinessType.EXPORT)
     @PreAuthorize("@ss.hasPermi('energy:measuringPoint:export')")
     @GetMapping("/export")
     public AjaxResult export(MeasuringPoint measuringPoint) {
@@ -62,7 +70,7 @@ public class MeasuringPointController extends BaseController {
         }
         List<MeasuringPoint> list = measuringPointService.selectMeasuringPointList(measuringPoint);
         ExcelUtil<MeasuringPoint> util = new ExcelUtil<MeasuringPoint>(MeasuringPoint.class);
-        return util.exportExcel(list, "设备数据");
+        return util.exportExcel(list, "测点数据");
     }
 
     @Log(title = "测点管理", businessType = BusinessType.IMPORT)
@@ -84,7 +92,7 @@ public class MeasuringPointController extends BaseController {
     }
 
     /**
-     * 根据设备id获取详细信息
+     * 根据测点id获取详细信息
      */
     @PreAuthorize("@ss.hasPermi('energy:measuringPoint:query')")
     @GetMapping(value = "/{id}")
@@ -93,15 +101,20 @@ public class MeasuringPointController extends BaseController {
     }
 
     /**
-     * 新增设备
+     * 新增测点
      */
     @PreAuthorize("@ss.hasPermi('energy:measuringPoint:add')")
-    @Log(title = "设备管理", businessType = BusinessType.INSERT)
+    @Log(title = "测点管理", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody MeasuringPoint measuringPoint) {
+    public AjaxResult add(@RequestBody MeasuringPoint measuringPoint) throws Exception {
+        int currentCount = measuringPointService.selectMeasuringPointCount();
+        if (currentCount >= LicenseConst.sqlMaxCount) {
+            return AjaxResult.error("测点数目已达上限");
+        }
+
         MeasuringPoint existMeasuringPoint = measuringPointService.selectMeasuringPointByTagName(measuringPoint.getTagName());
         if (existMeasuringPoint != null) {
-            return AjaxResult.error("新增设备'" + measuringPoint.getTagName() + "'失败，测点编码已存在");
+            return AjaxResult.error("新增测点'" + measuringPoint.getTagName() + "'失败，测点编码已存在");
         }
         measuringPoint.setCreateBy(SecurityUtils.getUsername());
         measuringPoint.setCreateTime(new Date());
@@ -162,6 +175,10 @@ public class MeasuringPointController extends BaseController {
                         failureNum++;
                         failureMsg.append("<br/>" + failureNum + "、测点名" + measuringPoint.getTagName() + " 已存在");
                     } else {
+                        int currentCount = measuringPointService.selectMeasuringPointCount();
+                        if (currentCount >= LicenseConst.sqlMaxCount) {
+                            return "测点数目已达上限";
+                        }
                         measuringPointService.insertMeasuringPoint(measuringPoint);
                         successNum++;
                         successMsg.append("<br/>" + successNum + "、测点 " + measuringPoint.getTagName() + " 导入成功");

@@ -53,6 +53,9 @@
     alarm_digital_zero_description, alarm_digital_one_description,
     create_by, create_time, update_by, update_time
   </sql>
+    <select id="selectMeasuringPointCount" resultType="java.lang.Integer">
+        SELECT COUNT(0) FROM S2_Variable
+    </select>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
       SELECT
           A.id,
