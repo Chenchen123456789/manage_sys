@@ -126,7 +126,7 @@
       <el-table-column label="设备名称" align="center" prop="deviceName" />
       <el-table-column label="表号" align="center" prop="meterCode" />
       <el-table-column label="装表地点" align="center" prop="meterLocation" />
-      <el-table-column label="倍率" align="center" prop="meterSpec" />
+      <el-table-column label="倍率" align="center" prop="meterParam" />
       <el-table-column label="上月抄见数" align="center" prop="preMonthValue" />
       <el-table-column label="本月抄见数" align="center" prop="currentMonthValue" />
       <el-table-column label="本月用电数" align="center">

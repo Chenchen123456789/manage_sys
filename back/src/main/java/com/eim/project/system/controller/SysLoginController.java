@@ -80,11 +80,12 @@ public class SysLoginController {
         map.put("licenseMsg", "");
         try {
             String licenseFilePath = FileUtil.getBasePath() + File.separator + "license.dat";
-
+//            System.out.println(licenseFilePath);
             byte[] fileEncodeData = Base64Utils.fileToByte(licenseFilePath);
-            System.out.println(fileEncodeData);
+//            System.out.println(new String(fileEncodeData));
             //解密
             byte[] decodedData = RSAUtils.decryptByPrivateKey(fileEncodeData, LicenseConst.privateKey);
+//            System.out.println(new String(decodedData));
             JSONObject jsonObject = JSONObject.parseObject(new String(decodedData));
             if (jsonObject == null) {
                 String countNumberStr = "";
@@ -147,16 +148,14 @@ public class SysLoginController {
     }
 
     public void stopSystem(Integer time) {
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(time);
-                    System.exit(0);
-                } catch (InterruptedException e) {
-                }
+        new Thread(() -> {
+            try {
+                Thread.sleep(time);
+                System.out.println("1小时时间到 服务停止");
+                System.exit(0);
+            } catch (InterruptedException e) {
             }
-        }.start();
+        }).start();
     }
 
     /**
