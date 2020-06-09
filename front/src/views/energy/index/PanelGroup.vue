@@ -68,6 +68,7 @@
             <br />&nbsp;&nbsp;（MPa）
           </div>
           <count-to
+            :decimals="2"
             :start-val="0"
             :end-val="lifeWaterPressure"
             :duration="3600"
@@ -87,6 +88,7 @@
             <br />&nbsp;&nbsp;（MPa）
           </div>
           <count-to
+            :decimals="2"
             :start-val="0"
             :end-val="fireWaterPressure"
             :duration="3600"
@@ -106,6 +108,7 @@
             <br />&nbsp;&nbsp;（MPa）
           </div>
           <count-to
+            :decimals="2"
             :start-val="0"
             :end-val="airCompressorPressure"
             :duration="3600"
@@ -130,7 +133,7 @@ export default {
       default: null
     }
   },
-  data() {
+  data () {
     return {
       yearSumValueOfElectricity: 0,
       yearSumValueOfWater: 0,
@@ -143,18 +146,18 @@ export default {
   watch: {
     panelGroupData: {
       deep: true,
-      handler(val) {
+      handler (val) {
         this.setValues(val)
       }
     }
   },
   methods: {
-    setValues(panelGroupData) {
+    setValues (panelGroupData) {
       const homePageChartSettingList = panelGroupData.homePageChartSettingList
       if (homePageChartSettingList.length > 0) {
-        this.lifeWaterPressure = homePageChartSettingList.find(item=> item.placeholderId == 1).tagValue
-        this.fireWaterPressure = homePageChartSettingList.find(item=> item.placeholderId == 2).tagValue
-        this.airCompressorPressure = homePageChartSettingList.find(item=> item.placeholderId == 3).tagValue
+        this.lifeWaterPressure = homePageChartSettingList.find(item => item.placeholderId == 1).tagValue
+        this.fireWaterPressure = homePageChartSettingList.find(item => item.placeholderId == 2).tagValue
+        this.airCompressorPressure = homePageChartSettingList.find(item => item.placeholderId == 3).tagValue
       }
 
       const yearTotal = panelGroupData.yearTotal

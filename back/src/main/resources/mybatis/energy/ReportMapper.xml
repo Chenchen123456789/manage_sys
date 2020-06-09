@@ -216,7 +216,7 @@
         b.[datatime] dataTime
         FROM
         dbo.Variable_Info a,
-        dbo.T_MinuteData b
+        dbo.S3_HistoryData1 b
         <where>
             b.TagName = a.tag_name
             AND a.[disable] != 1

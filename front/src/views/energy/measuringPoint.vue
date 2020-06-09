@@ -138,6 +138,7 @@
     </el-row>
 
     <el-table
+      size="mini"
       v-loading="loading"
       :data="measuringPointList"
       @selection-change="handleSelectionChange"
@@ -878,7 +879,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate (row) {
       this.reset()
-      const id = row.id
+      const id = row.id || this.ids
       getMeasuringPoint(id).then(response => {
         const data = response.data
         if (data.totalFlag != null) {

@@ -12,18 +12,21 @@ export function parseTime(time, pattern) {
 	}
 	const format = pattern || '{y}-{m}-{d} {h}:{i}:{s}'
 	let date
-	if (typeof time === 'object') {
-		date = time
-	} else {
-		if ((typeof time === 'string') && (/^[0-9]+$/.test(time))) {
-			time = parseInt(time)
-		} else if (typeof time === 'string') {
-			time = time.replace(new RegExp(/-/gm), '/');
+	date = new Date(time)
+	if (!date) {
+		if (typeof time === 'object') {
+			date = time
+		} else {
+			if ((typeof time === 'string') && (/^[0-9]+$/.test(time))) {
+				time = parseInt(time)
+			} else if (typeof time === 'string') {
+				time = time.replace(new RegExp(/-/gm), '/');
+			}
+			if ((typeof time === 'number') && (time.toString().length === 10)) {
+				time = time * 1000
+			}
+			date = new Date(time)
 		}
-		if ((typeof time === 'number') && (time.toString().length === 10)) {
-			time = time * 1000
-		}
-		date = new Date(time)
 	}
 	const formatObj = {
 		y: date.getFullYear(),

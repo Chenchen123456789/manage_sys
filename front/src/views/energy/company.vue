@@ -237,7 +237,7 @@ export default {
     /** 修改按钮操作 */
     handleUpdate(row) {
       this.reset()
-      const id = row.id
+      const id = row.id || this.ids
       getCompany(id).then(response => {
         this.form = response.data
         this.open = true
