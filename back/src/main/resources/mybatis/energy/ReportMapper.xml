@@ -640,21 +640,21 @@
         SELECT
         TagValue
         FROM
-        T_DayData D
+        T_YearData D
         WHERE
         A.TagName = D.TagName
         AND D.DataTime = (
         SELECT MAX
         ( E.DataTime )
         FROM
-        dbo.T_DayData E
+        dbo.T_YearData E
         WHERE
         D.tagname = E.tagname
         AND YEAR(E.DataTime) = YEAR(DATEADD( YEAR, - 1, GETDATE( ) ))
         )
         ) pre
         FROM
-        T_DayData A
+        T_YearData A
         GROUP BY
         TagName
         ) N
@@ -720,14 +720,14 @@
         SELECT
         TagValue
         FROM
-        T_DayData D
+        T_MonthData D
         WHERE
         A.TagName = D.TagName
         AND D.DataTime = (
         SELECT MAX
         ( E.DataTime )
         FROM
-        dbo.T_DayData E
+        dbo.T_MonthData E
         WHERE
         D.tagname = E.tagname
         AND CONVERT ( VARCHAR ( 7 ), E.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, GETDATE( ) ), 120
@@ -738,14 +738,14 @@
         SELECT
         TagValue
         FROM
-        T_DayData D
+        T_MonthData D
         WHERE
         A.TagName = D.TagName
         AND D.DataTime = (
         SELECT MAX
         ( E.DataTime )
         FROM
-        dbo.T_DayData E
+        dbo.T_MonthData E
         WHERE
         D.tagname = E.tagname
         AND CONVERT ( VARCHAR ( 7 ), E.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 2, GETDATE( ) ), 120
@@ -753,7 +753,7 @@
         )
         ) twoPre
         FROM
-        T_DayData A
+        T_MonthData A
         GROUP BY
         TagName
         ) N
@@ -807,14 +807,14 @@
         SELECT
         TagValue
         FROM
-        T_HourData D
+        T_DayData D
         WHERE
         A.TagName = D.TagName
         AND D.DataTime = (
         SELECT MAX
         ( E.DataTime )
         FROM
-        dbo.T_HourData E
+        dbo.T_DayData E
         WHERE
         D.tagname = E.tagname
         AND CONVERT ( VARCHAR ( 10 ), E.DataTime, 120 ) = CONVERT ( VARCHAR ( 10 ), DATEADD( DAY, - 1, GETDATE( ) ), 120
@@ -822,7 +822,7 @@
         )
         ) pre
         FROM
-        T_HourData A
+        T_DayData A
         GROUP BY
         TagName
         ) N
@@ -903,21 +903,21 @@
                 SELECT
                     TagValue
                 FROM
-                    T_HourData D
+                    T_YearData D
                 WHERE
                     A.TagName = D.TagName
                     AND D.DataTime = (
                     SELECT MAX
                         ( E.DataTime )
                     FROM
-                        dbo.T_HourData E
+                        dbo.T_YearData E
                     WHERE
                         D.tagname = E.tagname
                         AND YEAR ( E.DataTime ) = YEAR ( DATEADD( YEAR, - 1, getDate( ) ) )
                     )
                 ) pre
             FROM
-                T_HourData A
+                T_YearData A
             GROUP BY
                 TagName
             ) N
