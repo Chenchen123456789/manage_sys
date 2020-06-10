@@ -125,6 +125,7 @@
       <el-table-column label="建筑名称" align="center" prop="buildingName" />
       <el-table-column label="设备名称" align="center" prop="deviceName" />
       <el-table-column label="表号" align="center" prop="meterCode" />
+      <el-table-column label="测点名称" align="center" prop="tagName" />
       <el-table-column label="装表地点" align="center" prop="meterLocation" />
       <el-table-column label="倍率" align="center" prop="meterParam" />
       <el-table-column label="上月抄见数" align="center" prop="preMonthValue" />
@@ -133,6 +134,9 @@
         <el-table-column label="峰" align="center" prop="fValue" />
         <el-table-column label="平" align="center" prop="pValue" />
         <el-table-column label="谷" align="center" prop="gValue" />
+         <el-table-column label="总量" align="center">
+        <template slot-scope="scope">{{ Number(scope.row.currentMonthValue - scope.row.preMonthValue).toFixed(2) }}</template>
+      </el-table-column>
       </el-table-column>
     </el-table>
 

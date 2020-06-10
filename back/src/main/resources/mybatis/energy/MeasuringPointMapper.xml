@@ -166,6 +166,7 @@
                 and meter_id = #{meterId, jdbcType=INTEGER}
             </if>
         </where>
+        order by company_id asc, plant_id asc, building_name asc, device_code asc, meter_code asc, tag_name asc
     </select>
     <select id="selectByTagName" parameterType="java.lang.String" resultMap="BaseResultMap">
         select

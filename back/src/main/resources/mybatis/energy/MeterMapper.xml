@@ -91,12 +91,13 @@
                 and device_id = #{deviceId, jdbcType=INTEGER}
             </if>
         </where>
+        order by company_id asc, plant_id asc, building_name asc, device_code asc, meter_code asc
     </select>
     <select id="selectByMeterCode" resultMap="BaseResultMap">
         select
         <include refid="Base_Column_List"/>
         from O_5Meter
-        where meter_code = #{meterdeviceCode,jdbcType=NVARCHAR}
+        where meter_code = #{meterCode,jdbcType=NVARCHAR}
         AND device_id = #{deviceId,jdbcType=INTEGER}
     </select>
     <delete id="deleteByIds" parameterType="java.lang.Integer">

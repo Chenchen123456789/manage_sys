@@ -24,6 +24,7 @@
     from O_2Plant A
     join O_1Company B
     on A.company_id = B.id
+    order by company_id asc,A.id asc
   </select>
   <select id="selectByPlantCode" resultMap="BaseResultMap">
     select

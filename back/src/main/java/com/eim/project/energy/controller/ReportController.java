@@ -398,7 +398,7 @@ public class ReportController extends BaseController {
         }
         List<Map<String, Object>> monthDosageOfElectricityList = reportService.selectMonthDosageOfElectricity(map);
         String sheetName = "用电月报";
-        String[] tableHead = {"单位名称", "建筑名称", "设备名称", "表号", "装表地点", "倍率", "上月抄见数", "本月抄见数", "峰", "平", "谷"};
+        String[] tableHead = {"单位名称", "建筑名称", "设备名称", "表号", "装表地点", "倍率", "上月抄见数", "本月抄见数", "峰", "平", "谷", "总量"};
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = reportService.initSheetMonthDosageOfElectricity(workbook, sheetName, tableHead);
         Map<String, CellStyle> cellStyle = reportService.createStyles(workbook);
@@ -461,6 +461,10 @@ public class ReportController extends BaseController {
                     case 10:
                         cell.setCellType(CellType.NUMERIC);
                         cell.setCellValue(gValue);
+                        break;
+                    case 11:
+                        cell.setCellType(CellType.NUMERIC);
+                        cell.setCellValue(currentMonthValue - preMonthValue);
                         break;
                     default:
                         break;

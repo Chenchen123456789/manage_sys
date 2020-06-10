@@ -361,10 +361,10 @@
             T.TagName tagName,
             T.currentMonthValue,
             T.preMonthValue,
-            T.fValue,
-            T.pValue,
-            T.gValue
-        FROM
+            CAST ( T.fValue AS DECIMAL ( 20, 2 ) ) fValue ,
+            CAST ( T.pValue AS DECIMAL ( 20, 2 ) ) pValue,
+            CAST ( T.gValue AS DECIMAL ( 20, 2 ) ) gValue
+            FROM
             Variable_Info VI,
             (
             SELECT
@@ -640,21 +640,21 @@
         SELECT
         TagValue
         FROM
-        T_YearData D
+        T_DayData D
         WHERE
         A.TagName = D.TagName
         AND D.DataTime = (
         SELECT MAX
         ( E.DataTime )
         FROM
-        dbo.T_YearData E
+        dbo.T_DayData E
         WHERE
         D.tagname = E.tagname
         AND YEAR(E.DataTime) = YEAR(DATEADD( YEAR, - 1, GETDATE( ) ))
         )
         ) pre
         FROM
-        T_YearData A
+        T_DayData A
         GROUP BY
         TagName
         ) N
@@ -720,14 +720,14 @@
         SELECT
         TagValue
         FROM
-        T_MonthData D
+        T_DayData D
         WHERE
         A.TagName = D.TagName
         AND D.DataTime = (
         SELECT MAX
         ( E.DataTime )
         FROM
-        dbo.T_MonthData E
+        dbo.T_DayData E
         WHERE
         D.tagname = E.tagname
         AND CONVERT ( VARCHAR ( 7 ), E.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, GETDATE( ) ), 120
@@ -738,14 +738,14 @@
         SELECT
         TagValue
         FROM
-        T_MonthData D
+        T_DayData D
         WHERE
         A.TagName = D.TagName
         AND D.DataTime = (
         SELECT MAX
         ( E.DataTime )
         FROM
-        dbo.T_MonthData E
+        dbo.T_DayData E
         WHERE
         D.tagname = E.tagname
         AND CONVERT ( VARCHAR ( 7 ), E.DataTime, 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 2, GETDATE( ) ), 120
@@ -753,7 +753,7 @@
         )
         ) twoPre
         FROM
-        T_MonthData A
+        T_DayData A
         GROUP BY
         TagName
         ) N
@@ -903,21 +903,21 @@
                 SELECT
                     TagValue
                 FROM
-                    T_YearData D
+                    T_DayData D
                 WHERE
                     A.TagName = D.TagName
                     AND D.DataTime = (
                     SELECT MAX
                         ( E.DataTime )
                     FROM
-                        dbo.T_YearData E
+                        dbo.T_DayData E
                     WHERE
                         D.tagname = E.tagname
                         AND YEAR ( E.DataTime ) = YEAR ( DATEADD( YEAR, - 1, getDate( ) ) )
                     )
                 ) pre
             FROM
-                T_YearData A
+                T_DayData A
             GROUP BY
                 TagName
             ) N

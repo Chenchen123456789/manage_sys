@@ -348,16 +348,16 @@
           <el-col :span="12">
             <el-form-item label="总量点" prop="totalFlag">
               <el-select clearable v-model="form.totalFlag" placeholder="请选择">
-                <el-option :key="0" label="是" :value="0"></el-option>
-                <el-option :key="1" label="否" :value="1"></el-option>
+                <el-option :key="0" label="是" :value="1"></el-option>
+                <el-option :key="1" label="否" :value="0"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="主参数" prop="mainTag">
               <el-select clearable v-model="form.mainTag" placeholder="请选择">
-                <el-option :key="0" label="是" :value="0"></el-option>
-                <el-option :key="1" label="否" :value="1"></el-option>
+                <el-option :key="0" label="是" :value="1"></el-option>
+                <el-option :key="1" label="否" :value="0"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -813,13 +813,13 @@ export default {
             disable = '不可用'
           }
 
-          if (totalFlag == 0) {
+          if (totalFlag == 1) {
             totalFlag = '是'
           } else {
             totalFlag = '否'
           }
 
-          if (mainTag == 0) {
+          if (mainTag == 1) {
             mainTag = '是'
           } else {
             mainTag = '否'

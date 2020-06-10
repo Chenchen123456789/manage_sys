@@ -26,6 +26,7 @@
 	O_3Building A
 	JOIN O_2Plant B ON A.plant_id = B.id
 	JOIN O_1Company C ON B.company_id = C.id
+	order by company_id asc, plant_id asc, building_name asc
     </select>
     <select id="selectByBuildingCode" resultMap="BaseResultMap">
         select

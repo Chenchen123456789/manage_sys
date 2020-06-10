@@ -253,7 +253,7 @@ public class ReportService {
                 cell = row1.createCell(i);
                 cell.setCellValue("本月用电数");
                 cell.setCellStyle(styles.get("header"));
-                CellRangeAddress region1 = new CellRangeAddress(0, 0, 8, 10);
+                CellRangeAddress region1 = new CellRangeAddress(0, 0, 8, 11);
                 sheet.addMergedRegion(region1);
                 break;
             }

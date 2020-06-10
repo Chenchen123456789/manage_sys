@@ -222,21 +222,21 @@ export default {
             this.dayDosageOfElectricity = dayDosage.map(item => {
               return {
                 buildingName: item.buildingName,
-                sumValue: item.currentElectricitySumValue
+                sumValue: item.currentElectricitySumValue >=0 ? item.currentElectricitySumValue :0
               }
             })
 
             this.dayDosageOfAir = dayDosage.map(item => {
               return {
                 buildingName: item.buildingName,
-                sumValue: item.currentAirSumValue
+                sumValue: item.currentAirSumValue >=0 ? item.currentAirSumValue :0
               }
             })
 
             this.dayDosageOfWater = dayDosage.map(item => {
               return {
                 buildingName: item.buildingName,
-                sumValue: item.currentWaterSumValue
+                sumValue: item.currentWaterSumValue >=0? item.currentWaterSumValue :0
               }
             })
           }
@@ -245,21 +245,21 @@ export default {
             this.monthDosageOfElectricity = monthDosage.map(item => {
               return {
                 buildingName: item.buildingName,
-                sumValue: item.currentElectricitySumValue
+                sumValue: item.currentElectricitySumValue >=0 ? item.currentElectricitySumValue :0
               }
             })
 
             this.monthDosageOfAir = monthDosage.map(item => {
               return {
                 buildingName: item.buildingName,
-                sumValue: item.currentAirSumValue
+                sumValue: item.currentAirSumValue >=0 ? item.currentAirSumValue :0
               }
             })
 
             this.monthDosageOfWater = monthDosage.map(item => {
               return {
                 buildingName: item.buildingName,
-                sumValue: item.currentWaterSumValue
+                sumValue: item.currentWaterSumValue >=0? item.currentWaterSumValue :0
               }
             })
           }
@@ -268,19 +268,19 @@ export default {
             this.yearDosageOfElectricity = yearDosage.map(item => {
               return {
                 buildingName: item.buildingName,
-                sumValue: item.currentElectricitySumValue
+                sumValue: item.currentElectricitySumValue >=0 ? item.currentElectricitySumValue :0
               }
             })
             this.yearDosageOfAir = yearDosage.map(item => {
               return {
                 buildingName: item.buildingName,
-                sumValue: item.currentAirSumValue
+               sumValue: item.currentAirSumValue >=0 ? item.currentAirSumValue :0
               }
             })
             this.yearDosageOfWater = yearDosage.map(item => {
               return {
                 buildingName: item.buildingName,
-                sumValue: item.currentWaterSumValue
+                sumValue: item.currentWaterSumValue >=0? item.currentWaterSumValue :0
               }
             })
           }

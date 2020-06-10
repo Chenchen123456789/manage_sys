@@ -59,15 +59,15 @@ public class MeasuringPoint extends BaseEntity {
 
     private String rangeMax;
 
-    @Excel(name = "总量点", cellType = Excel.ColumnType.STRING)
+    @Excel(name = "总量点", cellType = Excel.ColumnType.STRING, readConverterExp = "0=否,1=是")
     private String totalFlag;
 
-    @Excel(name = "主参数", cellType = Excel.ColumnType.STRING)
+    @Excel(name = "主参数", cellType = Excel.ColumnType.STRING, readConverterExp = "0=否,1=是")
     private String mainTag;
 
     private String note;
 
-    @Excel(name = "状态", cellType = Excel.ColumnType.STRING)
+    @Excel(name = "状态", cellType = Excel.ColumnType.STRING, readConverterExp = "0=可用,1=不可用")
     private Integer disable;
 
     private Integer classId;
@@ -116,8 +116,10 @@ public class MeasuringPoint extends BaseEntity {
     @Excel(name = "报警等级", cellType = Excel.ColumnType.NUMERIC)
     private Integer alarmLevel;
 
+    @Excel(name = "为0报警说明", cellType = Excel.ColumnType.STRING)
     private String alarmDigitalZeroDescription;
 
+    @Excel(name = "为1报警说明", cellType = Excel.ColumnType.STRING)
     private String alarmDigitalOneDescription;
 }
 
