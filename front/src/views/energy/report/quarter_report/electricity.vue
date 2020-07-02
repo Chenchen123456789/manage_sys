@@ -80,11 +80,21 @@
       <el-form-item label="查询时间" prop="queryTime">
         <el-date-picker
           :clearable="false"
-          placeholder="选择月"
+          placeholder="选择年"
           size="small"
-          type="month"
+          type="year"
           v-model="queryParams.queryTime"
         ></el-date-picker>
+      </el-form-item>
+      <el-form-item label="选择季度" prop="queryTimeQuarter">
+        <el-select size="small" :clearable="false" v-model="queryParams.queryTimeQuarter">
+          <el-option
+            :key="item.id"
+            :label="item.label"
+            :value="item.id"
+            v-for="item in quarterOptions"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="大功率" prop="deviceType">
         <el-select size="small" clearable v-model="queryParams.deviceType">
@@ -133,12 +143,12 @@
           size="mini"
           slot="reference"
           type="warning"
-          v-hasPermi="['energy:report_monthDosageOfElectricity:export']"
+          v-hasPermi="['energy:report_quarterDosageOfElectricity:export']"
         >导出</el-button>
       </el-popover>
     </el-row>
 
-    <el-table :data="monthDosageOfElectricityList" show-summary size="mini" v-loading="loading">
+    <el-table :data="quarterDosageOfElectricityList" show-summary size="mini" v-loading="loading">
       <el-table-column :index="indexMethod" label="序号" type="index" width="50" />
       <el-table-column align="center" label="单位名称" prop="plantName" />
       <el-table-column align="center" label="建筑名称" prop="buildingName" />
@@ -147,8 +157,8 @@
       <el-table-column align="center" label="测点名称" prop="tagName" />
       <el-table-column align="center" label="装表地点" prop="meterLocation" />
       <el-table-column align="center" label="倍率" prop="meterParam" />
-      <el-table-column align="center" label="上月抄见数" prop="preTimeValue" />
-      <el-table-column align="center" label="本月抄见数" prop="currentTimeValue" />
+      <el-table-column align="center" label="上季度抄见数" prop="preTimeValue" />
+      <el-table-column align="center" label="本季度抄见数" prop="currentTimeValue" />
       <el-table-column align="center" :label="dataTime">
         <el-table-column align="center" label="峰" prop="fValue" />
         <el-table-column align="center" label="平" prop="pValue" />
@@ -173,8 +183,8 @@
 
 <script>
 import {
-  listMonthDosageOfElectricity,
-  exportMonthDosageOfElectricity
+  listQuarterDosageOfElectricity,
+  exportQuarterDosageOfElectricity
 } from '@/api/energy/report'
 import { listPlant } from '@/api/energy/plant'
 import { listBuilding } from '@/api/energy/building'
@@ -190,7 +200,7 @@ export default {
       // 总条数
       total: 0,
       // 表格数据
-      monthDosageOfElectricityList: [],
+      quarterDosageOfElectricityList: [],
       plantOptions: [],
       buildingOptions: [],
       deviceOptions: [],
@@ -204,6 +214,7 @@ export default {
       deviceDisabled: true,
       meterDisabled: true,
       // 查询参数
+      quarterOptions: [{ id: 1, label: '第一季度' }, { id: 2, label: '第二季度' }, { id: 3, label: '第三季度' }, { id: 4, label: '第四季度' }],
       queryParams: {
         pageNum: 1,
         pageSize: 10,
@@ -211,12 +222,8 @@ export default {
         buildingId: [],
         deviceId: [],
         meterId: [],
-        queryTime: new Date(
-          new Date().getFullYear() +
-          '-' +
-          (new Date().getMonth() + 1) +
-          '-01 00:00:00'
-        )
+        queryTimeQuarter: 1,
+        queryTime: new Date()
       }
     }
   },
@@ -226,11 +233,6 @@ export default {
     this.getBuildingOptions()
     this.getDeviceOptions()
     this.getMeterCodeOptions()
-
-    const year = new Date().getFullYear()
-    const month = new Date().getMonth() + 1
-    const day = new Date().getDate()
-    this.dataTime = '数据时间：' + year + '年' + month + '月'
   },
   watch: {
     'queryParams.plantId' (val) {
@@ -319,10 +321,11 @@ export default {
       } else {
       }
     },
-    changeQueryTime (value) {
-      const year = value.getFullYear()
-      const month = value.getMonth() + 1
-      this.dataTime = '数据时间：' + year + '年' + month + '月'
+   changeQueryTime () {
+      const year = this.queryParams.queryTime.getFullYear()
+      const queryTimeQuarter = this.queryParams.queryTimeQuarter
+      let queryTimeQuarterStr = this.quarterOptions.find(item => item.id == queryTimeQuarter).label
+      this.dataTime = '数据时间：' + year + '年 ' + queryTimeQuarterStr
     },
     getPlantOptions () {
       listPlant().then(res => {
@@ -351,10 +354,21 @@ export default {
     },
     /** 查询列表 */
     getList () {
-      this.changeQueryTime(this.queryParams.queryTime)
+      this.changeQueryTime()
       this.loading = true
-      listMonthDosageOfElectricity(this.queryParams).then(response => {
-        this.monthDosageOfElectricityList = response.rows
+      const queryParams = { ...this.queryParams }
+      const queryTimeQuarter = queryParams.queryTimeQuarter
+      const queryTimeYear = queryParams.queryTime.getFullYear()
+      queryParams.queryTimeYear = queryTimeYear
+      queryParams.queryTimeQuarter = queryTimeQuarter
+      queryParams.preQueryTimeYear = queryTimeYear
+      queryParams.preQueryTimeQuarter = queryTimeQuarter - 1
+      if (queryTimeQuarter == 1) {
+        queryParams.preQueryTimeYear = queryTimeYear - 1
+        queryParams.preQueryTimeQuarter = 4
+      }
+      listQuarterDosageOfElectricity(queryParams).then(response => {
+        this.quarterDosageOfElectricityList = response.rows
         this.total = response.total
         this.loading = false
       })
@@ -372,16 +386,26 @@ export default {
     /** 导出按钮操作 */
     handleExport (type) {
       const queryParams = { ...this.queryParams }
+      const queryTimeQuarter = queryParams.queryTimeQuarter
+      const queryTimeYear = queryParams.queryTime.getFullYear()
+      queryParams.queryTimeYear = queryTimeYear
+      queryParams.queryTimeQuarter = queryTimeQuarter
+      queryParams.preQueryTimeYear = queryTimeYear
+      queryParams.preQueryTimeQuarter = queryTimeQuarter - 1
+      if (queryTimeQuarter == 1) {
+        queryParams.preQueryTimeYear = queryTimeYear - 1
+        queryParams.preQueryTimeQuarter = 4
+      }
       if (type === 0) {
         queryParams.pageNum = null
       }
-      this.$confirm('是否确认导出电量月报数据项?', '警告', {
+      this.$confirm('是否确认导出电量季报数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(function () {
-          return exportMonthDosageOfElectricity(queryParams)
+          return exportQuarterDosageOfElectricity(queryParams)
         })
         .then(response => {
           this.download(response.msg)

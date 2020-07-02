@@ -20,13 +20,13 @@
       <el-form-item label="查询时间" prop="queryTime">
         <el-date-picker
           :clearable="false"
-          placeholder="选择月"
+          placeholder="选择日"
           size="small"
-          type="month"
+          type="date"
           v-model="queryParams.queryTime"
         ></el-date-picker>
       </el-form-item>
-     
+      
       <el-form-item label="计量等级" prop="measureLevel">
         <el-select size="small" clearable v-model="queryParams.measureLevel">
           <el-option
@@ -64,20 +64,20 @@
           size="mini"
           slot="reference"
           type="warning"
-          v-hasPermi="['energy:report_monthDosageOfWater:export']"
+          v-hasPermi="['energy:report_dayDosageOfWater:export']"
         >导出</el-button>
       </el-popover>
     </el-row>
 
-    <el-table :data="monthDosageOfWaterList" show-summary size="mini" v-loading="loading">
+    <el-table :data="dayDosageOfWaterList" show-summary size="mini" v-loading="loading">
       <el-table-column :index="indexMethod" label="序号" type="index" width="50" />
       <el-table-column align="center" label="单位" prop="plantName" />
       <el-table-column align="center" label="测点名" prop="tagName" />
       <el-table-column align="center" label="安装地点" prop="buildingName" />
       <el-table-column align="center" label="水表规格" prop="meterParam" />
       <el-table-column :label="dataTime" align="center">
-        <el-table-column align="center" label="上月抄见" prop="preTimeValue" />
-        <el-table-column align="center" label="本月抄见" prop="currentTimeValue" />
+        <el-table-column align="center" label="昨天抄见" prop="preTimeValue" />
+        <el-table-column align="center" label="今天抄见" prop="currentTimeValue" />
         <el-table-column align="center" label="实际用量" prop="realDosage" />
       </el-table-column>
     </el-table>
@@ -94,8 +94,8 @@
 
 <script>
 import {
-  listMonthDosageOfWater,
-  exportMonthDosageOfWater
+  listDayDosageOfWater,
+  exportDayDosageOfWater
 } from '@/api/energy/report'
 import { listPlant } from '@/api/energy/plant'
 
@@ -108,24 +108,21 @@ export default {
       // 总条数
       total: 0,
       // 表格数据
-      monthDosageOfWaterList: [],
+      dayDosageOfWaterList: [],
       queryPlantOptions: [],
       dataTime:
         '数据时间：' +
         new Date().getFullYear() +
         '年' +
         (new Date().getMonth() + 1) +
-        '月',
+        '月' +
+        new Date().getDate() +
+        '日',
       // 查询参数
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        queryTime: new Date(
-          new Date().getFullYear() +
-          '-' +
-          (new Date().getMonth() + 1) +
-          '-01 00:00:00'
-        ),
+        queryTime: new Date(),
         plantId: undefined
       }
     }
@@ -148,7 +145,8 @@ export default {
     changeQueryTime (value) {
       const year = value.getFullYear()
       const month = value.getMonth() + 1
-      this.dataTime = '数据时间：' + year + '年' + month + '月'
+      const day = value.getDate()
+      this.dataTime = '数据时间：' + year + '年' + month + '月' + day + '日'
     },
     indexMethod (index) {
       return (
@@ -159,7 +157,7 @@ export default {
     getList () {
       this.changeQueryTime(this.queryParams.queryTime)
       this.loading = true
-      listMonthDosageOfWater(this.queryParams).then(response => {
+      listDayDosageOfWater(this.queryParams).then(response => {
         const list = response.rows
         for (const index in list) {
           const preTimeValue = list[index].preTimeValue || 0
@@ -169,7 +167,7 @@ export default {
           list[index].currentTimeValue = currentTimeValue
           list[index].realDosage = realDosage
         }
-        this.monthDosageOfWaterList = list
+        this.dayDosageOfWaterList = list
         this.total = response.total
         this.loading = false
       })
@@ -190,13 +188,13 @@ export default {
       if (type === 0) {
         queryParams.pageNum = null
       }
-      this.$confirm('是否确认导出水量月报数据项?', '警告', {
+      this.$confirm('是否确认导出水量日报数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(function () {
-          return exportMonthDosageOfWater(queryParams)
+          return exportDayDosageOfWater(queryParams)
         })
         .then(response => {
           this.download(response.msg)

@@ -43,7 +43,7 @@ public class MeterController extends BaseController {
     @Autowired
     private TokenService tokenService;
 
-//    @PreAuthorize("@ss.hasPermi('energy:meter:list')")
+    //    @PreAuthorize("@ss.hasPermi('energy:meter:list')")
     @GetMapping("/list")
     public TableDataInfo selectMeterList(Meter meter) {
         startPage();
@@ -166,20 +166,22 @@ public class MeterController extends BaseController {
                         successNum++;
                         successMsg.append("<br/>" + successNum + "、仪表 " + meter.getMeterName() + " 导入成功");
                     }
-                } else if (isUpdateSupport) {
-                    meter.setUpdateBy(operName);
-                    meter.setUpdateTime(new Date());
-                    if (checkMeterCode != null && !checkMeterCode.getId().equals(meter.getId())) {
-                        failureNum++;
-                        failureMsg.append("<br/>" + failureNum + "、仪表编码 " + meter.getMeterCode() + " 已存在");
-                    } else {
-                        meterService.updateMeter(meter);
-                        successNum++;
-                        successMsg.append("<br/>" + successNum + "、仪表 " + meter.getMeterName() + " 更新成功");
-                    }
                 } else {
-                    failureNum++;
-                    failureMsg.append("<br/>" + failureNum + "、仪表 " + meter.getMeterName() + " 已存在");
+                    if (isUpdateSupport) {
+                        meter.setUpdateBy(operName);
+                        meter.setUpdateTime(new Date());
+                        if (checkMeterCode != null && !checkMeterCode.getId().equals(meter.getId())) {
+                            failureNum++;
+                            failureMsg.append("<br/>" + failureNum + "、仪表编码 " + meter.getMeterCode() + " 已存在");
+                        } else {
+                            meterService.updateMeter(meter);
+                            successNum++;
+                            successMsg.append("<br/>" + successNum + "、仪表 " + meter.getMeterName() + " 更新成功");
+                        }
+                    } else {
+                        failureNum++;
+                        failureMsg.append("<br/>" + failureNum + "、仪表 " + meter.getMeterName() + " 已存在");
+                    }
                 }
             } catch (Exception e) {
                 failureNum++;

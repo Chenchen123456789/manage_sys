@@ -6,7 +6,6 @@ import com.eim.project.energy.entity.Building;
 import com.eim.project.energy.mapper.BuildingMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 
 /**

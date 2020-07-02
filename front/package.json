@@ -1,7 +1,7 @@
 {
   "name": "eim",
   "version": "2.0.0",
-  "description": "公用工程管理系统",
+  "description": "能源管理系统",
   "author": "chenchen",
   "license": "MIT",
   "scripts": {

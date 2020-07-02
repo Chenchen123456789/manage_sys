@@ -167,20 +167,22 @@ public class DeviceController extends BaseController {
                         successNum++;
                         successMsg.append("<br/>" + successNum + "、设备 " + device.getDeviceName() + " 导入成功");
                     }
-                } else if (isUpdateSupport) {
-                    device.setUpdateBy(operName);
-                    device.setUpdateTime(new Date());
-                    if (checkDeviceCode != null && !checkDeviceCode.getId().equals(device.getId())) {
-                        failureNum++;
-                        failureMsg.append("<br/>" + failureNum + "、设备编号 " + device.getDeviceCode() + " 已存在");
+                } else{
+                    if (isUpdateSupport) {
+                        device.setUpdateBy(operName);
+                        device.setUpdateTime(new Date());
+                        if (checkDeviceCode != null && !checkDeviceCode.getId().equals(device.getId())) {
+                            failureNum++;
+                            failureMsg.append("<br/>" + failureNum + "、设备编号 " + device.getDeviceCode() + " 已存在");
+                        } else {
+                            deviceService.updateDevice(device);
+                            successNum++;
+                            successMsg.append("<br/>" + successNum + "、设备 " + device.getDeviceName() + " 更新成功");
+                        }
                     } else {
-                        deviceService.updateDevice(device);
-                        successNum++;
-                        successMsg.append("<br/>" + successNum + "、设备 " + device.getDeviceName() + " 更新成功");
+                        failureNum++;
+                        failureMsg.append("<br/>" + failureNum + "、设备 " + device.getDeviceName() + " 已存在");
                     }
-                } else {
-                    failureNum++;
-                    failureMsg.append("<br/>" + failureNum + "、设备 " + device.getDeviceName() + " 已存在");
                 }
             } catch (Exception e) {
                 failureNum++;

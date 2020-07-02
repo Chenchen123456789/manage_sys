@@ -15,9 +15,9 @@
         <el-date-picker
           @change="changeQueryTime"
           clearable
-          placeholder="选择月"
+          placeholder="选择年"
           size="small"
-          type="month"
+          type="year"
           v-model="queryParams.queryTime"
         ></el-date-picker>
       </el-form-item>
@@ -126,7 +126,7 @@
         <el-table-column align="center" label="金额" prop="waterAmount">
           <template slot-scope="scope">{{(waterPrice * scope.row.currentWaterDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="上月累计" prop="preWaterSumValue" />
+        <el-table-column align="center" label="去年累计" prop="preWaterSumValue" />
         <el-table-column align="center" label="耗水累计" prop="currentWaterSumValue" />
       </el-table-column>
       <el-table-column align="center" label="空气">
@@ -137,7 +137,7 @@
         <el-table-column align="center" label="金额" prop="airAmount">
           <template slot-scope="scope">{{(airPrice * scope.row.currentAirDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="上月累计" prop="preAirSumValue" />
+        <el-table-column align="center" label="去年累计" prop="preAirSumValue" />
         <el-table-column align="center" label="空气累计" prop="currentAirSumValue" />
       </el-table-column>
       <el-table-column align="center" label="电">
@@ -150,7 +150,7 @@
             slot-scope="scope"
           >{{(electricityPrice * scope.row.currentElectricityDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="上月累计" prop="preElectricitySumValue" />
+        <el-table-column align="center" label="去年累计" prop="preElectricitySumValue" />
         <el-table-column align="center" label="耗电累计" prop="currentElectricitySumValue" />
       </el-table-column>
       <el-table-column align="center" label="蒸汽">
@@ -161,7 +161,7 @@
         <el-table-column align="center" label="金额" prop="steamAmount">
           <template slot-scope="scope">{{(steamPrice * scope.row.currentSteamDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="上月累计" prop="preSteamSumValue" />
+        <el-table-column align="center" label="去年累计" prop="preSteamSumValue" />
         <el-table-column align="center" label="蒸汽累计" prop="currentSteamSumValue" />
       </el-table-column>
       <el-table-column align="center" label="金额合计" prop="totalAmount">
@@ -187,7 +187,7 @@
 </template>
 
 <script>
-import { listMonthSettlement, exportMonthSettlement } from '@/api/energy/report'
+import { listYearSettlement, exportYearSettlement } from '@/api/energy/report'
 import { listPlant } from '@/api/energy/plant'
 import { listUnitPrice, updateUnitPrice } from '@/api/energy/unitPrice'
 
@@ -206,12 +206,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        queryTime: new Date(
-          new Date().getFullYear() +
-          '-' +
-          (new Date().getMonth() + 1) +
-          '-01 00:00:00'
-        ),
+        queryTime: new Date(),
         plantId: undefined
       },
       unitPriceList: [],
@@ -289,7 +284,7 @@ export default {
     /** 查询列表 */
     getList () {
       this.loading = true
-      listMonthSettlement(this.queryParams).then(response => {
+      listYearSettlement(this.queryParams).then(response => {
         let list = response.rows
         for (const index in list) {
           const currentAirSumValue = list[index].currentAirSumValue || 0
@@ -346,13 +341,13 @@ export default {
       queryParams.airPrice = airPrice
       queryParams.electricityPrice = electricityPrice
       queryParams.steamPrice = steamPrice
-      this.$confirm('是否确认导出月报结算数据项?', '警告', {
+      this.$confirm('是否确认导出年报结算数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(function () {
-          return exportMonthSettlement(queryParams)
+          return exportYearSettlement(queryParams)
         })
         .then(response => {
           this.download(response.msg)

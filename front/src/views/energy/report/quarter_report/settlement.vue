@@ -13,13 +13,22 @@
       </el-form-item>
       <el-form-item label="查询时间" prop="queryTime">
         <el-date-picker
-          @change="changeQueryTime"
-          clearable
-          placeholder="选择月"
+          :clearable="false"
+          placeholder="选择年"
           size="small"
-          type="month"
+          type="year"
           v-model="queryParams.queryTime"
         ></el-date-picker>
+      </el-form-item>
+      <el-form-item label="选择季度" prop="queryTimeQuarter">
+        <el-select size="small" :clearable="false" v-model="queryParams.queryTimeQuarter">
+          <el-option
+            :key="item.id"
+            :label="item.label"
+            :value="item.id"
+            v-for="item in quarterOptions"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="大功率" prop="deviceType">
         <el-select size="small" clearable v-model="queryParams.deviceType">
@@ -126,7 +135,7 @@
         <el-table-column align="center" label="金额" prop="waterAmount">
           <template slot-scope="scope">{{(waterPrice * scope.row.currentWaterDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="上月累计" prop="preWaterSumValue" />
+        <el-table-column align="center" label="上季度累计" prop="preWaterSumValue" />
         <el-table-column align="center" label="耗水累计" prop="currentWaterSumValue" />
       </el-table-column>
       <el-table-column align="center" label="空气">
@@ -137,7 +146,7 @@
         <el-table-column align="center" label="金额" prop="airAmount">
           <template slot-scope="scope">{{(airPrice * scope.row.currentAirDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="上月累计" prop="preAirSumValue" />
+        <el-table-column align="center" label="上季度累计" prop="preAirSumValue" />
         <el-table-column align="center" label="空气累计" prop="currentAirSumValue" />
       </el-table-column>
       <el-table-column align="center" label="电">
@@ -150,7 +159,7 @@
             slot-scope="scope"
           >{{(electricityPrice * scope.row.currentElectricityDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="上月累计" prop="preElectricitySumValue" />
+        <el-table-column align="center" label="上季度累计" prop="preElectricitySumValue" />
         <el-table-column align="center" label="耗电累计" prop="currentElectricitySumValue" />
       </el-table-column>
       <el-table-column align="center" label="蒸汽">
@@ -161,7 +170,7 @@
         <el-table-column align="center" label="金额" prop="steamAmount">
           <template slot-scope="scope">{{(steamPrice * scope.row.currentSteamDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="上月累计" prop="preSteamSumValue" />
+        <el-table-column align="center" label="上季度累计" prop="preSteamSumValue" />
         <el-table-column align="center" label="蒸汽累计" prop="currentSteamSumValue" />
       </el-table-column>
       <el-table-column align="center" label="金额合计" prop="totalAmount">
@@ -187,7 +196,7 @@
 </template>
 
 <script>
-import { listMonthSettlement, exportMonthSettlement } from '@/api/energy/report'
+import { listQuarterSettlement, exportQuarterSettlement } from '@/api/energy/report'
 import { listPlant } from '@/api/energy/plant'
 import { listUnitPrice, updateUnitPrice } from '@/api/energy/unitPrice'
 
@@ -203,15 +212,12 @@ export default {
       settlementList: [],
       queryPlantOptions: [],
       // 查询参数
+      quarterOptions: [{ id: 1, label: '第一季度' }, { id: 2, label: '第二季度' }, { id: 3, label: '第三季度' }, { id: 4, label: '第四季度' }],
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        queryTime: new Date(
-          new Date().getFullYear() +
-          '-' +
-          (new Date().getMonth() + 1) +
-          '-01 00:00:00'
-        ),
+        queryTime: new Date(),
+        queryTimeQuarter: 1,
         plantId: undefined
       },
       unitPriceList: [],
@@ -276,11 +282,6 @@ export default {
         this.queryPlantOptions = res.rows
       })
     },
-    changeQueryTime (value) {
-      const year = value.getFullYear()
-      const month = value.getMonth() + 1
-      this.dataTime = '数据时间：' + year + '年' + month + '月'
-    },
     indexMethod (index) {
       return (
         (this.queryParams.pageNum - 1) * this.queryParams.pageSize + index + 1
@@ -289,7 +290,18 @@ export default {
     /** 查询列表 */
     getList () {
       this.loading = true
-      listMonthSettlement(this.queryParams).then(response => {
+      const queryParams = { ...this.queryParams }
+      const queryTimeQuarter = queryParams.queryTimeQuarter
+      const queryTimeYear = queryParams.queryTime.getFullYear()
+      queryParams.queryTimeYear = queryTimeYear
+      queryParams.queryTimeQuarter = queryTimeQuarter
+      queryParams.preQueryTimeYear = queryTimeYear
+      queryParams.preQueryTimeQuarter = queryTimeQuarter - 1
+      if (queryTimeQuarter == 1) {
+        queryParams.preQueryTimeYear = queryTimeYear - 1
+        queryParams.preQueryTimeQuarter = 4
+      }
+      listQuarterSettlement(queryParams).then(response => {
         let list = response.rows
         for (const index in list) {
           const currentAirSumValue = list[index].currentAirSumValue || 0
@@ -338,6 +350,16 @@ export default {
     /** 导出按钮操作 */
     handleExport (type) {
       const queryParams = { ...this.queryParams }
+      const queryTimeQuarter = queryParams.queryTimeQuarter
+      const queryTimeYear = queryParams.queryTime.getFullYear()
+      queryParams.queryTimeYear = queryTimeYear
+      queryParams.queryTimeQuarter = queryTimeQuarter
+      queryParams.preQueryTimeYear = queryTimeYear
+      queryParams.preQueryTimeQuarter = queryTimeQuarter - 1
+      if (queryTimeQuarter == 1) {
+        queryParams.preQueryTimeYear = queryTimeYear - 1
+        queryParams.preQueryTimeQuarter = 4
+      }
       if (type === 0) {
         queryParams.pageNum = null
       }
@@ -346,13 +368,13 @@ export default {
       queryParams.airPrice = airPrice
       queryParams.electricityPrice = electricityPrice
       queryParams.steamPrice = steamPrice
-      this.$confirm('是否确认导出月报结算数据项?', '警告', {
+      this.$confirm('是否确认导出季报结算数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(function () {
-          return exportMonthSettlement(queryParams)
+          return exportQuarterSettlement(queryParams)
         })
         .then(response => {
           this.download(response.msg)

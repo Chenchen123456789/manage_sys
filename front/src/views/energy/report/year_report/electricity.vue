@@ -80,9 +80,9 @@
       <el-form-item label="查询时间" prop="queryTime">
         <el-date-picker
           :clearable="false"
-          placeholder="选择月"
+          placeholder="选择年"
           size="small"
-          type="month"
+          type="year"
           v-model="queryParams.queryTime"
         ></el-date-picker>
       </el-form-item>
@@ -133,12 +133,12 @@
           size="mini"
           slot="reference"
           type="warning"
-          v-hasPermi="['energy:report_monthDosageOfElectricity:export']"
+          v-hasPermi="['energy:report_yearDosageOfElectricity:export']"
         >导出</el-button>
       </el-popover>
     </el-row>
 
-    <el-table :data="monthDosageOfElectricityList" show-summary size="mini" v-loading="loading">
+    <el-table :data="yearDosageOfElectricityList" show-summary size="mini" v-loading="loading">
       <el-table-column :index="indexMethod" label="序号" type="index" width="50" />
       <el-table-column align="center" label="单位名称" prop="plantName" />
       <el-table-column align="center" label="建筑名称" prop="buildingName" />
@@ -147,8 +147,8 @@
       <el-table-column align="center" label="测点名称" prop="tagName" />
       <el-table-column align="center" label="装表地点" prop="meterLocation" />
       <el-table-column align="center" label="倍率" prop="meterParam" />
-      <el-table-column align="center" label="上月抄见数" prop="preTimeValue" />
-      <el-table-column align="center" label="本月抄见数" prop="currentTimeValue" />
+      <el-table-column align="center" label="去年抄见数" prop="preTimeValue" />
+      <el-table-column align="center" label="今年抄见数" prop="currentTimeValue" />
       <el-table-column align="center" :label="dataTime">
         <el-table-column align="center" label="峰" prop="fValue" />
         <el-table-column align="center" label="平" prop="pValue" />
@@ -173,8 +173,8 @@
 
 <script>
 import {
-  listMonthDosageOfElectricity,
-  exportMonthDosageOfElectricity
+  listYearDosageOfElectricity,
+  exportYearDosageOfElectricity
 } from '@/api/energy/report'
 import { listPlant } from '@/api/energy/plant'
 import { listBuilding } from '@/api/energy/building'
@@ -190,7 +190,7 @@ export default {
       // 总条数
       total: 0,
       // 表格数据
-      monthDosageOfElectricityList: [],
+      yearDosageOfElectricityList: [],
       plantOptions: [],
       buildingOptions: [],
       deviceOptions: [],
@@ -211,12 +211,7 @@ export default {
         buildingId: [],
         deviceId: [],
         meterId: [],
-        queryTime: new Date(
-          new Date().getFullYear() +
-          '-' +
-          (new Date().getMonth() + 1) +
-          '-01 00:00:00'
-        )
+        queryTime: new Date()
       }
     }
   },
@@ -226,11 +221,9 @@ export default {
     this.getBuildingOptions()
     this.getDeviceOptions()
     this.getMeterCodeOptions()
-
+    
     const year = new Date().getFullYear()
-    const month = new Date().getMonth() + 1
-    const day = new Date().getDate()
-    this.dataTime = '数据时间：' + year + '年' + month + '月'
+    this.dataTime = '数据时间：' + year + '年' 
   },
   watch: {
     'queryParams.plantId' (val) {
@@ -322,7 +315,7 @@ export default {
     changeQueryTime (value) {
       const year = value.getFullYear()
       const month = value.getMonth() + 1
-      this.dataTime = '数据时间：' + year + '年' + month + '月'
+      this.dataTime = '数据时间：' + year + '年'
     },
     getPlantOptions () {
       listPlant().then(res => {
@@ -353,8 +346,8 @@ export default {
     getList () {
       this.changeQueryTime(this.queryParams.queryTime)
       this.loading = true
-      listMonthDosageOfElectricity(this.queryParams).then(response => {
-        this.monthDosageOfElectricityList = response.rows
+      listYearDosageOfElectricity(this.queryParams).then(response => {
+        this.yearDosageOfElectricityList = response.rows
         this.total = response.total
         this.loading = false
       })
@@ -375,13 +368,13 @@ export default {
       if (type === 0) {
         queryParams.pageNum = null
       }
-      this.$confirm('是否确认导出电量月报数据项?', '警告', {
+      this.$confirm('是否确认导出电量年报数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(function () {
-          return exportMonthDosageOfElectricity(queryParams)
+          return exportYearDosageOfElectricity(queryParams)
         })
         .then(response => {
           this.download(response.msg)

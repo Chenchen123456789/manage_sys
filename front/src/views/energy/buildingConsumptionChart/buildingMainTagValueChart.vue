@@ -6,7 +6,6 @@
 import echarts from 'echarts'
 require('echarts/theme/macarons') // echarts theme
 import resize from '../index/mixins/resize'
-import { queryBuildingDosage } from '../../../api/energy/report'
 
 const animationDuration = 6000
 

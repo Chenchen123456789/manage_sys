@@ -23,14 +23,14 @@ export default {
     },
     height: {
       type: String,
-      default: '300px'
+      default: '380px'
     },
     buildingId: {
       type: Number,
       default: null
     }
   },
-  data() {
+  data () {
     return {
       chart: null,
       queryParams: {
@@ -42,20 +42,23 @@ export default {
     }
   },
   watch: {
-    buildingId(newValue) {
-      this.queryParams.buildingId = newValue
-      this.getBuildingDosage()
+    buildingId: {
+      deep: true,
+      handler (newValue) {
+        this.queryParams.buildingId = newValue
+        this.getBuildingDosage()
+      }
     }
   },
-  created() {
+  created () {
     this.getBuildingDosage()
   },
-  mounted() {
+  mounted () {
     this.$nextTick(() => {
       this.initChart()
     })
   },
-  beforeDestroy() {
+  beforeDestroy () {
     if (!this.chart) {
       return
     }
@@ -63,8 +66,8 @@ export default {
     this.chart = null
   },
   methods: {
-    getBuildingDosage() {
-      queryBuildingDosage(this.queryParams).then(res => {
+    getBuildingDosage () {
+      this.queryParams.buildingId && queryBuildingDosage(this.queryParams).then(res => {
         const data = res.data
         const dayDosage = data.dayDosage
         const monthDosage = data.monthDosage
@@ -117,7 +120,7 @@ export default {
         })
       })
     },
-    initChart() {
+    initChart () {
       this.chart = echarts.init(this.$el, 'macarons')
       this.chart.setOption({
         tooltip: {
@@ -130,7 +133,7 @@ export default {
         grid: {
           top: 40,
           left: '2%',
-          right: '2%',
+          right: '3%',
           bottom: '3%',
           containLabel: true
         },

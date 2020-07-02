@@ -6,7 +6,7 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || '公用工程管理系统' // 标题
+const name = defaultSettings.title || '能源管理系统' // 标题
 
 const port = process.env.port || process.env.npm_config_port || 4100 // 端口
 
@@ -98,13 +98,7 @@ module.exports = {
         return options
       })
       .end()
-
-    config
-      // https://webpack.js.org/configuration/devtool/#development
-      .when(process.env.NODE_ENV === 'development',
-        config => config.devtool('cheap-source-map')
-      )
-
+      
     config
       .when(process.env.NODE_ENV !== 'development',
         config => {

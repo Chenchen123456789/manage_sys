@@ -40,7 +40,7 @@ public class BuildingController extends BaseController {
     @Autowired
     private TokenService tokenService;
 
-//    @PreAuthorize("@ss.hasPermi('energy:building:list')")
+    //    @PreAuthorize("@ss.hasPermi('energy:building:list')")
     @GetMapping("/list")
     public TableDataInfo selectBuildingList(Building building) {
         startPage();
@@ -134,7 +134,7 @@ public class BuildingController extends BaseController {
     /**
      * 导入数据
      *
-     * @param buildingList       数据列表
+     * @param buildingList    数据列表
      * @param isUpdateSupport 是否更新支持，如果已存在，则进行更新数据
      * @param operName        操作人
      * @return 结果
@@ -163,20 +163,22 @@ public class BuildingController extends BaseController {
                         successNum++;
                         successMsg.append("<br/>" + successNum + "、建筑 " + building.getBuildingName() + " 导入成功");
                     }
-                } else if (isUpdateSupport) {
-                    building.setUpdateBy(operName);
-                    building.setUpdateTime(new Date());
-                    if (checkBuildingCode != null && !checkBuildingCode.getId().equals(building.getId())) {
-                        failureNum++;
-                        failureMsg.append("<br/>" + failureNum + "、建筑编码 " + building.getBuildingCode() + " 已存在");
-                    } else {
-                        buildingService.updateBuilding(building);
-                        successNum++;
-                        successMsg.append("<br/>" + successNum + "、建筑 " + building.getBuildingName() + " 更新成功");
-                    }
                 } else {
-                    failureNum++;
-                    failureMsg.append("<br/>" + failureNum + "、建筑 " + building.getBuildingName() + " 已存在");
+                    if (isUpdateSupport) {
+                        building.setUpdateBy(operName);
+                        building.setUpdateTime(new Date());
+                        if (checkBuildingCode != null && !checkBuildingCode.getId().equals(building.getId())) {
+                            failureNum++;
+                            failureMsg.append("<br/>" + failureNum + "、建筑编码 " + building.getBuildingCode() + " 已存在");
+                        } else {
+                            buildingService.updateBuilding(building);
+                            successNum++;
+                            successMsg.append("<br/>" + successNum + "、建筑 " + building.getBuildingName() + " 更新成功");
+                        }
+                    } else {
+                        failureNum++;
+                        failureMsg.append("<br/>" + failureNum + "、建筑 " + building.getBuildingName() + " 已存在");
+                    }
                 }
             } catch (Exception e) {
                 failureNum++;

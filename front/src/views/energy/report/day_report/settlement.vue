@@ -15,14 +15,14 @@
         <el-date-picker
           @change="changeQueryTime"
           clearable
-          placeholder="选择月"
+          placeholder="选择日"
           size="small"
-          type="month"
+          type="date"
           v-model="queryParams.queryTime"
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="大功率" prop="deviceType">
-        <el-select size="small" clearable v-model="queryParams.deviceType">
+        <el-select  size="small" clearable v-model="queryParams.deviceType">
           <el-option
             :key="item.id"
             :label="item.label"
@@ -44,7 +44,7 @@
       <el-form-item>
         <el-button @click="handleQuery" icon="el-icon-search" size="mini" type="primary">搜索</el-button>
         <el-button @click="resetQuery" icon="el-icon-refresh" size="mini" type="info">重置</el-button>
-        <el-popover style="margin-left:10px" placement="bottom" trigger="click">
+        <el-popover placement="bottom" style="margin-left:10px" trigger="click">
           <div style="text-align: right; margin: 0">
             <el-button
               @click="handleExport(0)"
@@ -126,7 +126,7 @@
         <el-table-column align="center" label="金额" prop="waterAmount">
           <template slot-scope="scope">{{(waterPrice * scope.row.currentWaterDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="上月累计" prop="preWaterSumValue" />
+        <el-table-column align="center" label="昨天累计" prop="preWaterSumValue" />
         <el-table-column align="center" label="耗水累计" prop="currentWaterSumValue" />
       </el-table-column>
       <el-table-column align="center" label="空气">
@@ -137,7 +137,7 @@
         <el-table-column align="center" label="金额" prop="airAmount">
           <template slot-scope="scope">{{(airPrice * scope.row.currentAirDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="上月累计" prop="preAirSumValue" />
+        <el-table-column align="center" label="昨天累计" prop="preAirSumValue" />
         <el-table-column align="center" label="空气累计" prop="currentAirSumValue" />
       </el-table-column>
       <el-table-column align="center" label="电">
@@ -150,7 +150,7 @@
             slot-scope="scope"
           >{{(electricityPrice * scope.row.currentElectricityDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="上月累计" prop="preElectricitySumValue" />
+        <el-table-column align="center" label="昨天累计" prop="preElectricitySumValue" />
         <el-table-column align="center" label="耗电累计" prop="currentElectricitySumValue" />
       </el-table-column>
       <el-table-column align="center" label="蒸汽">
@@ -161,7 +161,7 @@
         <el-table-column align="center" label="金额" prop="steamAmount">
           <template slot-scope="scope">{{(steamPrice * scope.row.currentSteamDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="上月累计" prop="preSteamSumValue" />
+        <el-table-column align="center" label="昨天累计" prop="preSteamSumValue" />
         <el-table-column align="center" label="蒸汽累计" prop="currentSteamSumValue" />
       </el-table-column>
       <el-table-column align="center" label="金额合计" prop="totalAmount">
@@ -187,7 +187,7 @@
 </template>
 
 <script>
-import { listMonthSettlement, exportMonthSettlement } from '@/api/energy/report'
+import { listDaySettlement, exportDaySettlement } from '@/api/energy/report'
 import { listPlant } from '@/api/energy/plant'
 import { listUnitPrice, updateUnitPrice } from '@/api/energy/unitPrice'
 
@@ -206,12 +206,7 @@ export default {
       queryParams: {
         pageNum: 1,
         pageSize: 10,
-        queryTime: new Date(
-          new Date().getFullYear() +
-          '-' +
-          (new Date().getMonth() + 1) +
-          '-01 00:00:00'
-        ),
+        queryTime: new Date(),
         plantId: undefined
       },
       unitPriceList: [],
@@ -289,13 +284,14 @@ export default {
     /** 查询列表 */
     getList () {
       this.loading = true
-      listMonthSettlement(this.queryParams).then(response => {
+      listDaySettlement(this.queryParams).then(response => {
         let list = response.rows
         for (const index in list) {
           const currentAirSumValue = list[index].currentAirSumValue || 0
           const preAirSumValue = list[index].preAirSumValue || 0
           const currentAirDosage = currentAirSumValue - preAirSumValue
-          const currentElectricitySumValue = list[index].currentElectricitySumValue || 0
+          const currentElectricitySumValue =
+            list[index].currentElectricitySumValue || 0
           const preElectricitySumValue = list[index].preElectricitySumValue || 0
           const currentElectricityDosage = currentElectricitySumValue - preElectricitySumValue
           const currentWaterSumValue = list[index].currentWaterSumValue || 0
@@ -346,13 +342,13 @@ export default {
       queryParams.airPrice = airPrice
       queryParams.electricityPrice = electricityPrice
       queryParams.steamPrice = steamPrice
-      this.$confirm('是否确认导出月报结算数据项?', '警告', {
+      this.$confirm('是否确认导出日报结算数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       })
         .then(function () {
-          return exportMonthSettlement(queryParams)
+          return exportDaySettlement(queryParams)
         })
         .then(response => {
           this.download(response.msg)

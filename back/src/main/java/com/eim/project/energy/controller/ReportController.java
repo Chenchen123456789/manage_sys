@@ -40,25 +40,39 @@ public class ReportController extends BaseController {
     @PostMapping("/historyDetail/list")
     public TableDataInfo selectHistoryDetailList(@RequestBody Map<String, Object> map) {
         startPage();
-        List<Map<String, Object>> yearDosageList = null;
+        List<Map<String, Object>> dosageList = null;
         int queryTypeId = (int) map.get("queryTypeId");
+        String tableName = "";
         switch (queryTypeId) {
             case 1:
-                yearDosageList = reportService.selectHistoryOfYearDosage(map);
+                tableName = "T_YearData";
                 break;
             case 2:
-                yearDosageList = reportService.selectHistoryOfMonthDosage(map);
+                tableName = "T_MonthData";
                 break;
             case 3:
-                yearDosageList = reportService.selectHistoryOfDayDosage(map);
+                tableName = "T_DayData";
                 break;
             case 4:
-                yearDosageList = reportService.selectHistoryOfHourDosage(map);
+                tableName = "T_HourData";
+                break;
+            case 5:
+                tableName = "T_MinuteData";
                 break;
             default:
                 break;
         }
-        return getDataTable(yearDosageList);
+        map.put("tableName", tableName);
+        dosageList = reportService.selectHistoryOfDosage(map);
+        return getDataTable(dosageList);
+    }
+
+    @PreAuthorize("@ss.hasPermi('energy:report_dayDosageOfWater:list')")
+    @PostMapping("/dayDosageOfWater/list")
+    public TableDataInfo selectDayDosageOfWaterList(@RequestBody Map<String, Object> map) {
+        startPage();
+        List<Map<String, Object>> dayDosageOfWaterList = reportService.selectDayDosageOfWater(map);
+        return getDataTable(dayDosageOfWaterList);
     }
 
     @PreAuthorize("@ss.hasPermi('energy:report_monthDosageOfWater:list')")
@@ -69,12 +83,60 @@ public class ReportController extends BaseController {
         return getDataTable(monthDosageOfWaterList);
     }
 
+    @PreAuthorize("@ss.hasPermi('energy:report_quarterDosageOfWater:list')")
+    @PostMapping("/quarterDosageOfWater/list")
+    public TableDataInfo selectQuarterDosageOfWaterList(@RequestBody Map<String, Object> map) {
+        startPage();
+        List<Map<String, Object>> quarterDosageOfWaterList = reportService.selectQuarterDosageOfWater(map);
+        return getDataTable(quarterDosageOfWaterList);
+    }
+
+    @PreAuthorize("@ss.hasPermi('energy:report_yearDosageOfWater:list')")
+    @PostMapping("/yearDosageOfWater/list")
+    public TableDataInfo selectYearDosageOfWaterList(@RequestBody Map<String, Object> map) {
+        startPage();
+        List<Map<String, Object>> yearDosageOfWaterList = reportService.selectYearDosageOfWater(map);
+        return getDataTable(yearDosageOfWaterList);
+    }
+
+    @PreAuthorize("@ss.hasPermi('energy:report_dayDosageOfElectricity:list')")
+    @PostMapping("/dayDosageOfElectricity/list")
+    public TableDataInfo selectDayDosageOfElectricityList(@RequestBody Map<String, Object> map) {
+        startPage();
+        List<Map<String, Object>> dayDosageOfElectricityList = reportService.selectDayDosageOfElectricity(map);
+        return getDataTable(dayDosageOfElectricityList);
+    }
+
     @PreAuthorize("@ss.hasPermi('energy:report_monthDosageOfElectricity:list')")
     @PostMapping("/monthDosageOfElectricity/list")
     public TableDataInfo selectMonthDosageOfElectricityList(@RequestBody Map<String, Object> map) {
         startPage();
         List<Map<String, Object>> monthDosageOfElectricityList = reportService.selectMonthDosageOfElectricity(map);
         return getDataTable(monthDosageOfElectricityList);
+    }
+
+    @PreAuthorize("@ss.hasPermi('energy:report_quarterDosageOfElectricity:list')")
+    @PostMapping("/quarterDosageOfElectricity/list")
+    public TableDataInfo selectQuarterDosageOfElectricityList(@RequestBody Map<String, Object> map) {
+        startPage();
+        List<Map<String, Object>> quarterDosageOfElectricityList = reportService.selectQuarterDosageOfElectricity(map);
+        return getDataTable(quarterDosageOfElectricityList);
+    }
+
+    @PreAuthorize("@ss.hasPermi('energy:report_yearDosageOfElectricity:list')")
+    @PostMapping("/yearDosageOfElectricity/list")
+    public TableDataInfo selectYearDosageOfElectricityList(@RequestBody Map<String, Object> map) {
+        startPage();
+        List<Map<String, Object>> yearDosageOfElectricityList = reportService.selectYearDosageOfElectricity(map);
+        return getDataTable(yearDosageOfElectricityList);
+    }
+
+    @PreAuthorize("@ss.hasPermi('energy:report_daySettlement:list')")
+    @PostMapping("/daySettlement/list")
+    public TableDataInfo selectDaySettlementList(@RequestBody Map<String, Object> map) {
+        startPage();
+        List<Map<String, Object>> daySettlementList = reportService.selectDaySettlement(map);
+        return getDataTable(daySettlementList);
     }
 
     @PreAuthorize("@ss.hasPermi('energy:report_monthSettlement:list')")
@@ -85,12 +147,28 @@ public class ReportController extends BaseController {
         return getDataTable(monthSettlementList);
     }
 
+    @PreAuthorize("@ss.hasPermi('energy:report_quarterSettlement:list')")
+    @PostMapping("/quarterSettlement/list")
+    public TableDataInfo selectQuarterSettlementList(@RequestBody Map<String, Object> map) {
+        startPage();
+        List<Map<String, Object>> quarterSettlementList = reportService.selectQuarterSettlement(map);
+        return getDataTable(quarterSettlementList);
+    }
+
+    @PreAuthorize("@ss.hasPermi('energy:report_yearSettlement:list')")
+    @PostMapping("/yearSettlement/list")
+    public TableDataInfo selectYearSettlementList(@RequestBody Map<String, Object> map) {
+        startPage();
+        List<Map<String, Object>> yearSettlementList = reportService.selectYearSettlement(map);
+        return getDataTable(yearSettlementList);
+    }
+
     @PostMapping("/buildingDosage/list")
     public AjaxResult selectBuildingDosage(@RequestBody Map<String, Object> map) {
         List<Map<String, Object>> yearList = reportService.selectBuildingYearDosage(map);
         List<Map<String, Object>> monthList = reportService.selectBuildingMonthDosage(map);
         List<Map<String, Object>> dayList = reportService.selectBuildingDayDosage(map);
-        Map resultMap = new HashMap();
+        Map<String, Object> resultMap = new HashMap();
         resultMap.put("yearDosage", null);
         resultMap.put("monthDosage", null);
         resultMap.put("dayDosage", null);
@@ -161,11 +239,6 @@ public class ReportController extends BaseController {
         return getDataTable(systemList);
     }
 
-    @GetMapping("/buildingDistribution/list")
-    public AjaxResult selectBuildingDistributionList() {
-        List<Map<String, Object>> buildingDistributionList = reportService.selectBuildingDistribution();
-        return AjaxResult.success(buildingDistributionList);
-    }
 
     @GetMapping("/buildingMainMPValue/list/{buildingId}")
     public AjaxResult selectBuildingMainMPValueList(@PathVariable Integer buildingId) {
@@ -188,24 +261,30 @@ public class ReportController extends BaseController {
         if (pageNum != null) {
             startPage();
         }
-        List<Map<String, Object>> yearDosageList = null;
+        List<Map<String, Object>> dosageList = null;
         int queryTypeId = (int) map.get("queryTypeId");
+        String tableName = "";
         switch (queryTypeId) {
             case 1:
-                yearDosageList = reportService.selectHistoryOfYearDosage(map);
+                tableName = "T_YearData";
                 break;
             case 2:
-                yearDosageList = reportService.selectHistoryOfMonthDosage(map);
+                tableName = "T_MonthData";
                 break;
             case 3:
-                yearDosageList = reportService.selectHistoryOfDayDosage(map);
+                tableName = "T_DayData";
                 break;
             case 4:
-                yearDosageList = reportService.selectHistoryOfHourDosage(map);
+                tableName = "T_HourData";
+                break;
+            case 5:
+                tableName = "T_MinuteData";
                 break;
             default:
                 break;
         }
+        map.put("tableName", tableName);
+        dosageList = reportService.selectHistoryOfDosage(map);
         String sheetName = "建筑数据";
         String[] tableHead = {"时间", "工厂名", "建筑名", "设备名", "仪表编号", "数据位号", "数据值", "系统名", "数据点描述"};
         XSSFWorkbook workbook = new XSSFWorkbook();
@@ -213,7 +292,7 @@ public class ReportController extends BaseController {
         Map<String, CellStyle> cellStyle = reportService.createStyles(workbook);
         int column = 1;
 
-        for (Map<String, Object> yearDosageMap : yearDosageList) {
+        for (Map<String, Object> yearDosageMap : dosageList) {
             XSSFRow row = sheet.createRow(column);
             // 设置列宽
             if (column == 8) {
@@ -270,31 +349,22 @@ public class ReportController extends BaseController {
                 }
             }
         }
-        OutputStream out = null;
-        try {
-            String filename = reportService.encodingFilename(sheetName);
-            out = new FileOutputStream(reportService.getAbsoluteFile(filename));
-            workbook.write(out);
-            return AjaxResult.success(filename);
-        } catch (Exception e) {
-            log.error("导出Excel异常{}", e.getMessage());
-            throw new CustomException("导出Excel失败，请联系网站管理员！");
-        } finally {
-            if (workbook != null) {
-                try {
-                    workbook.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
+        return writeWorkBook(workbook, sheetName);
+    }
+
+    @Log(title = "报表管理", businessType = BusinessType.EXPORT)
+    @PreAuthorize("@ss.hasPermi('energy:report_dayDosageOfWater:export')")
+    @PostMapping("/dayDosageOfWater/export")
+    public AjaxResult exportDayDosageOfWater(@RequestBody Map<String, Object> map) {
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        Integer pageNum = pageDomain.getPageNum();
+        if (pageNum != null) {
+            startPage();
         }
+        List<Map<String, Object>> dayDosageOfWaterList = reportService.selectDayDosageOfWater(map);
+        String sheetName = "用水日报";
+        String[] tableHead = {"单位", "测点名", "安装地点", "水表规格", "昨天抄见", "今天抄见", "实际用量"};
+        return exportDosageOfWater(map, dayDosageOfWaterList, sheetName, tableHead, 1);
     }
 
     @Log(title = "报表管理", businessType = BusinessType.EXPORT)
@@ -309,11 +379,46 @@ public class ReportController extends BaseController {
         List<Map<String, Object>> monthDosageOfWaterList = reportService.selectMonthDosageOfWater(map);
         String sheetName = "用水月报";
         String[] tableHead = {"单位", "测点名", "安装地点", "水表规格", "上月抄见", "本月抄见", "实际用量"};
+        return exportDosageOfWater(map, monthDosageOfWaterList, sheetName, tableHead, 2);
+    }
+
+    @Log(title = "报表管理", businessType = BusinessType.EXPORT)
+    @PreAuthorize("@ss.hasPermi('energy:report_quarterDosageOfWater:export')")
+    @PostMapping("/quarterDosageOfWater/export")
+    public AjaxResult exportQuarterDosageOfWater(@RequestBody Map<String, Object> map) {
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        Integer pageNum = pageDomain.getPageNum();
+        if (pageNum != null) {
+            startPage();
+        }
+        List<Map<String, Object>> quarterDosageOfWaterList = reportService.selectQuarterDosageOfWater(map);
+        String sheetName = "用水月报";
+        String[] tableHead = {"单位", "测点名", "安装地点", "水表规格", "本季度抄见", "上季度抄见", "实际用量"};
+        return exportDosageOfWater(map, quarterDosageOfWaterList, sheetName, tableHead, 3);
+    }
+
+    @Log(title = "报表管理", businessType = BusinessType.EXPORT)
+    @PreAuthorize("@ss.hasPermi('energy:report_yearDosageOfWater:export')")
+    @PostMapping("/yearDosageOfWater/export")
+    public AjaxResult exportYearDosageOfWater(@RequestBody Map<String, Object> map) {
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        Integer pageNum = pageDomain.getPageNum();
+        if (pageNum != null) {
+            startPage();
+        }
+        List<Map<String, Object>> yearDosageOfWaterList = reportService.selectYearDosageOfWater(map);
+        String sheetName = "用水年报";
+        String[] tableHead = {"单位", "测点名", "安装地点", "水表规格", "去年抄见", "今年抄见", "实际用量"};
+        return exportDosageOfWater(map, yearDosageOfWaterList, sheetName, tableHead, 4);
+    }
+
+    public AjaxResult exportDosageOfWater(Map<String, Object> map, List<Map<String, Object>> dosageOfWaterList,
+                                          String sheetName, String[] tableHead, Integer queryTimeType) {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = reportService.initSheetMonthDosageOfWater(workbook, sheetName, tableHead, map);
+        XSSFSheet sheet = reportService.initSheetDosageOfWater(workbook, sheetName, tableHead, map, queryTimeType);
         Map<String, CellStyle> cellStyle = reportService.createStyles(workbook);
         int column = 2;
-        for (Map<String, Object> monthDosageOfWaterMap : monthDosageOfWaterList) {
+        for (Map<String, Object> dosageOfWaterMap : dosageOfWaterList) {
             XSSFRow row = sheet.createRow(column);
             // 设置列宽
             sheet.setColumnWidth(column, (int) ((16 + 0.72) * 256));
@@ -323,20 +428,20 @@ public class ReportController extends BaseController {
             for (int i = 0; i < tableHead.length; i++) {
                 cell = row.createCell(i);
                 cell.setCellStyle(cellStyle.get("data"));
-                double currentMonthValue = monthDosageOfWaterMap.get("currentMonthValue") != null ? Double.valueOf(String.valueOf(monthDosageOfWaterMap.get("currentMonthValue"))) : 0;
-                double preMonthValue = monthDosageOfWaterMap.get("preMonthValue") != null ? Double.valueOf(String.valueOf(monthDosageOfWaterMap.get("preMonthValue"))) : 0;
+                double currentTimeValue = dosageOfWaterMap.get("currentTimeValue") != null ? Double.valueOf(String.valueOf(dosageOfWaterMap.get("currentTimeValue"))) : 0;
+                double preTimeValue = dosageOfWaterMap.get("preTimeValue") != null ? Double.valueOf(String.valueOf(dosageOfWaterMap.get("preTimeValue"))) : 0;
                 switch (i) {
                     case 0:
                         cell.setCellType(CellType.STRING);
-                        cell.setCellValue(String.valueOf(monthDosageOfWaterMap.get("plantName")));
+                        cell.setCellValue(String.valueOf(dosageOfWaterMap.get("plantName")));
                         break;
                     case 1:
                         cell.setCellType(CellType.STRING);
-                        cell.setCellValue(String.valueOf(monthDosageOfWaterMap.get("tagName")));
+                        cell.setCellValue(String.valueOf(dosageOfWaterMap.get("tagName")));
                         break;
                     case 2:
                         cell.setCellType(CellType.STRING);
-                        cell.setCellValue(String.valueOf(monthDosageOfWaterMap.get("buildingName")));
+                        cell.setCellValue(String.valueOf(dosageOfWaterMap.get("buildingName")));
                         break;
                     case 3:
                         cell.setCellType(CellType.STRING);
@@ -344,47 +449,37 @@ public class ReportController extends BaseController {
                         break;
                     case 4:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(preMonthValue);
+                        cell.setCellValue(preTimeValue);
                         break;
                     case 5:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(currentMonthValue);
+                        cell.setCellValue(currentTimeValue);
                         break;
                     case 6:
                         cell.setCellType(CellType.STRING);
-                        cell.setCellValue(currentMonthValue - preMonthValue);
+                        cell.setCellValue(currentTimeValue - preTimeValue);
                         break;
                     default:
                         break;
                 }
             }
         }
-        OutputStream out = null;
-        try {
-            String filename = reportService.encodingFilename(sheetName);
-            out = new FileOutputStream(reportService.getAbsoluteFile(filename));
-            workbook.write(out);
-            return AjaxResult.success(filename);
-        } catch (Exception e) {
-            log.error("导出Excel异常{}", e.getMessage());
-            throw new CustomException("导出Excel失败，请联系网站管理员！");
-        } finally {
-            if (workbook != null) {
-                try {
-                    workbook.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-        }
+        return writeWorkBook(workbook, sheetName);
+    }
 
+    @Log(title = "报表管理", businessType = BusinessType.EXPORT)
+    @PreAuthorize("@ss.hasPermi('energy:report_dayDosageOfElectricity:export')")
+    @PostMapping("/dayDosageOfElectricity/export")
+    public AjaxResult exportDayDosageOfElectricity(@RequestBody Map<String, Object> map) {
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        Integer pageNum = pageDomain.getPageNum();
+        if (pageNum != null) {
+            startPage();
+        }
+        List<Map<String, Object>> dayDosageOfElectricityList = reportService.selectDayDosageOfElectricity(map);
+        String sheetName = "用电日报";
+        String[] tableHead = {"单位名称", "建筑名称", "设备名称", "表号", "测点名称", "装表地点", "倍率", "昨天抄见数", "今天抄见数", "峰", "平", "谷", "总量"};
+        return exportDosageOfElectricity(map, dayDosageOfElectricityList, sheetName, tableHead, 1);
     }
 
     @Log(title = "报表管理", businessType = BusinessType.EXPORT)
@@ -398,12 +493,47 @@ public class ReportController extends BaseController {
         }
         List<Map<String, Object>> monthDosageOfElectricityList = reportService.selectMonthDosageOfElectricity(map);
         String sheetName = "用电月报";
-        String[] tableHead = {"单位名称", "建筑名称", "设备名称", "表号", "装表地点", "倍率", "上月抄见数", "本月抄见数", "峰", "平", "谷", "总量"};
+        String[] tableHead = {"单位名称", "建筑名称", "设备名称", "表号", "测点名称", "装表地点", "倍率", "上月抄见数", "本月抄见数", "峰", "平", "谷", "总量"};
+        return exportDosageOfElectricity(map, monthDosageOfElectricityList, sheetName, tableHead, 2);
+    }
+
+    @Log(title = "报表管理", businessType = BusinessType.EXPORT)
+    @PreAuthorize("@ss.hasPermi('energy:report_quarterDosageOfElectricity:export')")
+    @PostMapping("/quarterDosageOfElectricity/export")
+    public AjaxResult exportQuarterDosageOfElectricity(@RequestBody Map<String, Object> map) {
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        Integer pageNum = pageDomain.getPageNum();
+        if (pageNum != null) {
+            startPage();
+        }
+        List<Map<String, Object>> quarterDosageOfElectricityList = reportService.selectQuarterDosageOfElectricity(map);
+        String sheetName = "用电季报";
+        String[] tableHead = {"单位名称", "建筑名称", "设备名称", "表号", "测点名称", "装表地点", "倍率", "上季度抄见数", "本季度抄见数", "峰", "平", "谷", "总量"};
+        return exportDosageOfElectricity(map, quarterDosageOfElectricityList, sheetName, tableHead, 3);
+    }
+
+    @Log(title = "报表管理", businessType = BusinessType.EXPORT)
+    @PreAuthorize("@ss.hasPermi('energy:report_yearDosageOfElectricity:export')")
+    @PostMapping("/yearDosageOfElectricity/export")
+    public AjaxResult exportYearDosageOfElectricity(@RequestBody Map<String, Object> map) {
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        Integer pageNum = pageDomain.getPageNum();
+        if (pageNum != null) {
+            startPage();
+        }
+        List<Map<String, Object>> yearDosageOfElectricityList = reportService.selectYearDosageOfElectricity(map);
+        String sheetName = "用电年报";
+        String[] tableHead = {"单位名称", "建筑名称", "设备名称", "表号", "测点名称", "装表地点", "倍率", "去年抄见数", "今年抄见数", "峰", "平", "谷", "总量"};
+        return exportDosageOfElectricity(map, yearDosageOfElectricityList, sheetName, tableHead, 4);
+    }
+
+    public AjaxResult exportDosageOfElectricity(Map<String, Object> map, List<Map<String, Object>> dosageOfElectricityList,
+                                                String sheetName, String[] tableHead, Integer queryTimeType) {
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = reportService.initSheetMonthDosageOfElectricity(workbook, sheetName, tableHead);
+        XSSFSheet sheet = reportService.initSheetDosageOfElectricity(workbook, sheetName, tableHead, map, queryTimeType);
         Map<String, CellStyle> cellStyle = reportService.createStyles(workbook);
         int column = 2;
-        for (Map<String, Object> monthDosageOfElectricityMap : monthDosageOfElectricityList) {
+        for (Map<String, Object> dosageOfElectricityMap : dosageOfElectricityList) {
             XSSFRow row = sheet.createRow(column);
             // 设置列宽
             row.setHeight((short) (14 * 20));
@@ -412,90 +542,89 @@ public class ReportController extends BaseController {
             for (int i = 0; i < tableHead.length; i++) {
                 cell = row.createCell(i);
                 cell.setCellStyle(cellStyle.get("data"));
-                double currentMonthValue = monthDosageOfElectricityMap.get("currentMonthValue") != null ? Double.valueOf(String.valueOf(monthDosageOfElectricityMap.get("currentMonthValue"))) : 0;
-                double preMonthValue = monthDosageOfElectricityMap.get("preMonthValue") != null ? Double.valueOf(String.valueOf(monthDosageOfElectricityMap.get("preMonthValue"))) : 0;
-                double fValue = monthDosageOfElectricityMap.get("fValue") != null ? Double.valueOf(String.valueOf(monthDosageOfElectricityMap.get("fValue"))) : 0;
-                double pValue = monthDosageOfElectricityMap.get("pValue") != null ? Double.valueOf(String.valueOf(monthDosageOfElectricityMap.get("pValue"))) : 0;
-                double gValue = monthDosageOfElectricityMap.get("gValue") != null ? Double.valueOf(String.valueOf(monthDosageOfElectricityMap.get("gValue"))) : 0;
+                double currentTimeValue = dosageOfElectricityMap.get("currentTimeValue") != null ? Double.valueOf(String.valueOf(dosageOfElectricityMap.get("currentTimeValue"))) : 0;
+                double preTimeValue = dosageOfElectricityMap.get("preTimeValue") != null ? Double.valueOf(String.valueOf(dosageOfElectricityMap.get("preTimeValue"))) : 0;
+                double fValue = dosageOfElectricityMap.get("fValue") != null ? Double.valueOf(String.valueOf(dosageOfElectricityMap.get("fValue"))) : 0;
+                double pValue = dosageOfElectricityMap.get("pValue") != null ? Double.valueOf(String.valueOf(dosageOfElectricityMap.get("pValue"))) : 0;
+                double gValue = dosageOfElectricityMap.get("gValue") != null ? Double.valueOf(String.valueOf(dosageOfElectricityMap.get("gValue"))) : 0;
                 switch (i) {
                     case 0:
                         cell.setCellType(CellType.STRING);
-                        cell.setCellValue(String.valueOf(monthDosageOfElectricityMap.get("plantName")));
+                        cell.setCellValue(String.valueOf(dosageOfElectricityMap.get("plantName")));
                         break;
                     case 1:
                         cell.setCellType(CellType.STRING);
-                        cell.setCellValue(String.valueOf(monthDosageOfElectricityMap.get("buildingName")));
+                        cell.setCellValue(String.valueOf(dosageOfElectricityMap.get("buildingName")));
                         break;
                     case 2:
                         cell.setCellType(CellType.STRING);
-                        cell.setCellValue(String.valueOf(monthDosageOfElectricityMap.get("deviceName")));
+                        cell.setCellValue(String.valueOf(dosageOfElectricityMap.get("deviceName")));
                         break;
                     case 3:
                         cell.setCellType(CellType.STRING);
-                        cell.setCellValue(String.valueOf(monthDosageOfElectricityMap.get("meterCode")));
+                        cell.setCellValue(String.valueOf(dosageOfElectricityMap.get("meterCode")));
                         break;
                     case 4:
                         cell.setCellType(CellType.STRING);
-                        cell.setCellValue(String.valueOf(monthDosageOfElectricityMap.get("meterLocation")));
+                        cell.setCellValue(String.valueOf(dosageOfElectricityMap.get("tagName")));
                         break;
                     case 5:
                         cell.setCellType(CellType.STRING);
-                        cell.setCellValue(String.valueOf(monthDosageOfElectricityMap.get("meterSpec")));
+                        cell.setCellValue(String.valueOf(dosageOfElectricityMap.get("meterLocation")));
                         break;
                     case 6:
-                        cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(preMonthValue);
+                        cell.setCellType(CellType.STRING);
+                        cell.setCellValue(String.valueOf(dosageOfElectricityMap.get("meterSpec")));
                         break;
                     case 7:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(currentMonthValue);
+                        cell.setCellValue(preTimeValue);
                         break;
                     case 8:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(fValue);
+                        cell.setCellValue(currentTimeValue);
                         break;
                     case 9:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(pValue);
+                        cell.setCellValue(fValue);
                         break;
                     case 10:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(gValue);
+                        cell.setCellValue(pValue);
                         break;
                     case 11:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(currentMonthValue - preMonthValue);
+                        cell.setCellValue(gValue);
+                        break;
+                    case 12:
+                        cell.setCellType(CellType.NUMERIC);
+                        cell.setCellValue(currentTimeValue - preTimeValue);
                         break;
                     default:
                         break;
                 }
             }
         }
-        OutputStream out = null;
-        try {
-            String filename = reportService.encodingFilename(sheetName);
-            out = new FileOutputStream(reportService.getAbsoluteFile(filename));
-            workbook.write(out);
-            return AjaxResult.success(filename);
-        } catch (Exception e) {
-            log.error("导出Excel异常{}", e.getMessage());
-            throw new CustomException("导出Excel失败，请联系网站管理员！");
-        } finally {
-            if (workbook != null) {
-                try {
-                    workbook.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
+        return writeWorkBook(workbook, sheetName);
+    }
+
+    @Log(title = "报表管理", businessType = BusinessType.EXPORT)
+    @PreAuthorize("@ss.hasPermi('energy:report_daySettlement:export')")
+    @PostMapping("/daySettlement/export")
+    public AjaxResult exportDaySettlement(@RequestBody Map<String, Object> map) {
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        Integer pageNum = pageDomain.getPageNum();
+        if (pageNum != null) {
+            startPage();
         }
+        List<Map<String, Object>> daySettlementList = reportService.selectDaySettlement(map);
+        String sheetName = "结算日报";
+        String[] tableHead = {"单位", "建筑", "水数量", "单价", "金额", "昨天累计", "耗水累计",
+                "空气数量", "单价", "金额", "昨天累计", "空气累计",
+                "电数量", "单价", "金额", "昨天累计", "耗电累计",
+                "蒸汽数量", "单价", "金额", "昨天累计", "蒸汽累计",
+                "金额合计"};
+        return exportSettlement(map, daySettlementList, sheetName, tableHead, 1);
     }
 
     @Log(title = "报表管理", businessType = BusinessType.EXPORT)
@@ -508,21 +637,65 @@ public class ReportController extends BaseController {
             startPage();
         }
         List<Map<String, Object>> monthSettlementList = reportService.selectMonthSettlement(map);
-        Double waterPrice = map.get("waterPrice") != null ? (Double) map.get("waterPrice") : 0;
-        Double electricityPrice = map.get("electricityPrice") != null ? (Double) map.get("electricityPrice") : 0;
-        Double airPrice = map.get("airPrice") != null ? (Double) map.get("airPrice") : 0;
-        Double steamPrice = map.get("steamPrice") != null ? (Double) map.get("steamPrice") : 0;
         String sheetName = "结算月报";
-        String[] tableHead = {"单位", "水数量", "单价", "金额", "上月累计", "耗水累计",
+        String[] tableHead = {"单位", "建筑", "水数量", "单价", "金额", "上月累计", "耗水累计",
                 "空气数量", "单价", "金额", "上月累计", "空气累计",
                 "电数量", "单价", "金额", "上月累计", "耗电累计",
                 "蒸汽数量", "单价", "金额", "上月累计", "蒸汽累计",
                 "金额合计"};
+        return exportSettlement(map, monthSettlementList, sheetName, tableHead, 2);
+    }
+
+    @Log(title = "报表管理", businessType = BusinessType.EXPORT)
+    @PreAuthorize("@ss.hasPermi('energy:report_quarterSettlement:export')")
+    @PostMapping("/quarterSettlement/export")
+    public AjaxResult exportQuarterSettlement(@RequestBody Map<String, Object> map) {
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        Integer pageNum = pageDomain.getPageNum();
+        if (pageNum != null) {
+            startPage();
+        }
+        List<Map<String, Object>> quarterSettlementList = reportService.selectQuarterSettlement(map);
+        String sheetName = "结算季报";
+        String[] tableHead = {"单位", "建筑", "水数量", "单价", "金额", "上季度累计", "耗水累计",
+                "空气数量", "单价", "金额", "上季度累计", "空气累计",
+                "电数量", "单价", "金额", "上季度累计", "耗电累计",
+                "蒸汽数量", "单价", "金额", "上季度累计", "蒸汽累计",
+                "金额合计"};
+        return exportSettlement(map, quarterSettlementList, sheetName, tableHead, 3);
+    }
+
+    @Log(title = "报表管理", businessType = BusinessType.EXPORT)
+    @PreAuthorize("@ss.hasPermi('energy:report_yearSettlement:export')")
+    @PostMapping("/yearSettlement/export")
+    public AjaxResult exportYearSettlement(@RequestBody Map<String, Object> map) {
+        PageDomain pageDomain = TableSupport.buildPageRequest();
+        Integer pageNum = pageDomain.getPageNum();
+        if (pageNum != null) {
+            startPage();
+        }
+        List<Map<String, Object>> yearSettlementList = reportService.selectYearSettlement(map);
+        String sheetName = "结算年报";
+        String[] tableHead = {"单位", "建筑", "水数量", "单价", "金额", "去年累计", "耗水累计",
+                "空气数量", "单价", "金额", "去年累计", "空气累计",
+                "电数量", "单价", "金额", "去年累计", "耗电累计",
+                "蒸汽数量", "单价", "金额", "去年累计", "蒸汽累计",
+                "金额合计"};
+        return exportSettlement(map, yearSettlementList, sheetName, tableHead, 4);
+    }
+
+    public AjaxResult exportSettlement(Map<String, Object> map, List<Map<String, Object>> settlementList,
+                                       String sheetName, String[] tableHead, Integer queryTimeType) {
+        Double waterPrice = map.get("waterPrice") != null ? (Double) map.get("waterPrice") : 0;
+        Double electricityPrice = map.get("electricityPrice") != null ? (Double) map.get("electricityPrice") : 0;
+        Double airPrice = map.get("airPrice") != null ? (Double) map.get("airPrice") : 0;
+        Double steamPrice = map.get("steamPrice") != null ? (Double) map.get("steamPrice") : 0;
+
         XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFSheet sheet = reportService.initSheetMonthSettlement(workbook, sheetName, tableHead);
+        XSSFSheet sheet = reportService.initSheetSettlement(workbook, sheetName, tableHead, map, queryTimeType);
         Map<String, CellStyle> cellStyle = reportService.createStyles(workbook);
         int column = 2;
-        for (Map<String, Object> monthSettlementMap : monthSettlementList) {
+        for (Map<String, Object> settlementMap : settlementList) {
             XSSFRow row = sheet.createRow(column);
             // 设置列宽
             row.setHeight((short) (14 * 20));
@@ -532,123 +705,127 @@ public class ReportController extends BaseController {
                 cell = row.createCell(i);
                 cell.setCellStyle(cellStyle.get("data"));
                 double currentWaterSumValue = 0;
-                if (monthSettlementMap.get("currentWaterSumValue") != null) {
-                    currentWaterSumValue = Double.valueOf(String.valueOf(monthSettlementMap.get("currentWaterSumValue")));
+                if (settlementMap.get("currentWaterSumValue") != null) {
+                    currentWaterSumValue = Double.valueOf(String.valueOf(settlementMap.get("currentWaterSumValue")));
                 }
                 double preWaterSumValue = 0;
-                if (monthSettlementMap.get("preWaterSumValue") != null) {
-                    preWaterSumValue = Double.valueOf(String.valueOf(monthSettlementMap.get("preWaterSumValue")));
+                if (settlementMap.get("preWaterSumValue") != null) {
+                    preWaterSumValue = Double.valueOf(String.valueOf(settlementMap.get("preWaterSumValue")));
                 }
                 double currentAirSumValue = 0;
-                if (monthSettlementMap.get("currentAirSumValue") != null) {
-                    currentAirSumValue = Double.valueOf(String.valueOf(monthSettlementMap.get("currentAirSumValue")));
+                if (settlementMap.get("currentAirSumValue") != null) {
+                    currentAirSumValue = Double.valueOf(String.valueOf(settlementMap.get("currentAirSumValue")));
                 }
                 double preAirSumValue = 0;
-                if (monthSettlementMap.get("preAirSumValue") != null) {
-                    preAirSumValue = Double.valueOf(String.valueOf(monthSettlementMap.get("preAirSumValue")));
+                if (settlementMap.get("preAirSumValue") != null) {
+                    preAirSumValue = Double.valueOf(String.valueOf(settlementMap.get("preAirSumValue")));
                 }
                 double currentElectricitySumValue = 0;
-                if (monthSettlementMap.get("currentElectricitySumValue") != null) {
-                    currentElectricitySumValue = Double.valueOf(String.valueOf(monthSettlementMap.get("currentElectricitySumValue")));
+                if (settlementMap.get("currentElectricitySumValue") != null) {
+                    currentElectricitySumValue = Double.valueOf(String.valueOf(settlementMap.get("currentElectricitySumValue")));
                 }
                 double preElectricitySumValue = 0;
-                if (monthSettlementMap.get("preElectricitySumValue") != null) {
-                    preElectricitySumValue = Double.valueOf(String.valueOf(monthSettlementMap.get("preElectricitySumValue")));
+                if (settlementMap.get("preElectricitySumValue") != null) {
+                    preElectricitySumValue = Double.valueOf(String.valueOf(settlementMap.get("preElectricitySumValue")));
                 }
                 double currentSteamSumValue = 0;
-                if (monthSettlementMap.get("currentSteamSumValue") != null) {
-                    currentSteamSumValue = Double.valueOf(String.valueOf(monthSettlementMap.get("currentSteamSumValue")));
+                if (settlementMap.get("currentSteamSumValue") != null) {
+                    currentSteamSumValue = Double.valueOf(String.valueOf(settlementMap.get("currentSteamSumValue")));
                 }
                 double preSteamSumValue = 0;
-                if (monthSettlementMap.get("preSteamSumValue") != null) {
-                    preSteamSumValue = Double.valueOf(String.valueOf(monthSettlementMap.get("preSteamSumValue")));
+                if (settlementMap.get("preSteamSumValue") != null) {
+                    preSteamSumValue = Double.valueOf(String.valueOf(settlementMap.get("preSteamSumValue")));
                 }
                 switch (i) {
                     case 0:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(String.valueOf(monthSettlementMap.get("plantName")));
+                        cell.setCellValue(String.valueOf(settlementMap.get("plantName")));
                         break;
                     case 1:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(currentWaterSumValue - preWaterSumValue);
+                        cell.setCellValue(String.valueOf(settlementMap.get("buildingName")));
                         break;
                     case 2:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(waterPrice);
+                        cell.setCellValue(currentWaterSumValue - preWaterSumValue);
                         break;
                     case 3:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(waterPrice * (currentWaterSumValue - preWaterSumValue));
+                        cell.setCellValue(waterPrice);
                         break;
                     case 4:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(preWaterSumValue);
+                        cell.setCellValue(waterPrice * (currentWaterSumValue - preWaterSumValue));
                         break;
                     case 5:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(currentWaterSumValue);
+                        cell.setCellValue(preWaterSumValue);
                         break;
                     case 6:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(currentAirSumValue - preAirSumValue);
+                        cell.setCellValue(currentWaterSumValue);
                         break;
                     case 7:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(airPrice);
+                        cell.setCellValue(currentAirSumValue - preAirSumValue);
                         break;
                     case 8:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(airPrice * (currentAirSumValue - preAirSumValue));
+                        cell.setCellValue(airPrice);
                         break;
                     case 9:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(preAirSumValue);
+                        cell.setCellValue(airPrice * (currentAirSumValue - preAirSumValue));
                         break;
                     case 10:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(currentAirSumValue);
+                        cell.setCellValue(preAirSumValue);
                         break;
                     case 11:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(currentElectricitySumValue - preElectricitySumValue);
+                        cell.setCellValue(currentAirSumValue);
                         break;
                     case 12:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(electricityPrice);
+                        cell.setCellValue(currentElectricitySumValue - preElectricitySumValue);
                         break;
                     case 13:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(electricityPrice * (currentElectricitySumValue - preElectricitySumValue));
+                        cell.setCellValue(electricityPrice);
                         break;
                     case 14:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(preElectricitySumValue);
+                        cell.setCellValue(electricityPrice * (currentElectricitySumValue - preElectricitySumValue));
                         break;
                     case 15:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(currentElectricitySumValue);
+                        cell.setCellValue(preElectricitySumValue);
                         break;
                     case 16:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(currentSteamSumValue - preSteamSumValue);
+                        cell.setCellValue(currentElectricitySumValue);
                         break;
                     case 17:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(steamPrice);
+                        cell.setCellValue(currentSteamSumValue - preSteamSumValue);
                         break;
                     case 18:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(steamPrice * (currentSteamSumValue - preSteamSumValue));
+                        cell.setCellValue(steamPrice);
                         break;
                     case 19:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(preSteamSumValue);
+                        cell.setCellValue(steamPrice * (currentSteamSumValue - preSteamSumValue));
                         break;
                     case 20:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(currentSteamSumValue);
+                        cell.setCellValue(preSteamSumValue);
                         break;
                     case 21:
+                        cell.setCellType(CellType.NUMERIC);
+                        cell.setCellValue(currentSteamSumValue);
+                        break;
+                    case 22:
                         cell.setCellType(CellType.NUMERIC);
                         cell.setCellValue(waterPrice * (currentWaterSumValue - preWaterSumValue)
                                 + airPrice * (currentAirSumValue - preAirSumValue)
@@ -660,6 +837,10 @@ public class ReportController extends BaseController {
                 }
             }
         }
+        return writeWorkBook(workbook, sheetName);
+    }
+
+    public AjaxResult writeWorkBook(Workbook workbook, String sheetName) {
         OutputStream out = null;
         try {
             String filename = reportService.encodingFilename(sheetName);
@@ -685,7 +866,6 @@ public class ReportController extends BaseController {
                 }
             }
         }
-
     }
 }
 

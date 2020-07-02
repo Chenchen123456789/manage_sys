@@ -2,13 +2,7 @@
   <div class="dashboard-editor-container">
     <PanelGroup :panelGroupData="{homePageChartSettingList, yearTotal}" />
     <el-row :gutter="32" class="second-part">
-      <el-col
-        class="el-coldash-board"
-        :span="4"
-        v-for="item in [4,5,6,7,8,9]"
-        :key="item"
-        :xs="24"
-      >
+      <el-col :key="item" :span="4" :xs="24" class="el-coldash-board" v-for="item in [4,5,6,7,8,9]">
         <Dashboard
           :dashboardData="{dashboardDataList: groupedHomePageSettingData, placeholderId: item}"
         ></Dashboard>
@@ -19,7 +13,7 @@
     <el-row :gutter="32" class="third-part">
       <el-col :span="8" :xs="24">
         <el-card class="box-card">
-          <div slot="header" class="clearfix">
+          <div class="clearfix" slot="header">
             <span>电量统计</span>
           </div>
           <div>
@@ -41,7 +35,7 @@
       </el-col>
       <el-col :span="8" :xs="24">
         <el-card class="box-card">
-          <div slot="header" class="clearfix">
+          <div class="clearfix" slot="header">
             <span>水量统计</span>
           </div>
           <div>
@@ -63,7 +57,7 @@
       </el-col>
       <el-col :span="8" :xs="24">
         <el-card class="box-card">
-          <div slot="header" class="clearfix">
+          <div class="clearfix" slot="header">
             <span>气量统计</span>
           </div>
           <div>
@@ -88,7 +82,7 @@
     <el-row :gutter="32" class="fourth-part">
       <el-col :span="12" :xs="24">
         <el-card class="box-card">
-          <div slot="header" class="clearfix">
+          <div class="clearfix" slot="header">
             <span>用电、水、气环比</span>
           </div>
           <div>
@@ -110,7 +104,7 @@
       </el-col>
       <el-col :span="12" :xs="24">
         <el-card class="box-card">
-          <div slot="header" class="clearfix">
+          <div class="clearfix" slot="header">
             <span>电压棒图</span>
           </div>
           <div>
@@ -157,7 +151,7 @@ export default {
     BuildingSequentialDosageOfWater,
     BuildingSequentialDosageOfElectricity
   },
-  data() {
+  data () {
     return {
       homePageChartSettingList: [],
       groupedHomePageSettingData: [],
@@ -174,13 +168,13 @@ export default {
       yearTotal: {}
     }
   },
-  created() {
+  created () {
     this.getHomePageChartSettingList()
     this.getBuildingDosage()
     this.getYearTotal()
   },
   methods: {
-    getYearTotal() {
+    getYearTotal () {
       queryYearTotal().then(res => {
         const data = res.data
         const currentAirSumValue = data.currentAirSumValue || 0
@@ -195,12 +189,10 @@ export default {
         const currentSteamSumValue = data.currentSteamSumValue || 0
         const preSteamSumValue = data.preSteamSumValue || 0
 
-        const currentSteamDosage = currentSteamSumValue - preSteamSumValue
-        const currentAirDosage = currentAirSumValue - preAirSumValue
-        const currentWaterDosage = currentWaterSumValue - preWaterSumValue
-        const currentElectricityDosage = Number.parseFloat(
-          (currentElectricitySumValue - preElectricitySumValue).toFixed(2)
-        )
+        const currentSteamDosage = (currentSteamSumValue - preSteamSumValue) < 0 ? 0 : (currentSteamSumValue - preSteamSumValue)
+        const currentAirDosage = (currentAirSumValue - preAirSumValue) < 0 ? 0 : (currentAirSumValue - preAirSumValue)
+        const currentWaterDosage = (currentWaterSumValue - preWaterSumValue) < 0 ? 0 : (currentWaterSumValue - preWaterSumValue)
+        const currentElectricityDosage = (currentElectricitySumValue - preElectricitySumValue) < 0 ? 0 : (currentElectricitySumValue - preElectricitySumValue)
 
         this.yearTotal = {
           currentSteamDosage,
@@ -210,7 +202,7 @@ export default {
         }
       })
     },
-    getBuildingDosage() {
+    getBuildingDosage () {
       queryBuildingDosageforHomePage().then(res => {
         const buildingDosage = res.data
         this.seqDosageData = res.data
@@ -222,21 +214,21 @@ export default {
             this.dayDosageOfElectricity = dayDosage.map(item => {
               return {
                 buildingName: item.buildingName,
-                sumValue: item.currentElectricitySumValue >=0 ? item.currentElectricitySumValue :0
+                sumValue: item.currentElectricitySumValue >= 0 ? item.currentElectricitySumValue : 0
               }
             })
 
             this.dayDosageOfAir = dayDosage.map(item => {
               return {
                 buildingName: item.buildingName,
-                sumValue: item.currentAirSumValue >=0 ? item.currentAirSumValue :0
+                sumValue: item.currentAirSumValue >= 0 ? item.currentAirSumValue : 0
               }
             })
 
             this.dayDosageOfWater = dayDosage.map(item => {
               return {
                 buildingName: item.buildingName,
-                sumValue: item.currentWaterSumValue >=0? item.currentWaterSumValue :0
+                sumValue: item.currentWaterSumValue >= 0 ? item.currentWaterSumValue : 0
               }
             })
           }
@@ -245,21 +237,21 @@ export default {
             this.monthDosageOfElectricity = monthDosage.map(item => {
               return {
                 buildingName: item.buildingName,
-                sumValue: item.currentElectricitySumValue >=0 ? item.currentElectricitySumValue :0
+                sumValue: item.currentElectricitySumValue >= 0 ? item.currentElectricitySumValue : 0
               }
             })
 
             this.monthDosageOfAir = monthDosage.map(item => {
               return {
                 buildingName: item.buildingName,
-                sumValue: item.currentAirSumValue >=0 ? item.currentAirSumValue :0
+                sumValue: item.currentAirSumValue >= 0 ? item.currentAirSumValue : 0
               }
             })
 
             this.monthDosageOfWater = monthDosage.map(item => {
               return {
                 buildingName: item.buildingName,
-                sumValue: item.currentWaterSumValue >=0? item.currentWaterSumValue :0
+                sumValue: item.currentWaterSumValue >= 0 ? item.currentWaterSumValue : 0
               }
             })
           }
@@ -268,26 +260,26 @@ export default {
             this.yearDosageOfElectricity = yearDosage.map(item => {
               return {
                 buildingName: item.buildingName,
-                sumValue: item.currentElectricitySumValue >=0 ? item.currentElectricitySumValue :0
+                sumValue: item.currentElectricitySumValue >= 0 ? item.currentElectricitySumValue : 0
               }
             })
             this.yearDosageOfAir = yearDosage.map(item => {
               return {
                 buildingName: item.buildingName,
-               sumValue: item.currentAirSumValue >=0 ? item.currentAirSumValue :0
+                sumValue: item.currentAirSumValue >= 0 ? item.currentAirSumValue : 0
               }
             })
             this.yearDosageOfWater = yearDosage.map(item => {
               return {
                 buildingName: item.buildingName,
-                sumValue: item.currentWaterSumValue >=0? item.currentWaterSumValue :0
+                sumValue: item.currentWaterSumValue >= 0 ? item.currentWaterSumValue : 0
               }
             })
           }
         }
       })
     },
-    getDashBoardDesc(placeholderId) {
+    getDashBoardDesc (placeholderId) {
       const homePageChartSettingList = this.homePageChartSettingList
       let desc = ''
       if (homePageChartSettingList.length > 0) {
@@ -298,7 +290,7 @@ export default {
       }
       return desc
     },
-    groupArray(arr) {
+    groupArray (arr) {
       let map = {},
         dest = []
       for (const i in arr) {
@@ -321,7 +313,7 @@ export default {
       }
       return dest
     },
-    getHomePageChartSettingList() {
+    getHomePageChartSettingList () {
       listHomePageChartSetting().then(res => {
         this.homePageChartSettingList = res.data
         this.groupedHomePageSettingData = this.groupArray(res.data)

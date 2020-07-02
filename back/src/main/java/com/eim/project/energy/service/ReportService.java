@@ -26,32 +26,56 @@ public class ReportService {
     @Autowired
     private ReportMapper reportMapper;
 
-    public List<Map<String, Object>> selectHistoryOfYearDosage(Map<String, Object> map) {
-        return reportMapper.selectHistoryOfYearDosage(map);
-    }
-
-    public List<Map<String, Object>> selectHistoryOfMonthDosage(Map<String, Object> map) {
-        return reportMapper.selectHistoryOfMonthDosage(map);
-    }
-
-    public List<Map<String, Object>> selectHistoryOfDayDosage(Map<String, Object> map) {
-        return reportMapper.selectHistoryOfDayDosage(map);
-    }
-
-    public List<Map<String, Object>> selectHistoryOfHourDosage(Map<String, Object> map) {
-        return reportMapper.selectHistoryOfHourDosage(map);
+    public List<Map<String, Object>> selectHistoryOfDosage(Map<String, Object> map) {
+        return reportMapper.selectHistoryOfDosage(map);
     }
 
     public List<Map<String, Object>> selectMonthDosageOfWater(Map<String, Object> map) {
         return reportMapper.selectMonthDosageOfWater(map);
     }
 
+    public List<Map<String, Object>> selectDayDosageOfWater(Map<String, Object> map) {
+        return reportMapper.selectDayDosageOfWater(map);
+    }
+
+    public List<Map<String, Object>> selectQuarterDosageOfWater(Map<String, Object> map) {
+        return reportMapper.selectQuarterDosageOfWater(map);
+    }
+
+    public List<Map<String, Object>> selectYearDosageOfWater(Map<String, Object> map) {
+        return reportMapper.selectYearDosageOfWater(map);
+    }
+
+    public List<Map<String, Object>> selectYearDosageOfElectricity(Map<String, Object> map) {
+        return reportMapper.selectYearDosageOfElectricity(map);
+    }
+
+    public List<Map<String, Object>> selectQuarterDosageOfElectricity(Map<String, Object> map) {
+        return reportMapper.selectQuarterDosageOfElectricity(map);
+    }
+
+    public List<Map<String, Object>> selectDayDosageOfElectricity(Map<String, Object> map) {
+        return reportMapper.selectDayDosageOfElectricity(map);
+    }
+
     public List<Map<String, Object>> selectMonthDosageOfElectricity(Map<String, Object> map) {
         return reportMapper.selectMonthDosageOfElectricity(map);
     }
 
+    public List<Map<String, Object>> selectDaySettlement(Map<String, Object> map) {
+        return reportMapper.selectDaySettlement(map);
+    }
+
     public List<Map<String, Object>> selectMonthSettlement(Map<String, Object> map) {
         return reportMapper.selectMonthSettlement(map);
+    }
+
+    public List<Map<String, Object>> selectQuarterSettlement(Map<String, Object> map) {
+        return reportMapper.selectQuarterSettlement(map);
+    }
+
+    public List<Map<String, Object>> selectYearSettlement(Map<String, Object> map) {
+        return reportMapper.selectYearSettlement(map);
     }
 
     public List<Map<String, Object>> selectClassList() {
@@ -80,10 +104,6 @@ public class ReportService {
 
     public List<Map<String, Object>> selectBuildingDayDosage(Map<String, Object> map) {
         return reportMapper.selectBuildingDayDosage(map);
-    }
-
-    public List<Map<String, Object>> selectBuildingDistribution() {
-        return reportMapper.selectBuildingDistribution();
     }
 
     public List<Map<String, Object>> selectBuildingMainMPValue(Integer buildingId) {
@@ -184,13 +204,32 @@ public class ReportService {
         return styles;
     }
 
-    public XSSFSheet initSheetMonthDosageOfWater(XSSFWorkbook workbook, String sheetName, String[] tableHead, Map map) {
+    public XSSFSheet initSheetDosageOfWater(XSSFWorkbook workbook, String sheetName, String[] tableHead, Map map, Integer queryTimeType) {
         String queryTime = String.valueOf(map.get("queryTime"));
+        Integer queryTimeQuarter = (Integer) map.get("queryTimeQuarter");
+        String[] quarterOptions = new String[]{"第一季度", "第二季度", "第三季度", "第四季度"};
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDate localDate = LocalDate.parse(queryTime, fmt);
         int year = localDate.getYear();
         int month = localDate.getMonthValue();
-        String dataTime = "数据时间：" + year + "年" + month + "月";
+        int day = localDate.getDayOfMonth();
+        String dataTime = "";
+        switch (queryTimeType) {
+            case 1:
+                dataTime = "数据时间：" + year + "年" + month + "月" + day + "日";
+                break;
+            case 2:
+                dataTime = "数据时间：" + year + "年" + month + "月";
+                break;
+            case 3:
+                dataTime = "数据时间：" + year + "年 " + quarterOptions[queryTimeQuarter - 1];
+                break;
+            case 4:
+                dataTime = "数据时间：" + year + "年";
+                break;
+            default:
+                break;
+        }
         XSSFSheet sheet = workbook.createSheet(sheetName);
         Map<String, CellStyle> styles = createStyles(workbook);
 
@@ -234,9 +273,36 @@ public class ReportService {
         return sheet;
     }
 
-    public XSSFSheet initSheetMonthDosageOfElectricity(XSSFWorkbook workbook, String sheetName, String[] tableHead) {
+    public XSSFSheet initSheetDosageOfElectricity(XSSFWorkbook workbook, String sheetName, String[] tableHead, Map map, Integer queryTimeType) {
         XSSFSheet sheet = workbook.createSheet(sheetName);
         Map<String, CellStyle> styles = createStyles(workbook);
+
+        String queryTime = String.valueOf(map.get("queryTime"));
+        Integer queryTimeQuarter = (Integer) map.get("queryTimeQuarter");
+        String[] quarterOptions = new String[]{"第一季度", "第二季度", "第三季度", "第四季度"};
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDate localDate = LocalDate.parse(queryTime, fmt);
+        int year = localDate.getYear();
+        int month = localDate.getMonthValue();
+        int day = localDate.getDayOfMonth();
+        String dataTime = "";
+        switch (queryTimeType) {
+            case 1:
+                dataTime = "数据时间：" + year + "年" + month + "月" + day + "日";
+                break;
+            case 2:
+                dataTime = "数据时间：" + year + "年" + month + "月";
+                break;
+            case 3:
+                dataTime = "数据时间：" + year + "年 " + quarterOptions[queryTimeQuarter - 1];
+                break;
+            case 4:
+                dataTime = "数据时间：" + year + "年";
+                break;
+            default:
+                break;
+        }
+
         //设置第一行
         int column = 0;
         XSSFRow row1 = sheet.createRow(column);
@@ -244,16 +310,16 @@ public class ReportService {
         Cell cell;
 
         for (int i = 0; i < tableHead.length; i++) {
-            if (i < 8) {
+            if (i < 9) {
                 cell = row1.createCell(i);
                 cell.setCellStyle(styles.get("header"));
                 cell.setCellValue(tableHead[i]);
             }
-            if (i == 8) {
+            if (i == 9) {
                 cell = row1.createCell(i);
-                cell.setCellValue("本月用电数");
+                cell.setCellValue(dataTime);
                 cell.setCellStyle(styles.get("header"));
-                CellRangeAddress region1 = new CellRangeAddress(0, 0, 8, 11);
+                CellRangeAddress region1 = new CellRangeAddress(0, 0, 9, 12);
                 sheet.addMergedRegion(region1);
                 break;
             }
@@ -262,7 +328,7 @@ public class ReportService {
         XSSFRow row2 = sheet.createRow(column);
         row2.setHeight((short) (14 * 20));
         for (int i = 0; i < tableHead.length; i++) {
-            if (i < 8) {
+            if (i < 9) {
                 CellRangeAddress region2 = new CellRangeAddress(0, 1, i, i);
                 sheet.addMergedRegion(region2);
             } else {
@@ -271,55 +337,91 @@ public class ReportService {
                 cell.setCellValue(tableHead[i]);
             }
         }
-        for (int i = 0; i < 11; i++) {
+        for (int i = 0; i < 12; i++) {
             sheet.setColumnWidth(i, (int) ((16 + 0.72) * 256));
         }
         return sheet;
     }
 
-    public XSSFSheet initSheetMonthSettlement(XSSFWorkbook workbook, String sheetName, String[] tableHead) {
+    public XSSFSheet initSheetSettlement(XSSFWorkbook workbook, String sheetName, String[] tableHead, Map map, Integer queryTimeType) {
         XSSFSheet sheet = workbook.createSheet(sheetName);
         Map<String, CellStyle> styles = createStyles(workbook);
+
+        String queryTime = String.valueOf(map.get("queryTime"));
+        Integer queryTimeQuarter = (Integer) map.get("queryTimeQuarter");
+        String[] quarterOptions = new String[]{"第一季度", "第二季度", "第三季度", "第四季度"};
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDate localDate = LocalDate.parse(queryTime, fmt);
+        int year = localDate.getYear();
+        int month = localDate.getMonthValue();
+        int day = localDate.getDayOfMonth();
+        String dataTime = "";
+        switch (queryTimeType) {
+            case 1:
+                dataTime = "结算时间范围：" + year + "年" + month + "月" + day + "日";
+                break;
+            case 2:
+                dataTime = "结算时间范围：" + year + "年" + month + "月";
+                break;
+            case 3:
+                dataTime = "结算时间范围：" + year + "年 " + quarterOptions[queryTimeQuarter - 1];
+                break;
+            case 4:
+                dataTime = "结算时间范围：" + year + "年";
+                break;
+            default:
+                break;
+        }
+
         //设置第一行
-        int column = 0;
-        XSSFRow row1 = sheet.createRow(column);
-        row1.setHeight((short) (14 * 20));
         Cell cell;
+        int column = 0;
+        XSSFRow row0 = sheet.createRow(column);
+        row0.setHeight((short) (14 * 20));
+        cell = row0.createCell(0);
+        cell.setCellValue(dataTime);
+        cell.setCellStyle(styles.get("header"));
+        CellRangeAddress region0 = new CellRangeAddress(0, 0, 0, 1);
+        sheet.addMergedRegion(region0);
+        column++;
+
+        XSSFRow row1 = sheet.createRow(column);
+        row0.setHeight((short) (14 * 20));
         for (int i = 0; i < tableHead.length; i++) {
-            if (i == 0) {
+            if (i <= 1) {
                 cell = row1.createCell(i);
                 cell.setCellStyle(styles.get("header"));
                 cell.setCellValue(tableHead[i]);
             }
-            if (i == 1) {
+            if (i == 2) {
                 cell = row1.createCell(i);
                 cell.setCellValue("水");
                 cell.setCellStyle(styles.get("header"));
-                CellRangeAddress region1 = new CellRangeAddress(0, 0, 1, 5);
+                CellRangeAddress region1 = new CellRangeAddress(1, 1, 2, 6);
                 sheet.addMergedRegion(region1);
             }
-            if (i == 6) {
+            if (i == 7) {
                 cell = row1.createCell(i);
                 cell.setCellValue("空气");
                 cell.setCellStyle(styles.get("header"));
-                CellRangeAddress region1 = new CellRangeAddress(0, 0, 6, 10);
+                CellRangeAddress region1 = new CellRangeAddress(1, 1, 7, 11);
                 sheet.addMergedRegion(region1);
             }
-            if (i == 11) {
+            if (i == 12) {
                 cell = row1.createCell(i);
                 cell.setCellValue("电");
                 cell.setCellStyle(styles.get("header"));
-                CellRangeAddress region1 = new CellRangeAddress(0, 0, 11, 15);
+                CellRangeAddress region1 = new CellRangeAddress(1, 1, 12, 16);
                 sheet.addMergedRegion(region1);
             }
-            if (i == 16) {
+            if (i == 17) {
                 cell = row1.createCell(i);
                 cell.setCellValue("蒸汽");
                 cell.setCellStyle(styles.get("header"));
-                CellRangeAddress region1 = new CellRangeAddress(0, 0, 16, 20);
+                CellRangeAddress region1 = new CellRangeAddress(1, 1, 17, 21);
                 sheet.addMergedRegion(region1);
             }
-            if (i == 21) {
+            if (i == 22) {
                 cell = row1.createCell(i);
                 cell.setCellStyle(styles.get("header"));
                 cell.setCellValue(tableHead[i]);
@@ -329,17 +431,17 @@ public class ReportService {
         XSSFRow row2 = sheet.createRow(column);
         row2.setHeight((short) (14 * 20));
         for (int i = 0; i < tableHead.length; i++) {
-            if (i == 0 || i == 21) {
-                CellRangeAddress region2 = new CellRangeAddress(0, 1, i, i);
+            if (i <= 1 || i == 22) {
+                CellRangeAddress region2 = new CellRangeAddress(1, 2, i, i);
                 sheet.addMergedRegion(region2);
             }
-            if (i > 0 && i < 21) {
+            if (i > 1 && i < 22) {
                 cell = row2.createCell(i);
                 cell.setCellStyle(styles.get("header"));
                 cell.setCellValue(tableHead[i]);
             }
         }
-        for (int i = 0; i < 22; i++) {
+        for (int i = 0; i < 23; i++) {
             sheet.setColumnWidth(i, (int) ((16 + 0.72) * 256));
         }
         return sheet;

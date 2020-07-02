@@ -43,7 +43,7 @@ public class CompanyController extends BaseController {
     @Autowired
     private TokenService tokenService;
 
-//    @PreAuthorize("@ss.hasPermi('energy:company:list')")
+    //    @PreAuthorize("@ss.hasPermi('energy:company:list')")
     @GetMapping("/list")
     public TableDataInfo selectCompanyList(Company company) {
         startPage();
@@ -154,10 +154,10 @@ public class CompanyController extends BaseController {
             try {
                 // 验证是否存在这个公司
                 Company existCompany = companyService.selectCompanyById(company.getId());
+                Company checkCompanyCode = companyService.selectCompanyByCompanyCode(company.getCompanyCode());
                 if (StringUtils.isNull(existCompany)) {
                     company.setCreateBy(operName);
                     company.setCreateTime(new Date());
-                    Company checkCompanyCode = companyService.selectCompanyByCompanyCode(company.getCompanyCode());
                     if (checkCompanyCode != null) {
                         failureNum++;
                         failureMsg.append("<br/>" + failureNum + "、公司编号 " + company.getCompanyCode() + " 已存在");
@@ -166,21 +166,22 @@ public class CompanyController extends BaseController {
                         successNum++;
                         successMsg.append("<br/>" + successNum + "、公司 " + company.getCompanyName() + " 导入成功");
                     }
-                } else if (isUpdateSupport) {
-                    company.setUpdateBy(operName);
-                    company.setUpdateTime(new Date());
-                    Company checkCompanyCode = companyService.selectCompanyByCompanyCode(company.getCompanyCode());
-                    if (checkCompanyCode != null && !checkCompanyCode.getId().equals(company.getId())) {
-                        failureNum++;
-                        failureMsg.append("<br/>" + failureNum + "、公司编号 " + company.getCompanyCode() + " 已存在");
-                    } else {
-                        companyService.updateCompany(company);
-                        successNum++;
-                        successMsg.append("<br/>" + successNum + "、公司 " + company.getCompanyName() + " 更新成功");
-                    }
                 } else {
-                    failureNum++;
-                    failureMsg.append("<br/>" + failureNum + "、公司 " + company.getCompanyName() + " 已存在");
+                    if (isUpdateSupport) {
+                        company.setUpdateBy(operName);
+                        company.setUpdateTime(new Date());
+                        if (checkCompanyCode != null && !checkCompanyCode.getId().equals(company.getId())) {
+                            failureNum++;
+                            failureMsg.append("<br/>" + failureNum + "、公司编号 " + company.getCompanyCode() + " 已存在");
+                        } else {
+                            companyService.updateCompany(company);
+                            successNum++;
+                            successMsg.append("<br/>" + successNum + "、公司 " + company.getCompanyName() + " 更新成功");
+                        }
+                    } else {
+                        failureNum++;
+                        failureMsg.append("<br/>" + failureNum + "、公司 " + company.getCompanyName() + " 已存在");
+                    }
                 }
             } catch (Exception e) {
                 failureNum++;

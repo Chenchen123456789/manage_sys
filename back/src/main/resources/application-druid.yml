@@ -5,7 +5,7 @@ spring:
         druid:
             # 主库数据源
             master:
-                url: jdbc:mysql://localhost:3306/ry-vue?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+                url: jdbc:mysql://localhost:3306/dasmst?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
                 # url: jdbc:mysql://localhost:3306/dasmst?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
                 username: root
 #               password: admin@123root
@@ -17,12 +17,11 @@ spring:
                 # 从数据源开关/默认关闭
                 enabled: true
                 username: sa
-                url: jdbc:sqlserver://localhost:1433;DatabaseName=energy
-                password: root
-#               url: jdbc:sqlserver://localhost:1433;DatabaseName=energy
-#               password: saP@$$w0rd
-                # url: jdbc:sqlserver://172.16.3.84:1433;DatabaseName=energy
-                # password: P@$$w0rd                     
+#                url: jdbc:sqlserver://localhost:1433;DatabaseName=energy
+#                password: root
+#                password: saP@$$w0rd
+                url: jdbc:sqlserver://172.16.3.28:1433;DatabaseName=energy
+                password: P@$$w0rd
                 driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
             # 初始连接数
             initialSize: 5
@@ -59,7 +58,7 @@ spring:
                     # 慢SQL记录
                     log-slow-sql: true
                     slow-sql-millis: 1000
-                    merge-sql: true
+                    merge-sql: false
                 wall:
                     config:
                         multi-statement-allow: true

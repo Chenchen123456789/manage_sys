@@ -183,20 +183,22 @@ public class MeasuringPointController extends BaseController {
                         successNum++;
                         successMsg.append("<br/>" + successNum + "、测点 " + measuringPoint.getTagName() + " 导入成功");
                     }
-                } else if (isUpdateSupport) {
-                    measuringPoint.setUpdateBy(operName);
-                    measuringPoint.setUpdateTime(new Date());
-                    if (checkMeasuringPointCode != null && !checkMeasuringPointCode.getId().equals(measuringPoint.getId())) {
-                        failureNum++;
-                        failureMsg.append("<br/>" + failureNum + "、测点名 " + measuringPoint.getTagName() + " 已存在");
-                    } else {
-                        measuringPointService.updateMeasuringPoint(measuringPoint);
-                        successNum++;
-                        successMsg.append("<br/>" + successNum + "、测点 " + measuringPoint.getTagName() + " 更新成功");
-                    }
                 } else {
-                    failureNum++;
-                    failureMsg.append("<br/>" + failureNum + "、测点 " + measuringPoint.getTagName() + " 已存在");
+                    if (isUpdateSupport) {
+                        measuringPoint.setUpdateBy(operName);
+                        measuringPoint.setUpdateTime(new Date());
+                        if (checkMeasuringPointCode != null && !checkMeasuringPointCode.getId().equals(measuringPoint.getId())) {
+                            failureNum++;
+                            failureMsg.append("<br/>" + failureNum + "、测点名 " + measuringPoint.getTagName() + " 已存在");
+                        } else {
+                            measuringPointService.updateMeasuringPoint(measuringPoint);
+                            successNum++;
+                            successMsg.append("<br/>" + successNum + "、测点 " + measuringPoint.getTagName() + " 更新成功");
+                        }
+                    } else {
+                        failureNum++;
+                        failureMsg.append("<br/>" + failureNum + "、测点 " + measuringPoint.getTagName() + " 已存在");
+                    }
                 }
             } catch (Exception e) {
                 failureNum++;

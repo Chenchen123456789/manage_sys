@@ -40,7 +40,7 @@ public class PlantController extends BaseController {
     @Autowired
     private TokenService tokenService;
 
-//    @PreAuthorize("@ss.hasPermi('energy:plant:list')")
+    //    @PreAuthorize("@ss.hasPermi('energy:plant:list')")
     @GetMapping("/list")
     public TableDataInfo selectPlantList(Plant plant) {
         startPage();
@@ -163,20 +163,22 @@ public class PlantController extends BaseController {
                         successNum++;
                         successMsg.append("<br/>" + successNum + "、工厂 " + plant.getPlantName() + " 导入成功");
                     }
-                } else if (isUpdateSupport) {
-                    plant.setUpdateBy(operName);
-                    plant.setUpdateTime(new Date());
-                    if (checkPlantCode != null && !checkPlantCode.getId().equals(plant.getId())) {
-                        failureNum++;
-                        failureMsg.append("<br/>" + failureNum + "、工厂编号 " + plant.getPlantCode() + " 已存在");
-                    } else {
-                        plantService.updatePlant(plant);
-                        successNum++;
-                        successMsg.append("<br/>" + successNum + "、工厂 " + plant.getPlantName() + " 更新成功");
-                    }
                 } else {
-                    failureNum++;
-                    failureMsg.append("<br/>" + failureNum + "、工厂 " + plant.getPlantName() + " 已存在");
+                    if (isUpdateSupport) {
+                        plant.setUpdateBy(operName);
+                        plant.setUpdateTime(new Date());
+                        if (checkPlantCode != null && !checkPlantCode.getId().equals(plant.getId())) {
+                            failureNum++;
+                            failureMsg.append("<br/>" + failureNum + "、工厂编号 " + plant.getPlantCode() + " 已存在");
+                        } else {
+                            plantService.updatePlant(plant);
+                            successNum++;
+                            successMsg.append("<br/>" + successNum + "、工厂 " + plant.getPlantName() + " 更新成功");
+                        }
+                    } else {
+                        failureNum++;
+                        failureMsg.append("<br/>" + failureNum + "、工厂 " + plant.getPlantName() + " 已存在");
+                    }
                 }
             } catch (Exception e) {
                 failureNum++;
