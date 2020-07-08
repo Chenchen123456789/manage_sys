@@ -3,7 +3,12 @@
     <router-view />
     <el-form :inline="true" :model="queryParams" label-width="68px" ref="queryForm">
       <el-form-item label="查询类型" prop="queryTypeId">
-        <el-select style="width: 100px" placeholder="请选择" size="small" v-model="queryParams.queryTypeId">
+        <el-select
+          placeholder="请选择"
+          size="small"
+          style="width: 100px"
+          v-model="queryParams.queryTypeId"
+        >
           <el-option
             :key="item.id"
             :label="item.queryTypeName"
@@ -96,7 +101,6 @@
       </el-form-item>
       <el-form-item label="仪表编号" prop="meterId">
         <el-select
-          style="width: 150px"
           :disabled="meterDisabled"
           @change="changeQueryMeterCodeOptions"
           clearable
@@ -104,6 +108,7 @@
           multiple
           placeholder="请选择仪表编号"
           size="small"
+          style="width: 150px"
           v-model="queryParams.meterId"
           v-on:click.native="clickMeter"
         >
@@ -116,7 +121,13 @@
         </el-select>
       </el-form-item>
       <el-form-item label="系统名称" prop="systemId">
-        <el-select style="width: 150px" clearable placeholder="请选择系统" size="small" v-model="queryParams.systemId">
+        <el-select
+          clearable
+          placeholder="请选择系统"
+          size="small"
+          style="width: 150px"
+          v-model="queryParams.systemId"
+        >
           <el-option
             :key="item.systemId"
             :label="item.systemName"
@@ -126,7 +137,13 @@
         </el-select>
       </el-form-item>
       <el-form-item label="能源类型" prop="energyTypeId">
-        <el-select style="width: 150px" clearable placeholder="请选择能源" size="small" v-model="queryParams.energyTypeId">
+        <el-select
+          clearable
+          placeholder="请选择能源"
+          size="small"
+          style="width: 150px"
+          v-model="queryParams.energyTypeId"
+        >
           <el-option
             :key="item.energyTypeId"
             :label="item.energyTypeName"
@@ -136,7 +153,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="大功率" prop="deviceType">
-        <el-select style="width: 150px" clearable size="small" v-model="queryParams.deviceType">
+        <el-select clearable size="small" style="width: 150px" v-model="queryParams.deviceType">
           <el-option
             :key="item.id"
             :label="item.label"
@@ -146,7 +163,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="计量等级" prop="measureLevel">
-        <el-select style="width: 150px" clearable size="small" v-model="queryParams.measureLevel">
+        <el-select clearable size="small" style="width: 150px" v-model="queryParams.measureLevel">
           <el-option
             :key="item.id"
             :label="item.label"
@@ -200,7 +217,9 @@
       <el-table-column align="center" label="设备名" prop="deviceName" width="150" />
       <el-table-column align="center" label="仪表编号" prop="meterCode" width="120" />
       <el-table-column align="center" label="数据位号" prop="tagName" width="150" />
-      <el-table-column align="center" label="数据值" prop="tagValue" width="100" />
+      <el-table-column align="center" label="数据值" prop="tagValue" width="100">
+        <template slot-scope="scope">{{scope.row.tagValue.toFixed(2)}}</template>
+      </el-table-column>
       <el-table-column align="center" label="系统名" prop="systemName" width="120" />
       <el-table-column align="center" label="数据点描述" prop="description" />
     </el-table>

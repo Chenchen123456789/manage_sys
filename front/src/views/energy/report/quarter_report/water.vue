@@ -179,9 +179,9 @@ export default {
       listQuarterDosageOfWater(queryParams).then(response => {
         const list = response.rows
         for (const index in list) {
-          const preTimeValue = list[index].preTimeValue || 0
-          const currentTimeValue = list[index].currentTimeValue || 0
-          const realDosage = currentTimeValue - preTimeValue
+         const preTimeValue = list[index].preTimeValue.toFixed(2)
+          const currentTimeValue = list[index].currentTimeValue.toFixed(2)
+          const realDosage = (currentTimeValue - preTimeValue).toFixed(2)
           list[index].preTimeValue = preTimeValue
           list[index].currentTimeValue = currentTimeValue
           list[index].realDosage = realDosage

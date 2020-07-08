@@ -87,7 +87,7 @@
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="大功率" prop="deviceType">
-        <el-select size="small" clearable v-model="queryParams.deviceType">
+        <el-select clearable size="small" v-model="queryParams.deviceType">
           <el-option
             :key="item.id"
             :label="item.label"
@@ -97,7 +97,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="计量等级" prop="measureLevel">
-        <el-select size="small" clearable v-model="queryParams.measureLevel">
+        <el-select clearable size="small" v-model="queryParams.measureLevel">
           <el-option
             :key="item.id"
             :label="item.label"
@@ -153,11 +153,7 @@
         <el-table-column align="center" label="峰" prop="fValue" />
         <el-table-column align="center" label="平" prop="pValue" />
         <el-table-column align="center" label="谷" prop="gValue" />
-        <el-table-column align="center" label="总量">
-          <template
-            slot-scope="scope"
-          >{{ Number(scope.row.currentTimeValue - scope.row.preTimeValue).toFixed(2) }}</template>
-        </el-table-column>
+        <el-table-column align="center" label="总量" prop="totalValue"></el-table-column>
       </el-table-column>
     </el-table>
 
@@ -351,7 +347,23 @@ export default {
 
       this.loading = true
       listDayDosageOfElectricity(this.queryParams).then(response => {
-        this.dayDosageOfElectricityList = response.rows
+        const rows = response.rows
+        for (let index in rows) {
+          const preTimeValue = rows[index].preTimeValue.toFixed(2)
+          const currentTimeValue = rows[index].currentTimeValue.toFixed(2)
+          const fValue = rows[index].fValue.toFixed(2)
+          const gValue = rows[index].gValue.toFixed(2)
+          const pValue = rows[index].pValue.toFixed(2)
+          const totalValue = (currentTimeValue - preTimeValue).toFixed(2)
+
+          rows[index].preTimeValue = preTimeValue
+          rows[index].currentTimeValue = currentTimeValue
+          rows[index].fValue = fValue
+          rows[index].gValue = gValue
+          rows[index].pValue = pValue
+          rows[index].totalValue = totalValue
+        }
+        this.dayDosageOfElectricityList = rows
         this.total = response.total
         this.loading = false
       })

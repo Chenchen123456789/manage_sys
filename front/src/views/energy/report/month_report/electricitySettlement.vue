@@ -31,7 +31,7 @@
           ></el-option>
         </el-select>
       </el-form-item>
-      <el-form-item label="计量等级" prop="measureLevel">
+      <!-- <el-form-item label="计量等级" prop="measureLevel">
         <el-select clearable size="small" v-model="queryParams.measureLevel">
           <el-option
             :key="item.id"
@@ -40,7 +40,7 @@
             v-for="item in [{id: 1, label:'一级' },{id: 2, label:'二级' },{id: 3, label:'三级' }]"
           ></el-option>
         </el-select>
-      </el-form-item>
+      </el-form-item>-->
       <el-form-item>
         <el-button @click="handleQuery" icon="el-icon-search" size="mini" type="primary">搜索</el-button>
         <el-button @click="resetQuery" icon="el-icon-refresh" size="mini" type="info">重置</el-button>
@@ -74,18 +74,27 @@
       :gutter="10"
       style="display:flex; align-items:center; justify-content:stretch;margin-left: 0px"
     >
-      <el-col :span="4">
+      <!-- <el-col :span="3">
         <span>水单价：{{waterPrice }} 元/m³</span>
       </el-col>
       <el-col :span="4">
         <span>电单价：{{electricityPrice }} 元/kWh</span>
+      </el-col> -->
+      <el-col :span="3">
+        <span>电-峰单价：{{electricityFPrice }} 元/kWh</span>
       </el-col>
-      <el-col :span="4">
+      <el-col :span="3">
+        <span>电-平单价：{{electricityPPrice }} 元/kWh</span>
+      </el-col>
+      <el-col :span="3">
+        <span>电-谷单价：{{electricityGPrice }} 元/kWh</span>
+      </el-col>
+      <!-- <el-col :span="3">
         <span>空气单价：{{airPrice }} 元/m³</span>
       </el-col>
-      <el-col :span="4">
+      <el-col :span="3">
         <span>蒸汽单价：{{steamPrice }} 元/m³</span>
-      </el-col>
+      </el-col> -->
       <el-col :span="1.5">
         <el-button @click="handleUpdate" icon="el-icon-edit" size="mini" type="success">修改</el-button>
       </el-col>
@@ -93,18 +102,27 @@
 
     <el-dialog :visible.sync="open" title="修改" width="500px">
       <el-form :model="form" label-width="80px" ref="form">
-        <el-form-item label="水单价" prop="waterPrice">
+        <!-- <el-form-item label="水单价" prop="waterPrice">
           <el-input-number placeholder="请输入水单价" v-model="form.waterPrice" />
         </el-form-item>
         <el-form-item label="电单价" prop="electricityPrice">
           <el-input-number placeholder="请输入电单价" v-model="form.electricityPrice" />
+        </el-form-item> -->
+        <el-form-item label="电-峰单价" prop="electricityFPrice">
+          <el-input-number placeholder="请输入电-峰单价" v-model="form.electricityFPrice" />
         </el-form-item>
-        <el-form-item label="空气单价" prop="airPrice">
+        <el-form-item label="电-平单价" prop="electricityPPrice">
+          <el-input-number placeholder="请输入电-平单价" v-model="form.electricityPPrice" />
+        </el-form-item>
+        <el-form-item label="电-谷单价" prop="electricityGPrice">
+          <el-input-number placeholder="请输入电-谷单价" v-model="form.electricityGPrice" />
+        </el-form-item>
+        <!-- <el-form-item label="空气单价" prop="airPrice">
           <el-input-number placeholder="请输入空气单价" v-model="form.airPrice" />
         </el-form-item>
         <el-form-item label="蒸汽单价" prop="steamPrice">
           <el-input-number placeholder="请输入蒸汽单价" v-model="form.steamPrice" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div class="dialog-footer" slot="footer">
         <el-button @click="submitForm" type="primary">确 定</el-button>
@@ -118,52 +136,44 @@
       <el-table-column :index="indexMethod" label="序号" type="index" width="50" />
       <el-table-column align="center" label="单位" prop="plantName" />
       <el-table-column align="center" label="建筑" prop="buildingName" width="120" />
-      <el-table-column align="center" label="水">
-        <el-table-column align="center" label="水数量" prop="currentWaterDosage" width="120" />
-        <el-table-column align="center" label="单价">
-          <span>{{waterPrice}}</span>
-        </el-table-column>
-        <el-table-column align="center" label="金额" prop="waterAmount" width="120">
-          <template slot-scope="scope">{{(waterPrice * scope.row.currentWaterDosage).toFixed(2)}}</template>
-        </el-table-column>
-        <el-table-column align="center" label="上月累计" prop="preWaterSumValue" width="120" />
-        <el-table-column align="center" label="耗水累计" prop="currentWaterSumValue" width="120" />
-      </el-table-column>
-      <el-table-column align="center" label="空气">
-        <el-table-column align="center" label="空气数量" prop="currentAirDosage" width="120" />
-        <el-table-column align="center" label="单价" prop="airPrice">
-          <span>{{airPrice}}</span>
-        </el-table-column>
-        <el-table-column align="center" label="金额" prop="airAmount" width="120">
-          <template slot-scope="scope">{{(airPrice * scope.row.currentAirDosage).toFixed(2)}}</template>
-        </el-table-column>
-        <el-table-column align="center" label="上月累计" prop="preAirSumValue" width="120" />
-        <el-table-column align="center" label="空气累计" prop="currentAirSumValue" width="120" />
-      </el-table-column>
+
       <el-table-column align="center" label="电">
-        <el-table-column align="center" label="电数量" prop="currentElectricityDosage" width="120" />
-        <el-table-column align="center" label="单价" prop="electricityPrice">
-          <span>{{electricityPrice}}</span>
+        <el-table-column align="center" label="电数量" prop="currentElectricityDosage" />
+
+        <el-table-column align="center" label="电-峰数量" prop="currentElectricityDosage" width="120" />
+        <el-table-column align="center" label="电-峰单价">
+          <span>{{electricityFPrice}}</span>
         </el-table-column>
-        <el-table-column align="center" label="金额" prop="electricityAmount" width="120">
+        <el-table-column align="center" label="电-峰金额" prop="electricityAmount" width="120">
           <template
             slot-scope="scope"
-          >{{(electricityPrice * scope.row.currentElectricityDosage).toFixed(2)}}</template>
+          >{{(electricityFPrice * scope.row.currentElectricityDosage).toFixed(2)}}</template>
         </el-table-column>
+
+        <el-table-column align="center" label="电-平数量" prop="currentElectricityDosage" width="120" />
+        <el-table-column align="center" label="电-平单价">
+          <span>{{electricityPPrice}}</span>
+        </el-table-column>
+        <el-table-column align="center" label="电-平金额" prop="electricityAmount" width="120">
+          <template
+            slot-scope="scope"
+          >{{(electricityPPrice * scope.row.currentElectricityDosage).toFixed(2)}}</template>
+        </el-table-column>
+
+        <el-table-column align="center" label="电-谷数量" prop="currentElectricityDosage" width="120" />
+        <el-table-column align="center" label="电-谷单价">
+          <span>{{electricityGPrice}}</span>
+        </el-table-column>
+        <el-table-column align="center" label="电-谷金额" prop="electricityAmount" width="120">
+          <template
+            slot-scope="scope"
+          >{{(electricityGPrice * scope.row.currentElectricityDosage).toFixed(2)}}</template>
+        </el-table-column>
+
         <el-table-column align="center" label="上月累计" prop="preElectricitySumValue" width="120" />
         <el-table-column align="center" label="耗电累计" prop="currentElectricitySumValue" width="120" />
       </el-table-column>
-      <el-table-column align="center" label="蒸汽">
-        <el-table-column align="center" label="蒸汽数量" prop="currentSteamDosage" width="120" />
-        <el-table-column align="center" label="单价" prop="steamPrice">
-          <span>{{steamPrice}}</span>
-        </el-table-column>
-        <el-table-column align="center" label="金额" prop="steamAmount" width="120">
-          <template slot-scope="scope">{{(steamPrice * scope.row.currentSteamDosage).toFixed(2)}}</template>
-        </el-table-column>
-        <el-table-column align="center" label="上月累计" prop="preSteamSumValue" width="120" />
-        <el-table-column align="center" label="蒸汽累计" prop="currentSteamSumValue" width="120" />
-      </el-table-column>
+
       <el-table-column align="center" label="金额合计" prop="totalAmount" width="120">
         <template slot-scope="scope">
           {{
@@ -220,7 +230,10 @@ export default {
       waterPrice: 0,
       airPrice: 0,
       electricityPrice: 0,
-      steamPrice: 0
+      steamPrice: 0,
+      electricityFPrice: 0,
+      electricityPPrice: 0,
+      electricityGPrice: 0
     }
   },
   created () {
@@ -255,6 +268,11 @@ export default {
       this.open = true
       this.form.waterPrice = this.waterPrice
       this.form.electricityPrice = this.electricityPrice
+
+      this.form.electricityFPrice = this.electricityFPrice
+      this.form.electricityPPrice = this.electricityPPrice
+      this.form.electricityGPrice = this.electricityGPrice
+
       this.form.airPrice = this.airPrice
       this.form.steamPrice = this.steamPrice
     },
@@ -265,6 +283,14 @@ export default {
           res.data.find(item => item.energyType == '水').price || 0
         this.electricityPrice =
           res.data.find(item => item.energyType == '电').price || 0
+
+        this.electricityFPrice =
+          res.data.find(item => item.energyType == '电-峰').price || 0
+        this.electricityPPrice =
+          res.data.find(item => item.energyType == '电-平').price || 0
+        this.electricityGPrice =
+          res.data.find(item => item.energyType == '电-谷').price || 0
+
         this.airPrice =
           res.data.find(item => item.energyType == '空气').price || 0
         this.steamPrice =
@@ -341,10 +367,15 @@ export default {
       if (type === 0) {
         queryParams.pageNum = null
       }
-      const { waterPrice, airPrice, electricityPrice, steamPrice } = this
+      const { waterPrice, airPrice, electricityPrice, steamPrice, electricityFPrice, electricityPPrice, electricityGPrice } = this
       queryParams.waterPrice = waterPrice
       queryParams.airPrice = airPrice
       queryParams.electricityPrice = electricityPrice
+
+      queryParams.electricityFPrice = electricityFPrice
+      queryParams.electricityPPrice = electricityPPrice
+      queryParams.electricityGPrice = electricityGPrice
+
       queryParams.steamPrice = steamPrice
       this.$confirm('是否确认导出月报结算数据项?', '警告', {
         confirmButtonText: '确定',

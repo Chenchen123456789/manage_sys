@@ -21,7 +21,7 @@
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="选择季度" prop="queryTimeQuarter">
-        <el-select size="small" :clearable="false" v-model="queryParams.queryTimeQuarter">
+        <el-select :clearable="false" size="small" v-model="queryParams.queryTimeQuarter">
           <el-option
             :key="item.id"
             :label="item.label"
@@ -31,7 +31,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="大功率" prop="deviceType">
-        <el-select size="small" clearable v-model="queryParams.deviceType">
+        <el-select clearable size="small" v-model="queryParams.deviceType">
           <el-option
             :key="item.id"
             :label="item.label"
@@ -41,7 +41,7 @@
         </el-select>
       </el-form-item>
       <el-form-item label="计量等级" prop="measureLevel">
-        <el-select size="small" clearable v-model="queryParams.measureLevel">
+        <el-select clearable size="small" v-model="queryParams.measureLevel">
           <el-option
             :key="item.id"
             :label="item.label"
@@ -53,7 +53,7 @@
       <el-form-item>
         <el-button @click="handleQuery" icon="el-icon-search" size="mini" type="primary">搜索</el-button>
         <el-button @click="resetQuery" icon="el-icon-refresh" size="mini" type="info">重置</el-button>
-        <el-popover style="margin-left:10px" placement="bottom" trigger="click">
+        <el-popover placement="bottom" style="margin-left:10px" trigger="click">
           <div style="text-align: right; margin: 0">
             <el-button
               @click="handleExport(0)"
@@ -126,54 +126,54 @@
     <el-table :data="settlementList" size="mini" v-loading="loading">
       <el-table-column :index="indexMethod" label="序号" type="index" width="50" />
       <el-table-column align="center" label="单位" prop="plantName" />
-      <el-table-column align="center" label="建筑" prop="buildingName" />
+      <el-table-column align="center" label="建筑" prop="buildingName" width="120" />
       <el-table-column align="center" label="水">
-        <el-table-column align="center" label="水数量" prop="currentWaterDosage" />
+        <el-table-column align="center" label="水数量" prop="currentWaterDosage" width="120" />
         <el-table-column align="center" label="单价">
           <span>{{waterPrice}}</span>
         </el-table-column>
-        <el-table-column align="center" label="金额" prop="waterAmount">
+        <el-table-column align="center" label="金额" prop="waterAmount" width="120">
           <template slot-scope="scope">{{(waterPrice * scope.row.currentWaterDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="上季度累计" prop="preWaterSumValue" />
-        <el-table-column align="center" label="耗水累计" prop="currentWaterSumValue" />
+        <el-table-column align="center" label="上季度累计" prop="preWaterSumValue" width="120" />
+        <el-table-column align="center" label="耗水累计" prop="currentWaterSumValue" width="120" />
       </el-table-column>
       <el-table-column align="center" label="空气">
-        <el-table-column align="center" label="空气数量" prop="currentAirDosage" />
+        <el-table-column align="center" label="空气数量" prop="currentAirDosage" width="120" />
         <el-table-column align="center" label="单价" prop="airPrice">
           <span>{{airPrice}}</span>
         </el-table-column>
-        <el-table-column align="center" label="金额" prop="airAmount">
+        <el-table-column align="center" label="金额" prop="airAmount" width="120">
           <template slot-scope="scope">{{(airPrice * scope.row.currentAirDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="上季度累计" prop="preAirSumValue" />
-        <el-table-column align="center" label="空气累计" prop="currentAirSumValue" />
+        <el-table-column align="center" label="上季度累计" prop="preAirSumValue" width="120" />
+        <el-table-column align="center" label="空气累计" prop="currentAirSumValue" width="120" />
       </el-table-column>
       <el-table-column align="center" label="电">
-        <el-table-column align="center" label="电数量" prop="currentElectricityDosage" />
+        <el-table-column align="center" label="电数量" prop="currentElectricityDosage" width="120" />
         <el-table-column align="center" label="单价" prop="electricityPrice">
           <span>{{electricityPrice}}</span>
         </el-table-column>
-        <el-table-column align="center" label="金额" prop="electricityAmount">
+        <el-table-column align="center" label="金额" prop="electricityAmount" width="120">
           <template
             slot-scope="scope"
           >{{(electricityPrice * scope.row.currentElectricityDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="上季度累计" prop="preElectricitySumValue" />
-        <el-table-column align="center" label="耗电累计" prop="currentElectricitySumValue" />
+        <el-table-column align="center" label="上季度累计" prop="preElectricitySumValue" width="120" />
+        <el-table-column align="center" label="耗电累计" prop="currentElectricitySumValue" width="120" />
       </el-table-column>
       <el-table-column align="center" label="蒸汽">
-        <el-table-column align="center" label="蒸汽数量" prop="currentSteamDosage" />
+        <el-table-column align="center" label="蒸汽数量" prop="currentSteamDosage" width="120" />
         <el-table-column align="center" label="单价" prop="steamPrice">
           <span>{{steamPrice}}</span>
         </el-table-column>
-        <el-table-column align="center" label="金额" prop="steamAmount">
+        <el-table-column align="center" label="金额" prop="steamAmount" width="120">
           <template slot-scope="scope">{{(steamPrice * scope.row.currentSteamDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="上季度累计" prop="preSteamSumValue" />
-        <el-table-column align="center" label="蒸汽累计" prop="currentSteamSumValue" />
+        <el-table-column align="center" label="上季度累计" prop="preSteamSumValue" width="120" />
+        <el-table-column align="center" label="蒸汽累计" prop="currentSteamSumValue" width="120" />
       </el-table-column>
-      <el-table-column align="center" label="金额合计" prop="totalAmount">
+      <el-table-column align="center" label="金额合计" prop="totalAmount" width="120">
         <template slot-scope="scope">
           {{
           (waterPrice * scope.row.currentWaterDosage +
@@ -390,7 +390,7 @@ export default {
   margin: 12px 0;
 }
 
-.first-divider  {
+.first-divider {
   margin: 0px 0 12px 0;
 }
 </style>

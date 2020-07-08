@@ -117,54 +117,54 @@
     <el-table :data="settlementList" size="mini" v-loading="loading">
       <el-table-column :index="indexMethod" label="序号" type="index" width="50" />
       <el-table-column align="center" label="单位" prop="plantName" />
-      <el-table-column align="center" label="建筑" prop="buildingName" />
-      <el-table-column align="center" label="水">
-        <el-table-column align="center" label="水数量" prop="currentWaterDosage" />
+      <el-table-column align="center" width="120"  label="建筑" prop="buildingName" />
+      <el-table-column align="center"  label="水">
+        <el-table-column align="center" width="120"  label="水数量" prop="currentWaterDosage" />
         <el-table-column align="center" label="单价">
           <span>{{waterPrice}}</span>
         </el-table-column>
-        <el-table-column align="center" label="金额" prop="waterAmount">
+        <el-table-column align="center" width="120" label="金额" prop="waterAmount">
           <template slot-scope="scope">{{(waterPrice * scope.row.currentWaterDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="昨天累计" prop="preWaterSumValue" />
-        <el-table-column align="center" label="耗水累计" prop="currentWaterSumValue" />
+        <el-table-column align="center" width="120" label="昨天累计" prop="preWaterSumValue" />
+        <el-table-column align="center" width="120" label="耗水累计" prop="currentWaterSumValue" />
       </el-table-column>
       <el-table-column align="center" label="空气">
-        <el-table-column align="center" label="空气数量" prop="currentAirDosage" />
+        <el-table-column align="center" width="120" label="空气数量" prop="currentAirDosage" />
         <el-table-column align="center" label="单价" prop="airPrice">
           <span>{{airPrice}}</span>
         </el-table-column>
-        <el-table-column align="center" label="金额" prop="airAmount">
+        <el-table-column align="center" width="120" label="金额" prop="airAmount">
           <template slot-scope="scope">{{(airPrice * scope.row.currentAirDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="昨天累计" prop="preAirSumValue" />
-        <el-table-column align="center" label="空气累计" prop="currentAirSumValue" />
+        <el-table-column align="center" width="120" label="昨天累计" prop="preAirSumValue" />
+        <el-table-column align="center" width="120" label="空气累计" prop="currentAirSumValue" />
       </el-table-column>
       <el-table-column align="center" label="电">
-        <el-table-column align="center" label="电数量" prop="currentElectricityDosage" />
+        <el-table-column align="center" width="120" label="电数量" prop="currentElectricityDosage" />
         <el-table-column align="center" label="单价" prop="electricityPrice">
           <span>{{electricityPrice}}</span>
         </el-table-column>
-        <el-table-column align="center" label="金额" prop="electricityAmount">
+        <el-table-column align="center" width="120" label="金额" prop="electricityAmount">
           <template
             slot-scope="scope"
           >{{(electricityPrice * scope.row.currentElectricityDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="昨天累计" prop="preElectricitySumValue" />
-        <el-table-column align="center" label="耗电累计" prop="currentElectricitySumValue" />
+        <el-table-column align="center" width="120" label="昨天累计" prop="preElectricitySumValue" />
+        <el-table-column align="center" width="120" label="耗电累计" prop="currentElectricitySumValue" />
       </el-table-column>
       <el-table-column align="center" label="蒸汽">
-        <el-table-column align="center" label="蒸汽数量" prop="currentSteamDosage" />
+        <el-table-column align="center" width="120" label="蒸汽数量" prop="currentSteamDosage" />
         <el-table-column align="center" label="单价" prop="steamPrice">
           <span>{{steamPrice}}</span>
         </el-table-column>
-        <el-table-column align="center" label="金额" prop="steamAmount">
+        <el-table-column align="center" width="120" label="金额" prop="steamAmount">
           <template slot-scope="scope">{{(steamPrice * scope.row.currentSteamDosage).toFixed(2)}}</template>
         </el-table-column>
-        <el-table-column align="center" label="昨天累计" prop="preSteamSumValue" />
-        <el-table-column align="center" label="蒸汽累计" prop="currentSteamSumValue" />
+        <el-table-column align="center" width="120" label="昨天累计" prop="preSteamSumValue" />
+        <el-table-column align="center" width="120" label="蒸汽累计" prop="currentSteamSumValue" />
       </el-table-column>
-      <el-table-column align="center" label="金额合计" prop="totalAmount">
+      <el-table-column align="center" width="120" label="金额合计" prop="totalAmount">
         <template slot-scope="scope">
           {{
           (waterPrice * scope.row.currentWaterDosage +

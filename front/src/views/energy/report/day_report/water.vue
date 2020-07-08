@@ -26,9 +26,9 @@
           v-model="queryParams.queryTime"
         ></el-date-picker>
       </el-form-item>
-      
+
       <el-form-item label="计量等级" prop="measureLevel">
-        <el-select size="small" clearable v-model="queryParams.measureLevel">
+        <el-select clearable size="small" v-model="queryParams.measureLevel">
           <el-option
             :key="item.id"
             :label="item.label"
@@ -160,9 +160,9 @@ export default {
       listDayDosageOfWater(this.queryParams).then(response => {
         const list = response.rows
         for (const index in list) {
-          const preTimeValue = list[index].preTimeValue || 0
-          const currentTimeValue = list[index].currentTimeValue || 0
-          const realDosage = currentTimeValue - preTimeValue
+          const preTimeValue = list[index].preTimeValue.toFixed(2)
+          const currentTimeValue = list[index].currentTimeValue.toFixed(2)
+          const realDosage = (currentTimeValue - preTimeValue).toFixed(2)
           list[index].preTimeValue = preTimeValue
           list[index].currentTimeValue = currentTimeValue
           list[index].realDosage = realDosage

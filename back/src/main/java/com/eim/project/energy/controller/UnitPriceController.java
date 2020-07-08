@@ -27,16 +27,22 @@ public class UnitPriceController extends BaseController {
     }
 
     @PutMapping
-    public AjaxResult edit(@RequestBody Map<String, Object> map) {
+    public AjaxResult edit(@RequestBody Map<String, Double> map) {
         Double waterPrice = null;
         Double electricityPrice = null;
+        Double electricityFPrice = null;
+        Double electricityPPrice = null;
+        Double electricityGPrice = null;
         Double airPrice = null;
         Double steamPrice = null;
         if (map != null) {
-            waterPrice = (Double) map.getOrDefault("waterPrice", null);
-            electricityPrice = (Double) map.getOrDefault("electricityPrice", null);
-            airPrice = (Double) map.getOrDefault("airPrice", null);
-            steamPrice = (Double) map.getOrDefault("steamPrice", null);
+            waterPrice = map.getOrDefault("waterPrice", 0.0);
+            electricityPrice = map.getOrDefault("electricityPrice", 0.0);
+            airPrice =  map.getOrDefault("airPrice", 0.0);
+            steamPrice =  map.getOrDefault("steamPrice", 0.0);
+            electricityFPrice =  map.getOrDefault("electricityFPrice", 0.0);
+            electricityPPrice =  map.getOrDefault("electricityPPrice", 0.0);
+            electricityGPrice =   map.getOrDefault("electricityGPrice", 0.0);
         }
         UnitPrice unitPrice = new UnitPrice();
         unitPrice.setEnergyType("电").setPrice(electricityPrice);
@@ -46,6 +52,13 @@ public class UnitPriceController extends BaseController {
         unitPrice.setEnergyType("空气").setPrice(airPrice);
         unitPriceService.updateUnitPrice(unitPrice);
         unitPrice.setEnergyType("蒸汽").setPrice(steamPrice);
+        unitPriceService.updateUnitPrice(unitPrice);
+        unitPrice.setEnergyType("电-峰").setPrice(electricityFPrice);
+        unitPriceService.updateUnitPrice(unitPrice);
+        unitPrice.setEnergyType("电-平").setPrice(electricityPPrice);
+        unitPriceService.updateUnitPrice(unitPrice);
+        unitPrice.setEnergyType("电-谷").setPrice(electricityGPrice);
+
         return toAjax(unitPriceService.updateUnitPrice(unitPrice));
     }
 }
