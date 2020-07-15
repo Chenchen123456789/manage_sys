@@ -981,14 +981,14 @@
         building_id,
         SUM (
         CASE
-        WHEN CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ), getdate(), 120 )
+        WHEN CONVERT ( VARCHAR ( 4 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 4 ), getdate(), 120 )
         AND energy_type_name = '电' THEN
         TagValue ELSE 0.0
         END
         ) currentElectricitySumValue,
         SUM (
         CASE
-        WHEN CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ), DATEADD( day, - 1, getdate() ),
+        WHEN CONVERT ( VARCHAR ( 4 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 4 ), DATEADD( year, - 1, getdate() ),
         120 )
         AND energy_type_name = '电' THEN
         TagValue ELSE 0.0
@@ -996,14 +996,14 @@
         ) preElectricitySumValue,
         SUM (
         CASE
-        WHEN CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ), getdate(), 120 )
+        WHEN CONVERT ( VARCHAR ( 4 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 4 ), getdate(), 120 )
         AND energy_type_name = '水' THEN
         TagValue ELSE 0.0
         END
         ) currentWaterSumValue,
         SUM (
         CASE
-        WHEN CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ), DATEADD( day, - 1, getdate() ),
+        WHEN CONVERT ( VARCHAR ( 4 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 4 ), DATEADD( year, - 1, getdate() ),
         120 )
         AND energy_type_name = '水' THEN
         TagValue ELSE 0.0
@@ -1011,14 +1011,14 @@
         ) preWaterSumValue,
         SUM (
         CASE
-        WHEN CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ), getdate(), 120 )
+        WHEN CONVERT ( VARCHAR ( 4 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 4 ), getdate(), 120 )
         AND energy_type_name = '空气' THEN
         TagValue ELSE 0.0
         END
         ) currentAirSumValue,
         SUM (
         CASE
-        WHEN CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ), DATEADD( day, - 1, getdate() ),
+        WHEN CONVERT ( VARCHAR ( 4 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 4 ), DATEADD( year, - 1, getdate() ),
         120 )
         AND energy_type_name = '空气' THEN
         TagValue ELSE 0.0
@@ -1026,14 +1026,14 @@
         ) preAirSumValue,
         SUM (
         CASE
-        WHEN CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ), getdate(), 120 )
+        WHEN CONVERT ( VARCHAR ( 4 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 4 ), getdate(), 120 )
         AND energy_type_name = '蒸汽' THEN
         TagValue ELSE 0.0
         END
         ) currentSteamSumValue,
         SUM (
         CASE
-        WHEN CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ), DATEADD( day, - 1, getdate() ),
+        WHEN CONVERT ( VARCHAR ( 4 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 4 ), DATEADD( year, - 1, getdate() ),
         120 )
         AND energy_type_name = '蒸汽' THEN
         TagValue ELSE 0.0
@@ -1043,9 +1043,9 @@
         consumption_group_info A
         LEFT JOIN T_YearData B ON A.tag_name = B.TagName
         and (
-        CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ), DATEADD( day, - 1, getdate() ),
+        CONVERT ( VARCHAR ( 4 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 4 ), DATEADD( year, - 1, getdate() ),
         120 )
-        or CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ), getdate(), 120 )
+        or CONVERT ( VARCHAR ( 4 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 4 ), getdate(), 120 )
         )
         WHERE
         A.[disable] = 0

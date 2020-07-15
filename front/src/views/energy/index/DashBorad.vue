@@ -24,14 +24,26 @@ export default {
       type: String,
       default: '225px'
     },
-    dashboardData: {
-      type: Object,
-      default: {}
-    }
+    dashboardDataList: {
+      type: Array,
+      default: null
+    },
+    placeholderId: {
+      type: Number,
+      default: null
+    },
   },
   data () {
     return {
       chart: null
+    }
+  },
+  computed: {
+    dashboardData () {
+      return {
+        placeholderId: this.placeholderId,
+        dashboardDataList: this.dashboardDataList
+      }
     }
   },
   watch: {
@@ -58,10 +70,16 @@ export default {
     setChartData (dashboardData) {
       const placeholderId = dashboardData.placeholderId
       const dashboardDataList = dashboardData.dashboardDataList
+      console.log(dashboardData)
       if (dashboardDataList.length > 0) {
-        const resItem = dashboardDataList.find(
-          item => item.placeholderId === placeholderId
-        ).item
+        try {
+          var resItem = dashboardDataList.find(
+            item => item.placeholderId === placeholderId
+          ).item
+        } catch(e){
+          console.log(e)
+          return
+        }
         let resData = []
         let maxValue = Math.max(...resItem.map(item => item.tagValue))
         if (maxValue <= 1) {
@@ -75,7 +93,7 @@ export default {
           maxValue = number2 * 100
         }
         resData = resItem.map(item => {
-          return { value: item.tagValue, name:item.tagName }
+          return { value: item.tagValue, name: item.tagName }
         })
         const seriesData = []
         let index = 3
@@ -87,8 +105,9 @@ export default {
             type: 'gauge',
             name: item.name,
             max: maxValue,
+            center: ['50%', '46%'],
             // splitNumber: 10,
-            data: [{value: item.value}],
+            data: [{ value: item.value }],
             axisLine: {
               lineStyle: {
                 width: 5
@@ -135,7 +154,6 @@ export default {
             data: [{ value: 0 }],
             // min: 0,
             // max: maxValue,
-            // center:['50%','40%'],
             axisLine: {
               // 坐标轴线
               lineStyle: {

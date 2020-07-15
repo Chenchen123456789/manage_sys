@@ -1,9 +1,9 @@
 <template>
   <el-row :gutter="40" class="panel-group">
-    <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
+    <el-col :lg="4" :sm="12" :xs="12" class="card-panel-col">
       <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-electricity">
-          <svg-icon icon-class="electricity" class-name="card-panel-icon" />
+          <svg-icon class-name="card-panel-icon" icon-class="electricity" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
@@ -11,18 +11,18 @@
             <br />（kWh）
           </div>
           <count-to
-            :start-val="0"
-            :end-val="yearSumValueOfElectricity"
             :duration="2600"
+            :end-val="yearSumValueOfElectricity"
+            :start-val="0"
             class="card-panel-num"
           />
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
+    <el-col :lg="4" :sm="12" :xs="12" class="card-panel-col">
       <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-water">
-          <svg-icon icon-class="water" class-name="card-panel-icon" />
+          <svg-icon class-name="card-panel-icon" icon-class="water" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
@@ -30,18 +30,18 @@
             <br />&nbsp;&nbsp;&nbsp;（t）
           </div>
           <count-to
-            :start-val="0"
-            :end-val="yearSumValueOfWater"
             :duration="3000"
+            :end-val="yearSumValueOfWater"
+            :start-val="0"
             class="card-panel-num"
           />
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
+    <el-col :lg="4" :sm="12" :xs="12" class="card-panel-col">
       <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-air">
-          <svg-icon icon-class="air" class-name="card-panel-icon" />
+          <svg-icon class-name="card-panel-icon" icon-class="air" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
@@ -49,18 +49,18 @@
             <br />&nbsp;（m³）
           </div>
           <count-to
-            :start-val="0"
-            :end-val="yearSumValueOfAir"
             :duration="3200"
+            :end-val="yearSumValueOfAir"
+            :start-val="0"
             class="card-panel-num"
           />
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
+    <el-col :lg="4" :sm="12" :xs="12" class="card-panel-col">
       <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-lifeWater">
-          <svg-icon icon-class="lifeWater" class-name="card-panel-icon" />
+          <svg-icon class-name="card-panel-icon" icon-class="lifeWater" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
@@ -69,18 +69,18 @@
           </div>
           <count-to
             :decimals="2"
-            :start-val="0"
-            :end-val="lifeWaterPressure"
             :duration="3600"
+            :end-val="lifeWaterPressure"
+            :start-val="0"
             class="card-panel-num"
           />
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
+    <el-col :lg="4" :sm="12" :xs="12" class="card-panel-col">
       <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-fireWater">
-          <svg-icon icon-class="fireWater" class-name="card-panel-icon" />
+          <svg-icon class-name="card-panel-icon" icon-class="fireWater" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
@@ -89,18 +89,18 @@
           </div>
           <count-to
             :decimals="2"
-            :start-val="0"
-            :end-val="fireWaterPressure"
             :duration="3600"
+            :end-val="fireWaterPressure"
+            :start-val="0"
             class="card-panel-num"
           />
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="4" class="card-panel-col">
+    <el-col :lg="4" :sm="12" :xs="12" class="card-panel-col">
       <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-airPressure">
-          <svg-icon icon-class="airPressure" class-name="card-panel-icon" />
+          <svg-icon class-name="card-panel-icon" icon-class="airPressure" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
@@ -109,9 +109,9 @@
           </div>
           <count-to
             :decimals="2"
-            :start-val="0"
-            :end-val="airCompressorPressure"
             :duration="3600"
+            :end-val="airCompressorPressure"
+            :start-val="0"
             class="card-panel-num"
           />
         </div>
@@ -128,8 +128,12 @@ export default {
     CountTo
   },
   props: {
-    panelGroupData: {
+    yearTotal: {
       type: Object,
+      default: null
+    },
+    homePageChartSettingList: {
+      type: Array,
       default: null
     }
   },
@@ -141,6 +145,14 @@ export default {
       airCompressorPressure: 0,
       fireWaterPressure: 0,
       lifeWaterPressure: 0
+    }
+  },
+  computed: {
+    panelGroupData () {
+      return {
+        yearTotal: this.yearTotal,
+        homePageChartSettingList: this.homePageChartSettingList
+      }
     }
   },
   watch: {

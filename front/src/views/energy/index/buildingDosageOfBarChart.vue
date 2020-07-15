@@ -29,17 +29,17 @@ export default {
       default: null
     }
   },
-  data() {
+  data () {
     return {
       chart: null
     }
   },
-  mounted() {
+  mounted () {
     this.$nextTick(() => {
       this.initChart()
     })
   },
-  beforeDestroy() {
+  beforeDestroy () {
     if (!this.chart) {
       return
     }
@@ -49,13 +49,13 @@ export default {
   watch: {
     chartData: {
       deep: true,
-      handler(val) {
+      handler (val) {
         this.setChartData(val)
       }
     }
   },
   methods: {
-    setChartData(chartData) {
+    setChartData (chartData) {
       if (chartData && chartData.length > 0) {
         const xAxisData = chartData.map(item => item.buildingName)
         const seriesData = chartData.map(item => item.sumValue)
@@ -71,7 +71,7 @@ export default {
         })
       }
     },
-    initChart() {
+    initChart () {
       this.chart = echarts.init(this.$el, 'macarons')
 
       this.chart.setOption({

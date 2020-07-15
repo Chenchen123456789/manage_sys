@@ -1,13 +1,33 @@
 <template>
   <div class="dashboard-editor-container">
-    <PanelGroup :panelGroupData="{homePageChartSettingList, yearTotal}" />
+    <PanelGroup :homePageChartSettingList="homePageChartSettingList" :yearTotal="yearTotal" />
     <el-row :gutter="32" class="second-part">
-      <el-col :key="item" :span="4" :xs="24" class="el-coldash-board" v-for="item in [4,5,6,7,8,9]">
-        <Dashboard
-          :dashboardData="{dashboardDataList: groupedHomePageSettingData, placeholderId: item}"
-        ></Dashboard>
-        <div style="position: absolute;top: 184px;">{{getDashBoardDesc(item)}}</div>
-      </el-col>
+      <el-carousel :autoplay="false" height="230px" arrow="always" direction="vertical">
+        <el-carousel-item>
+          <el-col
+            :key="item"
+            :span="4"
+            :xs="24"
+            class="el-coldash-board"
+            v-for="item in [4,5,6,7,8,9]"
+          >
+            <Dashboard :dashboardDataList="groupedHomePageSettingData" :placeholderId="item"></Dashboard>
+            <div style="position: absolute;top: 202px;">{{getDashBoardDesc(item)}}</div>
+          </el-col>
+        </el-carousel-item>
+        <el-carousel-item>
+          <el-col
+            :key="item"
+            :span="4"
+            :xs="24"
+            class="el-coldash-board"
+            v-for="item in [11,12,13,14,15,16]"
+          >
+            <Dashboard :dashboardDataList="groupedHomePageSettingData" :placeholderId="item"></Dashboard>
+            <div style="position: absolute;top: 202px;">{{getDashBoardDesc(item)}}</div>
+          </el-col>
+        </el-carousel-item>
+      </el-carousel>
     </el-row>
 
     <el-row :gutter="32" class="third-part">
@@ -323,7 +343,7 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .el-coldash-board {
   display: flex;
   flex-direction: column;
@@ -342,6 +362,11 @@ export default {
   // display: flex;
   // justify-content: space-between;
   // align-items: center;
+  .el-carousel__indicator {
+    .el-carousel__button {
+      background: gray;
+    }
+  }
 }
 .third-part {
   margin-left: 0px !important;
