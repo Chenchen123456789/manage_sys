@@ -754,12 +754,17 @@
         )
         WHERE
         A.[disable] = 0
-        AND A.measure_level =2
         <if test="plantId!=null">
             AND plant_id = #{plantId, jdbcType=INTEGER}
         </if>
+        <if test="buildingId!=null">
+            AND A.building_id = #{buildingId, jdbcType=INTEGER}
+        </if>
         <if test="deviceType!=null">
             AND A.device_type = #{deviceType, jdbcType=INTEGER}
+        </if>
+        <if test="measureLevel!=null and measureLevel!=''">
+            AND A.measure_level = #{measureLevel, jdbcType=INTEGER}
         </if>
         GROUP BY building_id
     </select>
@@ -1380,6 +1385,74 @@
         )
         WHERE
         A.[disable] = 0
+    </select>
+
+    <select id="selectElectricityOfFPGValue" parameterType="map" resultType="map">
+        SELECT
+        building_id,
+        MAX ( concat ( plant_name, building_name ) ) in_department,
+        SUM (
+        CASE
+			WHEN CONVERT ( VARCHAR ( 7 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 ) THEN
+			FValue ELSE 0.0
+		END
+		) curSumFValue,
+		SUM (
+		CASE
+				WHEN CONVERT ( VARCHAR ( 7 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, #{queryTime} ), 120 ) THEN
+				FValue ELSE 0.0
+			END
+			) preSumFValue,
+
+			SUM (
+	CASE
+			WHEN CONVERT ( VARCHAR ( 7 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 ) THEN
+			PValue ELSE 0.0
+		END
+		) curSumPValue,
+		SUM (
+		CASE
+
+				WHEN CONVERT ( VARCHAR ( 7 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, #{queryTime} ), 120 ) THEN
+				PValue ELSE 0.0
+			END
+			) preSumPValue,
+			SUM (
+	CASE
+
+			WHEN CONVERT ( VARCHAR ( 7 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 ) THEN
+			GValue ELSE 0.0
+		END
+		) curSumGValue,
+		SUM (
+		CASE
+
+				WHEN CONVERT ( VARCHAR ( 7 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, #{queryTime} ), 120 ) THEN
+				GValue ELSE 0.0
+			END
+			) preSumGValue
+
+		FROM
+			consumption_group_info A
+			LEFT JOIN T_DayDataJFPG B ON A.tag_name = B.TagName
+			AND (
+				CONVERT ( VARCHAR ( 7 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
+				OR CONVERT ( VARCHAR ( 7 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 7 ), DATEADD( MONTH, - 1, #{queryTime} ), 120 )
+			)
+		WHERE
+			A.[disable] = 0
+			AND energy_type_name = '电'
+        <if test="buildingId!=null">
+            AND A.building_id = #{buildingId, jdbcType=INTEGER}
+        </if>
+        <if test="deviceType!=null">
+            AND A.device_type = #{deviceType, jdbcType=INTEGER}
+        </if>
+        <if test="measureLevel!=null and measureLevel!=''">
+            AND A.measure_level = #{measureLevel, jdbcType=INTEGER}
+        </if>
+		GROUP BY
+		building_id
     </select>
 
 </mapper>

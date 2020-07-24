@@ -7,12 +7,14 @@
         <result column="measure_level" jdbcType="INTEGER" property="measureLevel"/>
         <result column="building_id" jdbcType="INTEGER" property="buildingId"/>
         <result column="building_name" jdbcType="INTEGER" property="buildingName"/>
+        <result column="energy_building_id" jdbcType="INTEGER" property="energyBuildingId"/>
+        <result column="energy_building_name" jdbcType="INTEGER" property="energyBuildingName"/>
         <result column="device_type" jdbcType="INTEGER" property="deviceType"/>
         <result column="energy_type_id" jdbcType="INTEGER" property="energyTypeId"/>
         <result column="energy_type_name" jdbcType="NVARCHAR" property="energyTypeName"/>
     </resultMap>
     <sql id="Base_Column_List">
-    id, tag_name, measure_level, device_type
+    id, tag_name, measure_level, device_type, energy_building_id
   </sql>
     <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
         select
@@ -32,6 +34,8 @@
         tag_name,
         measure_level,
         building_id,
+        energy_building_name,
+        belongs_building_id,
         building_name,
         device_type,
         A.energy_type_id,
@@ -48,6 +52,9 @@
             <if test="measureLevel!=null and measureLevel!=''">
                 AND A.measure_level = #{measureLevel, jdbcType=INTEGER}
             </if>
+            <if test="buildingId!=null">
+                AND A.building_id = #{buildingId, jdbcType=INTEGER}
+            </if>
         </where>
         ORDER BY building_id ASC
     </select>
@@ -62,10 +69,10 @@
     where id = #{id,jdbcType=INTEGER}
   </delete>
     <insert id="insert" parameterType="com.eim.project.energy.entity.ConsumptionGroup">
-    insert into S1_consumption_group (id, tag_name, measure_level, device_type
+    insert into S1_consumption_group (id, tag_name, measure_level, device_type, energy_building_id
       )
     values (#{id,jdbcType=INTEGER}, #{tagName,jdbcType=NVARCHAR}, #{measureLevel,jdbcType=INTEGER}, 
-     #{deviceType,jdbcType=INTEGER}
+     #{deviceType,jdbcType=INTEGER} ,#{energyBuildingId,jdbcType=INTEGER}
       )
   </insert>
     <insert id="insertSelective" parameterType="com.eim.project.energy.entity.ConsumptionGroup">
@@ -83,6 +90,9 @@
             <if test="deviceType != null">
                 device_type,
             </if>
+            <if test="energyBuildingId != null">
+                energy_building_id,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -96,6 +106,9 @@
             </if>
             <if test="deviceType != null">
                 #{deviceType,jdbcType=INTEGER},
+            </if>
+            <if test="energyBuildingId != null">
+                #{energyBuildingId,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>
@@ -111,6 +124,9 @@
             <if test="deviceType != null">
                 device_type = #{deviceType,jdbcType=INTEGER},
             </if>
+            <if test="energyBuildingId != null">
+                energy_building_id = #{energyBuildingId,jdbcType=INTEGER},
+            </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
     </update>
@@ -119,6 +135,7 @@
     set tag_name = #{tagName,jdbcType=NVARCHAR},
       measure_level = #{measureLevel,jdbcType=INTEGER},
       device_type = #{deviceType,jdbcType=INTEGER},
+      energy_building_id = #{energyBuildingId,jdbcType=INTEGER}
     where id = #{id,jdbcType=INTEGER}
   </update>
 </mapper>

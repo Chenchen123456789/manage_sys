@@ -64,4 +64,6 @@ public interface ReportMapper {
     List<Map<String, Object>> selectQuarterSettlement(Map<String, Object> map);
 
     List<Map<String, Object>> selectYearSettlement(Map<String, Object> map);
+
+    List<Map<String, Object>> selectElectricityOfFPGValue(Map<String, Object> map);
 }

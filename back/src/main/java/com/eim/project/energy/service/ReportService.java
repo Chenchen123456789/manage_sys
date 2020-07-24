@@ -446,4 +446,8 @@ public class ReportService {
         }
         return sheet;
     }
+
+    public List<Map<String, Object>> selectElectricityOfFPGValue(Map<String, Object> map) {
+        return reportMapper.selectElectricityOfFPGValue(map);
+    }
 }

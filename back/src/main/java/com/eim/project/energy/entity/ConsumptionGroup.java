@@ -23,7 +23,7 @@ public class ConsumptionGroup {
 
     private Integer buildingId;
 
-    @Excel(name = "能耗建筑", type = Excel.Type.EXPORT, cellType = Excel.ColumnType.STRING)
+//    @Excel(name = "能耗建筑", type = Excel.Type.EXPORT, cellType = Excel.ColumnType.STRING)
     private String buildingName;
 
     @Excel(name = "大功率", cellType = Excel.ColumnType.STRING, readConverterExp = "1=大功率电器,0=未分类")
@@ -31,6 +31,12 @@ public class ConsumptionGroup {
 
     @Excel(name = "能源类型", type = Excel.Type.EXPORT, cellType = Excel.ColumnType.STRING, readConverterExp = "1=水,2=电")
     private Integer energyTypeId;
+
+    @Excel(name = "能耗划分建筑Id", cellType = Excel.ColumnType.NUMERIC,type = Excel.Type.IMPORT)
+    private Integer energyBuildingId;
+
+    @Excel(name = "能耗划分建筑", type = Excel.Type.EXPORT, cellType = Excel.ColumnType.STRING)
+    private String energyBuildingName;
 
     private String energyTypeName;
 }

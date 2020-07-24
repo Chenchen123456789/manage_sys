@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <el-form :inline="true" :model="queryParams" label-width="68px" ref="queryForm">
+    <el-form :inline="true" :model="queryParams" ref="queryForm">
       <el-form-item label="测点名" prop="tagName">
         <el-input placeholder="请输入" size="small" v-model="queryParams.tagName"></el-input>
       </el-form-item>
@@ -21,6 +21,16 @@
             :label="item.label"
             :value="item.id"
             v-for="item in [{id: 1, label:'一级' },{id: 2, label:'二级' },{id: 3, label:'三级' }]"
+          ></el-option>
+        </el-select>
+      </el-form-item>
+      <el-form-item label="能耗建筑划分" prop="buildingId">
+        <el-select clearable size="small" v-model="queryParams.buildingId">
+          <el-option
+            :key="item.id"
+            :label="item.buildingName"
+            :value="item.id"
+            v-for="item in buildingOptions"
           ></el-option>
         </el-select>
       </el-form-item>
@@ -103,7 +113,7 @@
     >
       <el-table-column align="center" type="selection" width="55" />
       <el-table-column :index="indexMethod" align="center" label="序号" type="index" width="60" />
-      <el-table-column align="center" label="能耗建筑" prop="buildingName" />
+      <el-table-column align="center" label="能耗划分建筑" prop="energyBuildingName" />
       <el-table-column align="center" label="测点名" prop="tagName" />
       <el-table-column align="center" label="计量等级" prop="measureLevel" />
       <el-table-column align="center" label="大功率" prop="deviceType">
@@ -139,12 +149,13 @@
     />
 
     <!-- 添加或修改能耗分类对话框 -->
-    <el-dialog :title="title" :visible.sync="open" width="500px">
-      <el-form :model="form" :rules="rules" label-width="100px" ref="form">
+    <el-dialog :title="title" :visible.sync="open" width="600px">
+      <el-form :model="form" :rules="rules" label-width="110px" ref="form">
         <el-form-item label="测点名" prop="tagName">
           <el-select
             :loading="loading1"
             :remote-method="remoteMethod1"
+            @change="changeFormTagName"
             collapse-tags
             filterable
             placeholder="请输入关键词"
@@ -160,6 +171,41 @@
               :value="item.value"
               v-for="(item, index) in options1"
             ></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="工厂名称" prop="plantId">
+          <el-select
+            :clearable="false"
+            @change="changeQueryPlantOptions"
+            placeholder="请选择工厂"
+            size="small"
+            style="width: 250px"
+            v-model="form.plantId"
+          >
+            <el-option
+              :key="item.id"
+              :label="item.plantName"
+              :value="item.id"
+              v-for="item in queryPlantOptions"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="能耗划分建筑" prop="energyBuildingId">
+          <el-select
+            :clearable="false"
+            @change="changeQueryBuildingOptions"
+            collapse-tags
+            placeholder="请选择建筑"
+            size="small"
+            style="width: 250px"
+            v-model="form.energyBuildingId"
+          >
+            <el-option
+              :key="item.id"
+              :label="item.buildingName"
+              :value="item.id"
+              v-for="item in queryBuildingOptions"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="计量等级" prop="measureLevel">
@@ -199,6 +245,7 @@ import ImportData from '../components/importData'
 import { listMeasuringPoint } from '@/api/energy/measuringPoint'
 import { listBuilding } from '@/api/energy/building'
 import { listEnergyType } from '@/api/energy/report'
+import { listPlant } from '@/api/energy/plant'
 
 export default {
   name: 'ConsumptionGroup',
@@ -237,26 +284,67 @@ export default {
       // 表单校验
       rules: {
         tagName: [
-          { required: true, message: '测点名不能为空', trigger: 'blur' }
+          { required: true, message: '测点名不能为空', trigger: 'blur' },
+        ],
+        energyBuildingId: [
+          { required: true, message: '建筑不能为空', trigger: 'blur' },
         ],
       },
       options1: [],
       loading1: false,
       optionList1: [],
       energyTypeOptions: [],
-      buildingOptions: []
+      queryPlantOptions: [],
+      queryBuildingOptions: [],
+      plantOptions: [],
+      buildingOptions: [],
+      measuringPointList: []
     }
   },
   created () {
     this.getList()
     this.getMeasuringPointList()
     this.getEnergyTypeOptions()
+    this.getPlantOptions()
     this.getBuildingOptions()
   },
   methods: {
+    changeFormTagName (value) {
+      if (value) {
+        const measuringPoint = this.measuringPointList.find(item => item.tagName == value)
+        if (measuringPoint) {
+          this.form.plantId = measuringPoint.plantId
+          this.form.energyBuildingId = measuringPoint.buildingId
+        }
+      }
+    },
+    changeQueryPlantOptions (value) {
+      this.form.energyBuildingId = undefined
+      if (value === '') {
+        this.form.plantId = undefined
+        this.queryBuildingOptions = this.buildingOptions
+      } else {
+        this.queryBuildingOptions = this.buildingOptions.filter(
+          item => item.plantId == value
+        )
+      }
+    },
+    changeQueryBuildingOptions (value) {
+      if (value === '') {
+      } else {
+        const building = this.buildingOptions.find(item => item.id == value)
+        const plantId = building.plantId || null
+        this.form.plantId = plantId
+      }
+    },
+    getPlantOptions () {
+      listPlant().then(res => {
+        this.queryPlantOptions = this.plantOptions = res.rows
+      })
+    },
     getBuildingOptions () {
       listBuilding().then(res => {
-        this.buildingOptions = res.rows
+        this.queryBuildingOptions = this.buildingOptions = res.rows
       })
     },
     getEnergyTypeOptions () {
@@ -267,6 +355,7 @@ export default {
     getMeasuringPointList () {
       listMeasuringPoint({}).then(res => {
         const list = res.rows.filter(item => item.disable == 0)
+        this.measuringPointList = res.rows
         for (const item of list) {
           this.optionList1.push({ value: item.tagName, label: item.tagName })
         }
@@ -311,7 +400,9 @@ export default {
         id: undefined,
         consumptionGroupCode: undefined,
         consumptionGroupName: undefined,
-        consumptionGroupDescription: 0
+        consumptionGroupDescription: 0,
+        energyBuildingId: undefined,
+        plantId: undefined
       }
       this.resetForm('form')
     },
@@ -342,7 +433,9 @@ export default {
       this.reset()
       const id = row.id || this.ids
       getConsumptionGroup(id).then(response => {
+        const { energyBuildingId } = response.data
         this.form = response.data
+        this.form.plantId = this.buildingOptions.find(item => item.id == energyBuildingId).plantId
         this.open = true
         this.title = '修改能耗分类'
       })

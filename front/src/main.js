@@ -20,6 +20,9 @@ import { getDicts } from "@/api/system/dict/data";
 import { getConfigKey } from "@/api/system/config";
 import { parseTime, resetForm, addDateRange, selectDictLabel, download } from "@/utils/util";
 import Pagination from "@/components/Pagination";
+import Print from 'vue-print-nb'
+Vue.use(Print);  //注册
+
 
 // 全局方法挂载
 Vue.prototype.getDicts = getDicts

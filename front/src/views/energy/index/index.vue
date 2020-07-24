@@ -2,7 +2,7 @@
   <div class="dashboard-editor-container">
     <PanelGroup :homePageChartSettingList="homePageChartSettingList" :yearTotal="yearTotal" />
     <el-row :gutter="32" class="second-part">
-      <el-carousel :autoplay="false" height="230px" arrow="always" direction="vertical">
+      <el-carousel :autoplay="true" height="230px" arrow="always" direction="vertical">
         <el-carousel-item>
           <el-col
             :key="item"
@@ -11,7 +11,7 @@
             class="el-coldash-board"
             v-for="item in [4,5,6,7,8,9]"
           >
-            <Dashboard :dashboardDataList="groupedHomePageSettingData" :placeholderId="item"></Dashboard>
+            <Dashboard :key="item" :dashboardDataList="groupedHomePageSettingData" :placeholderId="item"></Dashboard>
             <div style="position: absolute;top: 202px;">{{getDashBoardDesc(item)}}</div>
           </el-col>
         </el-carousel-item>
