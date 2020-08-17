@@ -1,24 +1,24 @@
 <template>
   <div class="navbar">
     <hamburger
-      id="hamburger-container"
       :is-active="sidebar.opened"
-      class="hamburger-container"
       @toggleClick="toggleSideBar"
+      class="hamburger-container"
+      id="hamburger-container"
     />
 
-    <breadcrumb id="breadcrumb-container" class="breadcrumb-container" />
+    <breadcrumb class="breadcrumb-container" id="breadcrumb-container" />
 
     <div class="right-menu">
       <template v-if="device!=='mobile'">
-        <Alarm v-if="alarmLogStatus" class="right-menu-item" />
+        <Alarm class="right-menu-item" v-if="alarmLogStatus" />
 
-        <search id="header-search" class="right-menu-item" />
+        <search class="right-menu-item" id="header-search" />
 
-        <screenfull id="screenfull" class="right-menu-item hover-effect" />
+        <screenfull class="right-menu-item hover-effect" id="screenfull" />
 
         <el-tooltip content="布局大小" effect="dark" placement="bottom">
-          <size-select id="size-select" class="right-menu-item hover-effect" />
+          <size-select class="right-menu-item hover-effect" id="size-select" />
         </el-tooltip>
       </template>
 
@@ -31,10 +31,10 @@
           <router-link to="/user/profile">
             <el-dropdown-item>个人中心</el-dropdown-item>
           </router-link>
-         <el-dropdown-item @click.native="setting = true">
+          <el-dropdown-item @click.native="setting = true">
             <span>布局设置</span>
           </el-dropdown-item>
-          <el-dropdown-item divided @click.native="logout">
+          <el-dropdown-item @click.native="logout" divided>
             <span>退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
@@ -67,16 +67,14 @@ export default {
     }
   },
   mounted () {
-    const addRoutes = this.$store.state.permission.addRoutes
-    const energy = addRoutes.find(item => item.name == 'Energy')
-    if (energy) {
-      const children = energy.children
-      if (children && children.length > 0) {
-        const alarmLog = children.find(item => item.name == 'AlarmLog')
-        if (alarmLog) {
-          this.alarmLogStatus = true
-        }
-      }
+    const permissions = this.$store.state.user.permissions
+    if (permissions[0] == '*:*:*') {
+      this.alarmLogStatus = true
+      return
+    }
+    const flag = permissions.find(item => item == 'energy:alarmLog:list')
+    if (flag) {
+      this.alarmLogStatus = true
     }
   },
   computed: {

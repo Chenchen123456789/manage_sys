@@ -46,17 +46,17 @@ public class RyTask {
         List<Map<String, Object>> list = alarmLogService.selectAlarmTagValueList();
         for (Map<String, Object> map : list) {
             String tagName = (String) map.get("tagName");
-            Double tagValue = Double.valueOf((String) map.get("tagValue"));
+            Double tagValue = Double.parseDouble(map.getOrDefault("tagValue", "0.0").toString());
             Integer alarmTag = (Integer) map.getOrDefault("alarmTag", 0);
-            Double alarmLLValue = (Double) map.getOrDefault("alarmLLValue", 0.0);
-            Double alarmLValue = (Double) map.getOrDefault("alarmLValue", 0.0);
-            Double alarmHValue = (Double) map.getOrDefault("alarmHValue", 0.0);
-            Double alarmHHValue = (Double) map.getOrDefault("alarmHHValue", 0.0);
+            Double alarmLLValue = Double.parseDouble(map.getOrDefault("alarmLLValue", "0.0").toString());
+            Double alarmLValue = Double.parseDouble(map.getOrDefault("alarmLValue", "0.0").toString());
+            Double alarmHValue = Double.parseDouble(map.getOrDefault("alarmHValue", "0.0").toString());
+            Double alarmHHValue = Double.parseDouble(map.getOrDefault("alarmHHValue", "0.0").toString());
             Integer alarmDigitalValue = (Integer) map.getOrDefault("alarmDigitalValue", 0);
             Integer alarmLevel = (Integer) map.getOrDefault("alarmLevel", 1);
-            String description = (String) map.getOrDefault("description","");
-            String alarmDigitalZeroDescription = (String) map.getOrDefault("alarmDigitalZeroDescription","");
-            String alarmDigitalOneDescription = (String) map.getOrDefault("alarmDigitalOneDescription","");
+            String description = (String) map.getOrDefault("description", "");
+            String alarmDigitalZeroDescription = (String) map.getOrDefault("alarmDigitalZeroDescription", "");
+            String alarmDigitalOneDescription = (String) map.getOrDefault("alarmDigitalOneDescription", "");
 
             String alarmLevelStr = "";
             switch (alarmLevel) {
@@ -188,7 +188,6 @@ public class RyTask {
                 if (alarmDigitalValue == 0) {
                     //非正常值
                     if (tagValue == 0) {
-//                        status = "0";
                         AlarmLog alarmLog = new AlarmLog();
                         alarmLog.setDescription(description)
                                 .setTagName(tagName)
@@ -203,6 +202,7 @@ public class RyTask {
                             if (bgColor.equals("purple") || bgColor.equals("green")) {
                                 alarmLogService.insertAlarmLog(alarmLog);
                             } else {
+                                status = alarmLog.getStatus();
                                 if (!status.equals(existStatus)) {
                                     alarmLogService.insertAlarmLog(alarmLog);
                                 }
@@ -234,6 +234,7 @@ public class RyTask {
                             if (bgColor.equals("purple") || bgColor.equals("green")) {
                                 alarmLogService.insertAlarmLog(alarmLog);
                             } else {
+                                status = alarmLog.getStatus();
                                 if (!status.equals(existStatus)) {
                                     alarmLogService.insertAlarmLog(alarmLog);
                                 }

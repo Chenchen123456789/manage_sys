@@ -20,7 +20,7 @@ spring:
 #                url: jdbc:sqlserver://localhost:1433;DatabaseName=energy
 #                password: root
 #                password: saP@$$w0rd
-                url: jdbc:sqlserver://172.16.3.64:1433;DatabaseName=energy
+                url: jdbc:sqlserver://172.16.3.35:1433;DatabaseName=energy
                 password: P@$$w0rd
                 driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
             # 初始连接数

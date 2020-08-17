@@ -2,11 +2,11 @@
   <div>
     <div class="alarm">
       <audio
-        style="display:none"
         loop="loop"
         preload="auto"
         ref="alarm"
         src="./static/audio/alarm.mp3"
+        style="display:none"
       ></audio>
       <i
         :class="hasUnAck?'el-icon-warning alarm-icon':'el-icon-warning alarm-icon-disable'"
@@ -14,9 +14,9 @@
       ></i>
 
       <svg-icon
+        :icon-class="audioSwitchStatus?'alarmAudioOn':'alarmAudioOff'"
         @click="handleSwitchAudio"
         style="font-size: 22px; cursor:pointer"
-        :icon-class="audioSwitchStatus?'alarmAudioOn':'alarmAudioOff'"
       />
     </div>
   </div>
@@ -24,6 +24,7 @@
 
 <script>
 import { getUnAckAlarmLog } from '@/api/energy/alarmLog'
+import { getRouters } from '@/api/menu'
 
 export default {
   name: 'Alarm',
@@ -33,11 +34,29 @@ export default {
       hasUnAck: false,
       customerAudioSwitchStatus: false,
       audioSwitchStatus: false,
-      audioPlayStatus: false
+      audioPlayStatus: false,
+      componentName: ""
     }
   },
   mounted () {
     this.getInfo()
+    getRouters().then(res => {
+      const routers = res.data
+      let componentName = ""
+      function findAlarmLog (routersArray = []) {
+        for (let router of routersArray) {
+          if (router.children && router.children.length > 0) {
+            findAlarmLog(router.children)
+          } else {
+            if (router.component == 'energy/alarmLog') {
+              componentName = router.name
+            }
+          }
+        }
+      }
+      findAlarmLog(routers)
+      this.componentName = componentName
+    })
   },
   methods: {
     handleSwitchAudio () {
@@ -67,9 +86,7 @@ export default {
       }, 10 * 1000)
     },
     handleClick () {
-      if (this.$route.fullPath !== "/energy/alarmLog") {
-        this.$router.push("/energy/alarmLog")
-      }
+      this.$route.name != this.componentName && this.$router.push({ name: this.componentName })
     }
   }
 }

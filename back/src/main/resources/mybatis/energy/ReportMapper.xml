@@ -20,7 +20,7 @@
         ${tableName} b
         <where>
             b.TagName = a.tag_name
-            AND a.[disable] != 1
+            AND a.[disable] = 0
             <if test="beginTime !=null">
                 AND dataTime &gt;= #{beginTime}
             </if>
