@@ -62,7 +62,7 @@ export default {
         const xAxisData = monthDosage.map(item => item.buildingName)
 
         const currentSeriesData = monthDosage.map(
-          item => item.currentWaterSumValue
+          item => item.currentWaterSumValue.toFixed(2)
         )
         const preSeriesData = monthDosage.map(
           item => item.preWaterSumValue

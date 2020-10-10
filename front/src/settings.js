@@ -3,7 +3,7 @@ module.exports = {
   //系统名和浏览器窗口名配置项
   title: '能源管理系统',
 
-  copyRight: 'Copyright © 2015-2030 天华鼎盛 All Rights Reserved.',
+  copyRight: 'Copyright © 2015-2030 天华鼎晟 All Rights Reserved.',
 
   /**
    * 是否系统布局配置

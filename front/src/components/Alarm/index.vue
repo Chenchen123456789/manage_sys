@@ -35,11 +35,13 @@ export default {
       customerAudioSwitchStatus: false,
       audioSwitchStatus: false,
       audioPlayStatus: false,
-      componentName: ""
+      componentName: "",
+      failedTimes: 0
     }
   },
   mounted () {
     this.getInfo()
+
     getRouters().then(res => {
       const routers = res.data
       let componentName = ""
@@ -71,19 +73,26 @@ export default {
       this.audioSwitchStatus = !this.audioSwitchStatus
     },
     getInfo () {
-      setInterval(() => {
-        getUnAckAlarmLog().then(res => {
-          if (res.data > 0) {
-            this.hasUnAck = true
-            if (this.customerAudioSwitchStatus) {
-              this.audioSwitchStatus = true
-            }
-          } else {
-            this.hasUnAck = false
-            this.audioSwitchStatus = false
+      getUnAckAlarmLog().then(res => {
+        if (res.data > 0) {
+          this.hasUnAck = true
+          if (this.customerAudioSwitchStatus) {
+            this.audioSwitchStatus = true
           }
-        })
-      }, 10 * 1000)
+        } else {
+          this.hasUnAck = false
+          this.audioSwitchStatus = false
+        }
+      }).catch(e => {
+        this.failedTimes++
+      }).finally(
+        () => {
+          if (this.failedTimes > 20) {
+            return
+          }
+          setTimeout(() => this.getInfo(), 5 * 1000)
+        }
+      )
     },
     handleClick () {
       this.$route.name != this.componentName && this.$router.push({ name: this.componentName })

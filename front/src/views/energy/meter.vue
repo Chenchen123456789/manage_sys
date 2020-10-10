@@ -242,7 +242,7 @@
           <el-input v-model="form.location" placeholder="请输入安装地点" />
         </el-form-item>
         <el-form-item label="仪表参数" prop="meterParam">
-          <el-input v-model="form.commParam" placeholder="请输入通讯参数" />
+          <el-input v-model="form.meterParam" placeholder="请输入通讯参数" />
         </el-form-item>
         <el-form-item label="描述" prop="meterDescription">
           <el-input v-model="form.meterDescription" type="textarea" placeholder="请输入内容" />

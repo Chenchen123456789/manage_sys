@@ -57,7 +57,7 @@ export default {
       const seriesData = chartData.map(item => {
         return {
           name: item.buildingName,
-          value: item.sumValue
+          value: item.sumValue.toFixed(2)
         }
       })
       const legendData = chartData.map(item => item.buildingName)

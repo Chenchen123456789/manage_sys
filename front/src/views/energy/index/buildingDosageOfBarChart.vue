@@ -58,7 +58,7 @@ export default {
     setChartData (chartData) {
       if (chartData && chartData.length > 0) {
         const xAxisData = chartData.map(item => item.buildingName)
-        const seriesData = chartData.map(item => item.sumValue)
+        const seriesData = chartData.map(item => item.sumValue.toFixed(2))
         this.chart.setOption({
           xAxis: {
             data: xAxisData

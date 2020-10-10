@@ -76,28 +76,28 @@ export default {
         let elecArray = []
         let waterArray = []
         if (dayDosage) {
-          const currentAirSumValue = dayDosage.currentAirSumValue || 0
+          const currentAirSumValue = dayDosage.currentAirSumValue.toFixed(2) || 0
           const currentElectricitySumValue =
-            dayDosage.currentElectricitySumValue || 0
-          const currentWaterSumValue = dayDosage.currentWaterSumValue || 0
+            dayDosage.currentElectricitySumValue.toFixed(2) || 0
+          const currentWaterSumValue = dayDosage.currentWaterSumValue.toFixed(2) || 0
           airArray[0] = currentAirSumValue
           elecArray[0] = currentElectricitySumValue
           waterArray[0] = currentWaterSumValue
         }
         if (monthDosage) {
-          const currentAirSumValue = monthDosage.currentAirSumValue || 0
+          const currentAirSumValue = monthDosage.currentAirSumValue.toFixed(2) || 0
           const currentElectricitySumValue =
-            monthDosage.currentElectricitySumValue || 0
-          const currentWaterSumValue = monthDosage.currentWaterSumValue || 0
+            monthDosage.currentElectricitySumValue.toFixed(2) || 0
+          const currentWaterSumValue = monthDosage.currentWaterSumValue.toFixed(2) || 0
           airArray[1] = currentAirSumValue
           elecArray[1] = currentElectricitySumValue
           waterArray[1] = currentWaterSumValue
         }
         if (yearDosage) {
-          const currentAirSumValue = yearDosage.currentAirSumValue || 0
+          const currentAirSumValue = yearDosage.currentAirSumValue.toFixed(2) || 0
           const currentElectricitySumValue =
-            yearDosage.currentElectricitySumValue || 0
-          const currentWaterSumValue = yearDosage.currentWaterSumValue || 0
+            yearDosage.currentElectricitySumValue.toFixed(2) || 0
+          const currentWaterSumValue = yearDosage.currentWaterSumValue.toFixed(2) || 0
           airArray[2] = currentAirSumValue
           elecArray[2] = currentElectricitySumValue
           waterArray[2] = currentWaterSumValue

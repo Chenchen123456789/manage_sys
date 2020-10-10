@@ -4,8 +4,9 @@
     <select id="selectHistoryOfDosage" resultType="map" parameterType="map">
         SELECT
         distinct
+        plant_id,
         a.plant_name plantName,
-        a.building_name buildingName,
+        a.building_name buildingName,`1`
         a.system_name systemName,
         a.device_name deviceName,
         a.meter_code meterCode,

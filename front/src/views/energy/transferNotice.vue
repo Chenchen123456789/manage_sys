@@ -72,7 +72,7 @@
           icon="el-icon-check"
           size="mini"
           type="success"
-          v-hasPermi="['energy:report_historyDetail:add']"
+          v-hasPermi="['energy:transferNotice:add']"
         >保存</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -81,7 +81,7 @@
           icon="el-icon-download"
           size="mini"
           type="warning"
-          v-hasPermi="['energy:report_historyDetail:export']"
+          v-hasPermi="['energy:transferNotice:export']"
         >导出</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -578,7 +578,7 @@ export default {
         return
       }
       const queryParams = { ...this.queryParams }
-      this.$confirm('是否确认导出历史详细数据项?', '警告', {
+      this.$confirm('是否确认导出通知单数据项?', '警告', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
