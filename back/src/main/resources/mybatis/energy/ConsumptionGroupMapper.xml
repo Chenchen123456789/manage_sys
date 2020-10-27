@@ -32,6 +32,7 @@
         SELECT
         A.cgId id,
         tag_name,
+        tag_name_desc tagNameDesc,
         measure_level,
         building_id,
         energy_building_name,

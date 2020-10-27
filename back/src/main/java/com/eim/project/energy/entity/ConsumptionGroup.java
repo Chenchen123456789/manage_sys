@@ -39,4 +39,6 @@ public class ConsumptionGroup {
     private String energyBuildingName;
 
     private String energyTypeName;
+
+    private String tagNameDesc;
 }

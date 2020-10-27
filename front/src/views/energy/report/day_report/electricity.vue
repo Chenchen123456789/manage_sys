@@ -142,7 +142,7 @@
       <el-table-column :index="indexMethod" label="序号" type="index" width="50" />
       <el-table-column align="center" label="单位名称" prop="plantName" />
       <el-table-column align="center" label="建筑名称" prop="buildingName" />
-      <el-table-column align="center" label="设备名称" prop="deviceName" />
+      <el-table-column align="center" label="仪表名称" prop="meterName" width="250" />
       <el-table-column align="center" label="表号" prop="meterCode" />
       <el-table-column align="center" label="测点名称" prop="tagName" />
       <el-table-column align="center" label="装表地点" prop="meterLocation" />

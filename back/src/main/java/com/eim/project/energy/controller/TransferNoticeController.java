@@ -71,6 +71,7 @@ public class TransferNoticeController extends BaseController {
             TransferNotice transferNotice = transferNoticeArray[0];
             transferNoticeService.deleteByBuildingIdAndDataTime(transferNotice.getBuildingId(), transferNotice.getDataTime());
             return toAjax(transferNoticeService.insertTransferNotice(transferNoticeArray));
+
         } else {
             return toAjax(0);
         }

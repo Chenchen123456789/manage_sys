@@ -115,6 +115,7 @@
       <el-table-column :index="indexMethod" align="center" label="序号" type="index" width="60" />
       <el-table-column align="center" label="能耗划分建筑" prop="energyBuildingName" />
       <el-table-column align="center" label="测点名" prop="tagName" />
+       <el-table-column align="center" label="测点描述" width="300" prop="tagNameDesc" />
       <el-table-column align="center" label="计量等级" prop="measureLevel" />
       <el-table-column align="center" label="大功率" prop="deviceType">
         <template slot-scope="scope">{{scope.row.deviceType ==1 ? '大功率电器':'未分类'}}</template>

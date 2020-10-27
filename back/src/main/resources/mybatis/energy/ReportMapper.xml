@@ -6,7 +6,7 @@
         distinct
         plant_id,
         a.plant_name plantName,
-        a.building_name buildingName,`1`
+        a.building_name buildingName,
         a.system_name systemName,
         a.device_name deviceName,
         a.meter_code meterCode,
@@ -236,6 +236,7 @@
         max(A.plant_name) plantName,
         max(device_name) deviceName,
         max(meter_code) meterCode,
+        max(meter_name) meterName,
         max(meter_location) meterLocation,
         max(meter_spec) meterSpec,
         max(CASE
@@ -328,6 +329,7 @@
         max(A.plant_name) plantName,
         max(device_name) deviceName,
         max(meter_code) meterCode,
+        max(meter_name) meterName,
         max(meter_location) meterLocation,
         max(meter_spec) meterSpec,
         max(CASE
@@ -421,6 +423,7 @@
         max(A.plant_name) plantName,
         max(device_name) deviceName,
         max(meter_code) meterCode,
+        max(meter_name) meterName,
         max(meter_location) meterLocation,
         max(meter_spec) meterSpec,
         max(CASE
@@ -512,6 +515,7 @@
         max(A.plant_name) plantName,
         max(device_name) deviceName,
         max(meter_code) meterCode,
+        max(meter_name) meterName,
         max(meter_location) meterLocation,
         max(meter_spec) meterSpec,
         max(CASE
