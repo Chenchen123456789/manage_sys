@@ -260,9 +260,16 @@
    }
  }
 
+ @media print {
+  .el-table{
+     border-right: 1px solid black !important;
+  }
+}
  .table-notice {
-   tr:last-child {
-     font-size: 15px;
-     font-weight: 600;
+   .el-table{
+    tr:last-child {
+      font-size: 15px;
+      font-weight: 600;
+    }
    }
  }

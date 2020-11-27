@@ -1,13 +1,15 @@
 <template>
   <div class="app-container">
     <el-form :inline="true" :model="queryParams" label-width="68px" ref="queryForm">
-      <el-form-item label="查询时间" prop="queryTime">
+      <el-form-item label="查询时间" prop="rangeTime">
         <el-date-picker
           :clearable="false"
-          placeholder="选择月"
           size="small"
-          type="month"
-          v-model="queryParams.queryTime"
+          type="daterange"
+          range-separator="至"
+          start-placeholder="开始日期"
+          end-placeholder="结束日期"
+          v-model="queryParams.rangeTime"
         ></el-date-picker>
       </el-form-item>
       <el-form-item label="工厂名称" prop="plantId">
@@ -60,7 +62,7 @@
     </el-form>
 
     <el-row :gutter="10" class="mb8">
-      <el-col :span="1.5">
+      <!-- <el-col :span="1.5">
         <el-button @click="handleEdit" icon="el-icon-edit" size="mini" type="primary">编辑</el-button>
       </el-col>
       <el-col :span="1.5">
@@ -74,10 +76,10 @@
           type="success"
           v-hasPermi="['energy:transferNotice:add']"
         >保存</el-button>
-      </el-col>
+      </el-col> -->
       <el-col :span="1.5">
         <el-button
-          @click="handleExport(0)"
+          @click="downloadExcel"
           icon="el-icon-download"
           size="mini"
           type="warning"
@@ -154,8 +156,12 @@
 
     <el-row class="table-notice" id="printArea" ref="printArea">
       <el-col :span="24" class="notice-title">费用转账通知单</el-col>
-      <el-col :span="16" class="in-department">转入单位：{{tableData.inDepartment}}</el-col>
-      <el-col :span="8" class="query-time">{{formatTime(queryParams.queryTime)}}</el-col>
+      
+      <tr class="block-table">
+        <td><el-col :span="16" class="in-department">转入单位：{{tableData.inDepartment}}</el-col></td>
+        <td></td><td></td><td></td>
+        <td><el-col :span="8" class="query-time">{{formatTime(queryParams.rangeTime)}}</el-col></td>
+      </tr>
 
       <el-table :data="transferNoticeList" size="medium" style="width:100%" v-loading="loading">
         <el-table-column align="center" label="费用项目" prop="energyTypeName" width="150" />
@@ -207,7 +213,8 @@
         </el-table-column>
       </el-table>
       <div class="notice-footer">
-        <el-col :span="10" class="out-department">
+        <tr class="block-table">
+          <td><el-col :span="10" class="out-department">
           转出单位：
           <span v-show="!showEdit">{{tableData.outDepartment}}</span>
           <el-input
@@ -216,8 +223,9 @@
             v-model="tableData.outDepartment"
             v-show="showEdit"
           ></el-input>
-        </el-col>
-        <el-col :span="8" class="modify-user">
+        </el-col></td>
+        <td></td><td></td><td></td>
+        <td><el-col :span="8" class="modify-user">
           制表人：
           <span v-show="!showEdit">{{tableData.modifyUser}}</span>
           <el-input
@@ -226,7 +234,8 @@
             v-model="tableData.modifyUser"
             v-show="showEdit"
           ></el-input>
-        </el-col>
+        </el-col></td>
+        </tr>
       </div>
     </el-row>
   </div>
@@ -241,6 +250,10 @@ import {
 import { listPlant } from '@/api/energy/plant'
 import { listBuilding } from '@/api/energy/building'
 import { listUnitPrice, updateUnitPrice } from '@/api/energy/unitPrice'
+import XLSX from 'xlsx'
+import XLSXS from 'yxg-xlsx-style'
+import XSU from '@/utils/xsu'
+import { saveAs } from 'file-saver'
 
 export default {
   name: 'TransferNotice',
@@ -259,7 +272,7 @@ export default {
       plantOptions: [],
       buildingOptions: [],
       queryParams: {
-        queryTime: new Date(),
+        rangeTime: [],
         plantId: undefined,
         buildingId: undefined,
       },
@@ -296,6 +309,31 @@ export default {
     }
   },
   methods: {
+     downloadExcel() {
+      var elt = document.getElementById('printArea')
+      //workbook例子
+      var wb = XLSX.utils.table_to_book(elt, { sheet: 'sheet1' })
+      var sheetName = wb.SheetNames[0]
+
+      XSU.setColWidth(wb, sheetName, [
+        { wch: 25 },
+        { wch: 13 },
+        { wch: 13 },
+        { wch: 13 },
+        { wch: 25 },
+      ])
+      XSU.setFontVertAlignAll(wb, sheetName, true)
+      XSU.setAlignmentVerticalAll(wb, sheetName, 'center')
+      XSU.setAlignmentHorizontalAll(wb, sheetName, 'center') //垂直居中
+      XSU.setBorderDefaultAll(wb, sheetName)
+      XSU.setTitleStylesDefault(wb, sheetName)
+      XSU.setEvenRowColorGrey(wb, sheetName)
+
+      const wopts = { bookType: 'xlsx', bookSST: false, type: 'binary' }
+      const wbout = XLSXS.write(wb, wopts)
+      //保存，使用FileSaver.js
+      return saveAs(new Blob([XSU.s2ab(wbout)], { type: '' }), '费用转账通知单.xlsx')
+    },
     handleCancelEdit(){
       this.showEdit = false
       this.handleQuery()
@@ -390,10 +428,10 @@ export default {
       })
     },
     formatTime (time) {
-      if (time) {
-        const year = time.getFullYear();
-        const month = time.getMonth() + 1
-        return year + '年' + month + '月'
+      if (time.length > 0) {
+        const beginTime = this.parseTime(time[0]) 
+        const endTime = this.parseTime(time[1])
+        return beginTime.substring(0, 10) + ' 至 ' + endTime.substring(0, 10)
       }
     },
     changeQueryPlantOptions (value) {
@@ -428,6 +466,8 @@ export default {
     /** 查询列表 */
     getList () {
       this.loading = true
+      this.queryParams.beginTime = this.queryParams.rangeTime[0]
+      this.queryParams.endTime = this.queryParams.rangeTime[1]
       listTransferNotice(this.queryParams).then(response => {
         const rows = response.rows
         const FPGList = rows[0].FPGList
@@ -445,9 +485,9 @@ export default {
               airDosage = (settlemenItem.currentAirSumValue - settlemenItem.preAirSumValue).toFixed(2)
             }
             if (FPGItem) {
-              electricityFDosage = (FPGItem.curSumFValue ).toFixed(2)
-              electricityPDosage = (FPGItem.curSumPValue ).toFixed(2)
-              electricityGDosage = (FPGItem.curSumGValue).toFixed(2)
+              electricityFDosage = (FPGItem.sumFValue || 0 ).toFixed(2)
+              electricityPDosage = (FPGItem.sumPValue || 0 ).toFixed(2)
+              electricityGDosage = (FPGItem.sumGValue || 0).toFixed(2)
             }
             resList.push(
               {
@@ -626,6 +666,12 @@ export default {
   .out-department {
     font-size: 16px;
     padding: 10px 0 0 10px;
+  }
+}
+.block-table{
+  display: block;
+  td{
+    display: block;
   }
 }
 </style>

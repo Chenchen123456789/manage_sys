@@ -242,16 +242,16 @@ public class ReportService {
 
 
         for (int i = 0; i < tableHead.length; i++) {
-            if (i < 4) {
+            if (i < 5) {
                 cell = row1.createCell(i);
                 cell.setCellStyle(styles.get("header"));
                 cell.setCellValue(tableHead[i]);
             }
-            if (i == 4) {
+            if (i == 5) {
                 cell = row1.createCell(i);
                 cell.setCellValue(dataTime);
                 cell.setCellStyle(styles.get("header"));
-                CellRangeAddress region1 = new CellRangeAddress(0, 0, 4, 6);
+                CellRangeAddress region1 = new CellRangeAddress(0, 0, 5, 7);
                 sheet.addMergedRegion(region1);
                 break;
             }
@@ -261,7 +261,7 @@ public class ReportService {
         XSSFRow row2 = sheet.createRow(column);
         row2.setHeight((short) (14 * 20));
         for (int i = 0; i < tableHead.length; i++) {
-            if (i < 4) {
+            if (i < 5) {
                 CellRangeAddress region2 = new CellRangeAddress(0, 1, i, i);
                 sheet.addMergedRegion(region2);
             } else {
@@ -449,5 +449,13 @@ public class ReportService {
 
     public List<Map<String, Object>> selectElectricityOfFPGValue(Map<String, Object> map) {
         return reportMapper.selectElectricityOfFPGValue(map);
+    }
+
+    public List<Map<String, Object>> selectMonthSettlementByRangeTime(Map<String, Object> map) {
+        return reportMapper.selectMonthSettlementByRangeTime(map);
+    }
+
+    public List<Map<String, Object>> selectElectricityOfFPGValueByRangeTime(Map<String, Object> map) {
+        return reportMapper.selectElectricityOfFPGValueByRangeTime(map);
     }
 }

@@ -363,7 +363,7 @@ public class ReportController extends BaseController {
         }
         List<Map<String, Object>> dayDosageOfWaterList = reportService.selectDayDosageOfWater(map);
         String sheetName = "用水日报";
-        String[] tableHead = {"单位", "测点名", "安装地点", "水表规格", "昨天抄见", "今天抄见", "实际用量"};
+        String[] tableHead = {"单位", "测点名", "测点描述", "安装地点", "水表规格", "昨天抄见", "今天抄见", "实际用量"};
         return exportDosageOfWater(map, dayDosageOfWaterList, sheetName, tableHead, 1);
     }
 
@@ -378,7 +378,7 @@ public class ReportController extends BaseController {
         }
         List<Map<String, Object>> monthDosageOfWaterList = reportService.selectMonthDosageOfWater(map);
         String sheetName = "用水月报";
-        String[] tableHead = {"单位", "测点名", "安装地点", "水表规格", "上月抄见", "本月抄见", "实际用量"};
+        String[] tableHead = {"单位", "测点名", "测点描述", "安装地点", "水表规格", "上月抄见", "本月抄见", "实际用量"};
         return exportDosageOfWater(map, monthDosageOfWaterList, sheetName, tableHead, 2);
     }
 
@@ -393,7 +393,7 @@ public class ReportController extends BaseController {
         }
         List<Map<String, Object>> quarterDosageOfWaterList = reportService.selectQuarterDosageOfWater(map);
         String sheetName = "用水月报";
-        String[] tableHead = {"单位", "测点名", "安装地点", "水表规格", "本季度抄见", "上季度抄见", "实际用量"};
+        String[] tableHead = {"单位", "测点名", "测点描述", "安装地点", "水表规格", "本季度抄见", "上季度抄见", "实际用量"};
         return exportDosageOfWater(map, quarterDosageOfWaterList, sheetName, tableHead, 3);
     }
 
@@ -408,7 +408,7 @@ public class ReportController extends BaseController {
         }
         List<Map<String, Object>> yearDosageOfWaterList = reportService.selectYearDosageOfWater(map);
         String sheetName = "用水年报";
-        String[] tableHead = {"单位", "测点名", "安装地点", "水表规格", "去年抄见", "今年抄见", "实际用量"};
+        String[] tableHead = {"单位", "测点名", "测点描述", "安装地点", "水表规格", "去年抄见", "今年抄见", "实际用量"};
         return exportDosageOfWater(map, yearDosageOfWaterList, sheetName, tableHead, 4);
     }
 
@@ -441,21 +441,25 @@ public class ReportController extends BaseController {
                         break;
                     case 2:
                         cell.setCellType(CellType.STRING);
-                        cell.setCellValue(String.valueOf(dosageOfWaterMap.get("buildingName")));
+                        cell.setCellValue(String.valueOf(dosageOfWaterMap.get("tagNameDesc")));
                         break;
                     case 3:
                         cell.setCellType(CellType.STRING);
-                        cell.setCellValue("");
+                        cell.setCellValue(String.valueOf(dosageOfWaterMap.get("buildingName")));
                         break;
                     case 4:
-                        cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(preTimeValue);
+                        cell.setCellType(CellType.STRING);
+                        cell.setCellValue(String.valueOf(dosageOfWaterMap.getOrDefault("meterParam", "")));
                         break;
                     case 5:
                         cell.setCellType(CellType.NUMERIC);
-                        cell.setCellValue(currentTimeValue);
+                        cell.setCellValue(preTimeValue);
                         break;
                     case 6:
+                        cell.setCellType(CellType.NUMERIC);
+                        cell.setCellValue(currentTimeValue);
+                        break;
+                    case 7:
                         cell.setCellType(CellType.STRING);
                         cell.setCellValue(currentTimeValue - preTimeValue);
                         break;
@@ -478,7 +482,7 @@ public class ReportController extends BaseController {
         }
         List<Map<String, Object>> dayDosageOfElectricityList = reportService.selectDayDosageOfElectricity(map);
         String sheetName = "用电日报";
-        String[] tableHead = {"单位名称", "建筑名称", "设备名称", "表号", "测点名称", "装表地点", "倍率", "昨天抄见数", "今天抄见数", "峰", "平", "谷", "总量"};
+        String[] tableHead = {"单位名称", "建筑名称", "仪表名称", "表号", "测点名称", "装表地点", "倍率", "昨天抄见数", "今天抄见数", "峰", "平", "谷", "总量"};
         return exportDosageOfElectricity(map, dayDosageOfElectricityList, sheetName, tableHead, 1);
     }
 
@@ -493,7 +497,7 @@ public class ReportController extends BaseController {
         }
         List<Map<String, Object>> monthDosageOfElectricityList = reportService.selectMonthDosageOfElectricity(map);
         String sheetName = "用电月报";
-        String[] tableHead = {"单位名称", "建筑名称", "设备名称", "表号", "测点名称", "装表地点", "倍率", "上月抄见数", "本月抄见数", "峰", "平", "谷", "总量"};
+        String[] tableHead = {"单位名称", "建筑名称", "仪表名称", "表号", "测点名称", "装表地点", "倍率", "上月抄见数", "本月抄见数", "峰", "平", "谷", "总量"};
         return exportDosageOfElectricity(map, monthDosageOfElectricityList, sheetName, tableHead, 2);
     }
 
@@ -508,7 +512,7 @@ public class ReportController extends BaseController {
         }
         List<Map<String, Object>> quarterDosageOfElectricityList = reportService.selectQuarterDosageOfElectricity(map);
         String sheetName = "用电季报";
-        String[] tableHead = {"单位名称", "建筑名称", "设备名称", "表号", "测点名称", "装表地点", "倍率", "上季度抄见数", "本季度抄见数", "峰", "平", "谷", "总量"};
+        String[] tableHead = {"单位名称", "建筑名称", "仪表名称", "表号", "测点名称", "装表地点", "倍率", "上季度抄见数", "本季度抄见数", "峰", "平", "谷", "总量"};
         return exportDosageOfElectricity(map, quarterDosageOfElectricityList, sheetName, tableHead, 3);
     }
 
@@ -523,7 +527,7 @@ public class ReportController extends BaseController {
         }
         List<Map<String, Object>> yearDosageOfElectricityList = reportService.selectYearDosageOfElectricity(map);
         String sheetName = "用电年报";
-        String[] tableHead = {"单位名称", "建筑名称", "设备名称", "表号", "测点名称", "装表地点", "倍率", "去年抄见数", "今年抄见数", "峰", "平", "谷", "总量"};
+        String[] tableHead = {"单位名称", "建筑名称", "仪表名称", "表号", "测点名称", "装表地点", "倍率", "去年抄见数", "今年抄见数", "峰", "平", "谷", "总量"};
         return exportDosageOfElectricity(map, yearDosageOfElectricityList, sheetName, tableHead, 4);
     }
 
@@ -558,7 +562,7 @@ public class ReportController extends BaseController {
                         break;
                     case 2:
                         cell.setCellType(CellType.STRING);
-                        cell.setCellValue(String.valueOf(dosageOfElectricityMap.get("deviceName")));
+                        cell.setCellValue(String.valueOf(dosageOfElectricityMap.get("meterName")));
                         break;
                     case 3:
                         cell.setCellType(CellType.STRING);
@@ -574,7 +578,7 @@ public class ReportController extends BaseController {
                         break;
                     case 6:
                         cell.setCellType(CellType.STRING);
-                        cell.setCellValue(String.valueOf(dosageOfElectricityMap.get("meterSpec")));
+                        cell.setCellValue(String.valueOf(dosageOfElectricityMap.getOrDefault("meterParam", "")));
                         break;
                     case 7:
                         cell.setCellType(CellType.NUMERIC);
@@ -686,10 +690,10 @@ public class ReportController extends BaseController {
 
     public AjaxResult exportSettlement(Map<String, Object> map, List<Map<String, Object>> settlementList,
                                        String sheetName, String[] tableHead, Integer queryTimeType) {
-        Double waterPrice = map.get("waterPrice") != null ? (Double) map.get("waterPrice") : 0;
-        Double electricityPrice = map.get("electricityPrice") != null ? (Double) map.get("electricityPrice") : 0;
-        Double airPrice = map.get("airPrice") != null ? (Double) map.get("airPrice") : 0;
-        Double steamPrice = map.get("steamPrice") != null ? (Double) map.get("steamPrice") : 0;
+        Double waterPrice = map.get("waterPrice") != null ? Double.valueOf(map.get("waterPrice") + "") : 0.0;
+        Double electricityPrice = map.get("electricityPrice") != null ? Double.valueOf("" + map.get("electricityPrice")) : 0.0;
+        Double airPrice = map.get("airPrice") != null ? Double.valueOf("" + map.get("airPrice")) : 0.0;
+        Double steamPrice = map.get("steamPrice") != null ? Double.valueOf("" + map.get("steamPrice")) : 0.0;
 
         XSSFWorkbook workbook = new XSSFWorkbook();
         XSSFSheet sheet = reportService.initSheetSettlement(workbook, sheetName, tableHead, map, queryTimeType);

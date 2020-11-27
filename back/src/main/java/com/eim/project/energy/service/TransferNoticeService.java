@@ -2,7 +2,9 @@ package com.eim.project.energy.service;
 
 import com.eim.framework.aspectj.lang.annotation.DataSource;
 import com.eim.framework.aspectj.lang.enums.DataSourceType;
+import com.eim.project.energy.entity.PlantTransferNotice;
 import com.eim.project.energy.entity.TransferNotice;
+import com.eim.project.energy.mapper.PlantTransferNoticeMapper;
 import com.eim.project.energy.mapper.TransferNoticeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,9 @@ import java.util.Map;
 public class TransferNoticeService {
     @Autowired
     private TransferNoticeMapper transferNoticeMapper;
+
+    @Autowired
+    private PlantTransferNoticeMapper plantTransferNoticeMapper;
 
     public List<TransferNotice> selectTransferNoticeList(Map<String, Object> map) {
         return transferNoticeMapper.selectTransferNoticeList(map);
@@ -41,7 +46,19 @@ public class TransferNoticeService {
         return transferNoticeMapper.batchInsertSelective(transferNoticeArray);
     }
 
-    public int deleteByBuildingIdAndDataTime(Integer buildingId, Date dataTime){
-      return   transferNoticeMapper.deleteByBuildingIdAndDataTime(buildingId, dataTime);
+    public int deleteByBuildingIdAndDataTime(Integer buildingId, Date dataTime) {
+        return transferNoticeMapper.deleteByBuildingIdAndDataTime(buildingId, dataTime);
+    }
+
+    public List<PlantTransferNotice> selectPlantTransferNoticeList(Map<String, Object> map) {
+        return plantTransferNoticeMapper.selectPlantTransferNoticeList(map);
+    }
+
+    public int deleteByPlantIdAndDataTime(Integer plantId, Date dataTime) {
+        return plantTransferNoticeMapper.deleteByPlantIdAndDataTime(plantId, dataTime);
+    }
+
+    public int insertPlantTransferNotice(PlantTransferNotice[] plantTransferNotices) {
+        return plantTransferNoticeMapper.batchInsertSelective(plantTransferNotices);
     }
 }

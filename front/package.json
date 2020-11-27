@@ -55,7 +55,10 @@
     "vue-quill-editor": "3.0.6",
     "vue-router": "3.1.3",
     "vue-splitpane": "1.0.6",
-    "vuex": "3.1.2"
+    "vuex": "3.1.2",
+    "xlsx": "^0.16.8",
+    "yxg-xlsx-style": "^0.0.1",
+    "file-saver": "^2.0.2"
   },
   "devDependencies": {
     "@babel/core": "7.0.0",

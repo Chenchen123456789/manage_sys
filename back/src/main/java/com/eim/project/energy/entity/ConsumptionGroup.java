@@ -18,6 +18,9 @@ public class ConsumptionGroup {
     @Excel(name = "测点名", cellType = Excel.ColumnType.STRING)
     private String tagName;
 
+    @Excel(name = "测点描述", cellType = Excel.ColumnType.STRING)
+    private String tagNameDesc;
+
     @Excel(name = "计量等级", cellType = Excel.ColumnType.STRING)
     private Integer measureLevel;
 
@@ -39,6 +42,4 @@ public class ConsumptionGroup {
     private String energyBuildingName;
 
     private String energyTypeName;
-
-    private String tagNameDesc;
 }

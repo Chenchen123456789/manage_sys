@@ -83,6 +83,7 @@
       <el-table-column :index="indexMethod" label="序号" type="index" width="50" />
       <el-table-column align="center" label="单位" prop="plantName" />
       <el-table-column align="center" label="测点名" prop="tagName" />
+      <el-table-column align="center" label="测点描述" width="200" prop="tagNameDesc" />
       <el-table-column align="center" label="安装地点" prop="buildingName" />
       <el-table-column align="center" label="水表规格" prop="meterParam" />
       <el-table-column :label="dataTime" align="center">

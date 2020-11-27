@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.eim.project.energy.mapper.PlantTransferNoticeMapper">
+  <resultMap id="BaseResultMap" type="com.eim.project.energy.entity.PlantTransferNotice">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="building_id" jdbcType="INTEGER" property="buildingId" />
+    <result column="data_time" jdbcType="TIMESTAMP" property="dataTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="NVARCHAR" property="createBy" />
+    <result column="note" jdbcType="NVARCHAR" property="note" />
+    <result column="out_department" jdbcType="NVARCHAR" property="outDepartment" />
+    <result column="modify_user" jdbcType="NVARCHAR" property="modifyUser" />
+    <result column="water_amount" jdbcType="DOUBLE" property="waterAmount" />
+    <result column="water_price" jdbcType="DOUBLE" property="waterPrice" />
+    <result column="in_department" jdbcType="NVARCHAR" property="inDepartment" />
+    <result column="air_amount" jdbcType="DOUBLE" property="airAmount" />
+    <result column="air_price" jdbcType="DOUBLE" property="airPrice" />
+    <result column="electricity_amount" jdbcType="DOUBLE" property="electricityAmount" />
+    <result column="electricity_price" jdbcType="DOUBLE" property="electricityPrice" />
+    <result column="electricity_f_amount" jdbcType="DOUBLE" property="electricityFAmount" />
+    <result column="electricity_f_price" jdbcType="DOUBLE" property="electricityFPrice" />
+    <result column="electricity_p_amount" jdbcType="DOUBLE" property="electricityPAmount" />
+    <result column="electricity_p_price" jdbcType="DOUBLE" property="electricityPPrice" />
+    <result column="electricity_g_amount" jdbcType="DOUBLE" property="electricityGAmount" />
+    <result column="electricity_g_price" jdbcType="DOUBLE" property="electricityGPrice" />
+    <result column="steam_amount" jdbcType="DOUBLE" property="steamAmount" />
+    <result column="steam_price" jdbcType="DOUBLE" property="steamPrice" />
+    <result column="building_name" jdbcType="NVARCHAR" property="buildingName" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, building_id, data_time, create_time, create_by, note, out_department, modify_user,
+    water_amount, water_price, in_department, air_amount, air_price, electricity_amount, 
+    electricity_price, electricity_f_amount, electricity_f_price, electricity_p_amount, 
+    electricity_p_price, electricity_g_amount, electricity_g_price, steam_amount, steam_price
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from Plant_Transfer_Notice
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectPlantTransferNoticeList" parameterType="map" resultMap="BaseResultMap">
+    select
+    A.id, building_id, building_name, data_time, note, out_department, modify_user,
+    water_amount, water_price, in_department, air_amount, air_price, electricity_amount,
+    electricity_price, electricity_f_amount, electricity_f_price, electricity_p_amount,
+    electricity_p_price, electricity_g_amount, electricity_g_price, steam_amount, steam_price
+    from Plant_Transfer_Notice A JOIN O_3Building B on A.building_id = B.id
+    <where>
+      <if test="plantId!=null">
+        and B.plant_id = #{ plantId, jdbcType = INTEGER}
+      </if>
+      <if test="queryTime!=null">
+        and CONVERT ( VARCHAR ( 7 ), data_time , 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
+      </if>
+    </where>
+  </select>
+  <delete id="deleteByPlantIdAndDataTime">
+    delete from Plant_Transfer_Notice
+    where building_id in (SELECT id FROM O_3Building WHERE plant_id = #{plantId,jdbcType=INTEGER} )
+    and CONVERT ( VARCHAR ( 7 ), data_time , 120 ) = CONVERT ( VARCHAR ( 7 ), #{dataTime}, 120 )
+  </delete>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from Plant_Transfer_Notice
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="batchInsertSelective" parameterType="com.eim.project.energy.entity.PlantTransferNotice">
+    insert into Plant_Transfer_Notice (building_id, data_time,
+    create_time, create_by, note,
+    out_department, modify_user, water_amount,
+    water_price, in_department, air_amount,
+    air_price, electricity_amount, electricity_price,
+    electricity_f_amount, electricity_f_price, electricity_p_amount,
+    electricity_p_price, electricity_g_amount, electricity_g_price, steam_amount, steam_price)
+    values
+    <foreach collection="array" item="item" separator=",">
+      ( #{item.buildingId,jdbcType=INTEGER}, #{item.dataTime,jdbcType=TIMESTAMP},
+      #{ item.createTime,jdbcType=TIMESTAMP}, #{ item.createBy,jdbcType=NVARCHAR}, #{ item.note,jdbcType=NVARCHAR},
+      #{ item.outDepartment,jdbcType=NVARCHAR}, #{ item.modifyUser,jdbcType=NVARCHAR}, #{ item.waterAmount,jdbcType=DOUBLE},
+      #{ item.waterPrice,jdbcType=DOUBLE}, #{ item.inDepartment,jdbcType=NVARCHAR}, #{ item.airAmount,jdbcType=DOUBLE},
+      #{ item.airPrice,jdbcType=DOUBLE}, #{ item.electricityAmount,jdbcType=DOUBLE}, #{ item.electricityPrice,jdbcType=DOUBLE},
+      #{ item.electricityFAmount,jdbcType=DOUBLE}, #{ item.electricityFPrice,jdbcType=DOUBLE}, #{ item.electricityPAmount,jdbcType=DOUBLE},
+      #{ item.electricityPPrice,jdbcType=DOUBLE}, #{ item.electricityGAmount,jdbcType=DOUBLE}, #{ item.electricityGPrice,jdbcType=DOUBLE},
+      #{ item.steamAmount,jdbcType=DOUBLE}, #{ item.steamPrice,jdbcType=DOUBLE})
+    </foreach>
+  </insert>
+  <insert id="insert" parameterType="com.eim.project.energy.entity.PlantTransferNotice">
+    insert into Plant_Transfer_Notice (id, building_id, data_time, 
+      create_time, create_by, note, 
+      out_department, modify_user, water_amount, 
+      water_price, in_department, air_amount, 
+      air_price, electricity_amount, electricity_price, 
+      electricity_f_amount, electricity_f_price, electricity_p_amount, 
+      electricity_p_price, electricity_g_amount, electricity_g_price, steam_amount, steam_price
+      )
+    values (#{id,jdbcType=BIGINT}, #{buildingId,jdbcType=INTEGER}, #{dataTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=NVARCHAR}, #{note,jdbcType=NVARCHAR}, 
+      #{outDepartment,jdbcType=NVARCHAR}, #{modifyUser,jdbcType=NVARCHAR}, #{waterAmount,jdbcType=DOUBLE}, 
+      #{waterPrice,jdbcType=DOUBLE}, #{inDepartment,jdbcType=NVARCHAR}, #{airAmount,jdbcType=DOUBLE}, 
+      #{airPrice,jdbcType=DOUBLE}, #{electricityAmount,jdbcType=DOUBLE}, #{electricityPrice,jdbcType=DOUBLE}, 
+      #{electricityFAmount,jdbcType=DOUBLE}, #{electricityFPrice,jdbcType=DOUBLE}, #{electricityPAmount,jdbcType=DOUBLE}, 
+      #{electricityPPrice,jdbcType=DOUBLE}, #{electricityGAmount,jdbcType=DOUBLE}, #{electricityGPrice,jdbcType=DOUBLE},
+      #{steamAmount,jdbcType=DOUBLE}, #{steamPrice,jdbcType=DOUBLE}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.eim.project.energy.entity.PlantTransferNotice">
+    insert into Plant_Transfer_Notice
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="buildingId != null">
+        building_id,
+      </if>
+      <if test="dataTime != null">
+        data_time,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="note != null">
+        note,
+      </if>
+      <if test="outDepartment != null">
+        out_department,
+      </if>
+      <if test="modifyUser != null">
+        modify_user,
+      </if>
+      <if test="waterAmount != null">
+        water_amount,
+      </if>
+      <if test="waterPrice != null">
+        water_price,
+      </if>
+      <if test="inDepartment != null">
+        in_department,
+      </if>
+      <if test="airAmount != null">
+        air_amount,
+      </if>
+      <if test="airPrice != null">
+        air_price,
+      </if>
+      <if test="electricityAmount != null">
+        electricity_amount,
+      </if>
+      <if test="electricityPrice != null">
+        electricity_price,
+      </if>
+      <if test="electricityFAmount != null">
+        electricity_f_amount,
+      </if>
+      <if test="electricityFPrice != null">
+        electricity_f_price,
+      </if>
+      <if test="electricityPAmount != null">
+        electricity_p_amount,
+      </if>
+      <if test="electricityPPrice != null">
+        electricity_p_price,
+      </if>
+      <if test="electricityGAmount != null">
+        electricity_g_amount,
+      </if>
+      <if test="electricityGPrice != null">
+        electricity_g_price,
+      </if>,
+      <if test="steamAmount != null">
+        steam_amount,
+      </if>
+      <if test="steamPrice != null">
+        steam_price,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="buildingId != null">
+        #{buildingId,jdbcType=INTEGER},
+      </if>
+      <if test="dataTime != null">
+        #{dataTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=NVARCHAR},
+      </if>
+      <if test="note != null">
+        #{note,jdbcType=NVARCHAR},
+      </if>
+      <if test="outDepartment != null">
+        #{outDepartment,jdbcType=NVARCHAR},
+      </if>
+      <if test="modifyUser != null">
+        #{modifyUser,jdbcType=NVARCHAR},
+      </if>
+      <if test="waterAmount != null">
+        #{waterAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="waterPrice != null">
+        #{waterPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="inDepartment != null">
+        #{inDepartment,jdbcType=NVARCHAR},
+      </if>
+      <if test="airAmount != null">
+        #{airAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="airPrice != null">
+        #{airPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="electricityAmount != null">
+        #{electricityAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="electricityPrice != null">
+        #{electricityPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="electricityFAmount != null">
+        #{electricityFAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="electricityFPrice != null">
+        #{electricityFPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="electricityPAmount != null">
+        #{electricityPAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="electricityPPrice != null">
+        #{electricityPPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="electricityGAmount != null">
+        #{electricityGAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="electricityGPrice != null">
+        #{electricityGPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="steamAmount != null">
+        #{steamAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="steamPrice != null">
+        #{steamPrice,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.eim.project.energy.entity.PlantTransferNotice">
+    update Plant_Transfer_Notice
+    <set>
+      <if test="buildingId != null">
+        building_id = #{buildingId,jdbcType=INTEGER},
+      </if>
+      <if test="dataTime != null">
+        data_time = #{dataTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=NVARCHAR},
+      </if>
+      <if test="note != null">
+        note = #{note,jdbcType=NVARCHAR},
+      </if>
+      <if test="outDepartment != null">
+        out_department = #{outDepartment,jdbcType=NVARCHAR},
+      </if>
+      <if test="modifyUser != null">
+        modify_user = #{modifyUser,jdbcType=NVARCHAR},
+      </if>
+      <if test="waterAmount != null">
+        water_amount = #{waterAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="waterPrice != null">
+        water_price = #{waterPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="inDepartment != null">
+        in_department = #{inDepartment,jdbcType=NVARCHAR},
+      </if>
+      <if test="airAmount != null">
+        air_amount = #{airAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="airPrice != null">
+        air_price = #{airPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="electricityAmount != null">
+        electricity_amount = #{electricityAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="electricityPrice != null">
+        electricity_price = #{electricityPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="electricityFAmount != null">
+        electricity_f_amount = #{electricityFAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="electricityFPrice != null">
+        electricity_f_price = #{electricityFPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="electricityPAmount != null">
+        electricity_p_amount = #{electricityPAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="electricityPPrice != null">
+        electricity_p_price = #{electricityPPrice,jdbcType=DOUBLE},
+      </if>
+      <if test="electricityGAmount != null">
+        electricity_g_amount = #{electricityGAmount,jdbcType=DOUBLE},
+      </if>
+      <if test="electricityGPrice != null">
+        electricity_g_price = #{electricityGPrice,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.eim.project.energy.entity.PlantTransferNotice">
+    update Plant_Transfer_Notice
+    set building_id = #{buildingId,jdbcType=INTEGER},
+      data_time = #{dataTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=NVARCHAR},
+      note = #{note,jdbcType=NVARCHAR},
+      out_department = #{outDepartment,jdbcType=NVARCHAR},
+      modify_user = #{modifyUser,jdbcType=NVARCHAR},
+      water_amount = #{waterAmount,jdbcType=DOUBLE},
+      water_price = #{waterPrice,jdbcType=DOUBLE},
+      in_department = #{inDepartment,jdbcType=NVARCHAR},
+      air_amount = #{airAmount,jdbcType=DOUBLE},
+      air_price = #{airPrice,jdbcType=DOUBLE},
+      electricity_amount = #{electricityAmount,jdbcType=DOUBLE},
+      electricity_price = #{electricityPrice,jdbcType=DOUBLE},
+      electricity_f_amount = #{electricityFAmount,jdbcType=DOUBLE},
+      electricity_f_price = #{electricityFPrice,jdbcType=DOUBLE},
+      electricity_p_amount = #{electricityPAmount,jdbcType=DOUBLE},
+      electricity_p_price = #{electricityPPrice,jdbcType=DOUBLE},
+      electricity_g_amount = #{electricityGAmount,jdbcType=DOUBLE},
+      electricity_g_price = #{electricityGPrice,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

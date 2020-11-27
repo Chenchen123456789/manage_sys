@@ -13,7 +13,7 @@
         a.tag_name tagName,
         a.energy_type_name energyTypeName,
         b.TagValue tagValue,
-        a.Description description,
+        a.tag_name_desc description,
         b.[datatime] dataTime,
         DATEADD( SECOND, 1, b.[datatime] ) showTime
         FROM
@@ -78,7 +78,8 @@
         MAX (meter_param) meterParam,
         MAX(plant_id) plant_id,
         MAX(A.plant_name) plantName,
-        MAX(meter_code) meter_code,
+        MAX(meter_code) meterCode,
+        max(tag_name_desc) tagNameDesc,
         max(CASE
         WHEN CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ), #{queryTime}, 120 ) THEN
         TagValue ELSE 0
@@ -109,7 +110,7 @@
             AND A.measure_level = #{measureLevel, jdbcType=INTEGER}
         </if>
         GROUP BY tag_name
-        ORDER BY plant_id ASC , buildingName ASC, meter_code ASC
+        ORDER BY plant_id ASC , buildingName ASC, meterCode ASC
     </select>
     <select id="selectMonthDosageOfWater" resultType="map" parameterType="map">
         SELECT
@@ -118,7 +119,8 @@
         MAX (meter_param) meterParam,
         MAX(plant_id) plant_id,
         MAX(A.plant_name) plantName,
-        MAX(meter_code) meter_code,
+        max(tag_name_desc) tagNameDesc,
+        MAX(meter_code) meterCode,
         MAX(CASE
         WHEN CONVERT ( VARCHAR ( 7 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 ) THEN
         TagValue ELSE 0
@@ -149,7 +151,7 @@
             AND A.measure_level = #{measureLevel, jdbcType=INTEGER}
         </if>
         GROUP BY tag_name
-        ORDER BY plant_id ASC , buildingName ASC, meter_code ASC
+        ORDER BY plant_id ASC , buildingName ASC, meterCode ASC
     </select>
     <select id="selectQuarterDosageOfWater" resultType="map" parameterType="map">
         SELECT
@@ -158,7 +160,8 @@
         MAX (meter_param) meterParam,
         MAX(plant_id) plant_id,
         MAX(A.plant_name) plantName,
-        MAX(meter_code) meter_code,
+        max(tag_name_desc) tagNameDesc,
+        MAX(meter_code) meterCode,
         MAX(CASE
         WHEN YEAR(B.DataTime) = #{queryTimeYear} and [quarter] = #{queryTimeQuarter} THEN
         TagValue ELSE 0
@@ -188,7 +191,7 @@
         </if>
         GROUP BY tag_name
         ORDER BY
-        plant_id ASC , buildingName ASC, meter_code ASC
+        plant_id ASC , buildingName ASC, meterCode ASC
     </select>
     <select id="selectYearDosageOfWater" resultType="map" parameterType="map">
         SELECT
@@ -197,7 +200,8 @@
         MAX (meter_param) meterParam,
         MAX(plant_id) plant_id,
         MAX(A.plant_name) plantName,
-        MAX(meter_code) meter_code,
+        max(tag_name_desc) tagNameDesc,
+        MAX(meter_code) meterCode,
         MAX(CASE
         WHEN year(B.DataTime) = year (#{queryTime}) THEN
         TagValue ELSE 0
@@ -224,7 +228,7 @@
         </if>
         GROUP BY tag_name
         ORDER BY
-        plant_id ASC , buildingName ASC, meter_code ASC
+        plant_id ASC , buildingName ASC, meterCode ASC
     </select>
 
     <select id="selectDayDosageOfElectricity" parameterType="map" resultType="map">
@@ -601,9 +605,8 @@
 
     <select id="selectDaySettlement" parameterType="map" resultType="map">
         SELECT
-        ( SELECT DISTINCT building_name FROM consumption_group_info C WHERE C.building_id = A.building_id )
-        buildingName,
-        ( SELECT DISTINCT plant_name FROM consumption_group_info C WHERE C.building_id = A.building_id ) plantName,
+        max(building_name) buildingName,
+        max(plant_name) plantName,
         SUM (
         CASE
         WHEN CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ), #{queryTime}, 120 )
@@ -687,9 +690,9 @@
     </select>
     <select id="selectMonthSettlement" parameterType="map" resultType="map">
         SELECT
-        ( SELECT DISTINCT building_name FROM consumption_group_info C WHERE C.building_id = A.building_id )
-        buildingName,
-        ( SELECT DISTINCT plant_name FROM consumption_group_info C WHERE C.building_id = A.building_id ) plantName,
+        A.building_id buildingId,
+        max(building_name) buildingName,
+        max(plant_name) plantName,
         SUM (
         CASE
         WHEN CONVERT ( VARCHAR ( 7 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 7 ), #{queryTime}, 120 )
@@ -775,9 +778,8 @@
     </select>
     <select id="selectQuarterSettlement" parameterType="map" resultType="map">
         SELECT
-        ( SELECT DISTINCT building_name FROM consumption_group_info C WHERE C.building_id = A.building_id )
-        buildingName,
-        ( SELECT DISTINCT plant_name FROM consumption_group_info C WHERE C.building_id = A.building_id ) plantName,
+        max(building_name) buildingName,
+        max(plant_name) plantName,
         SUM (
         CASE
         WHEN YEAR(B.DataTime) = #{queryTimeYear} and [quarter] = #{queryTimeQuarter}
@@ -856,9 +858,8 @@
     </select>
     <select id="selectYearSettlement" parameterType="map" resultType="map">
         SELECT
-        ( SELECT DISTINCT building_name FROM consumption_group_info C WHERE C.building_id = A.building_id )
-        buildingName,
-        ( SELECT DISTINCT plant_name FROM consumption_group_info C WHERE C.building_id = A.building_id ) plantName,
+        max(building_name) buildingName,
+        max(plant_name) plantName,
         SUM (
         CASE
         WHEN CONVERT ( VARCHAR ( 4 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 4 ), #{queryTime}, 120 )
@@ -1394,7 +1395,7 @@
 
     <select id="selectElectricityOfFPGValue" parameterType="map" resultType="map">
         SELECT
-        building_id,
+        building_id buildingId,
         MAX ( concat ( plant_name, building_name ) ) in_department,
         SUM (
         CASE
@@ -1450,6 +1451,9 @@
         <if test="buildingId!=null">
             AND A.building_id = #{buildingId, jdbcType=INTEGER}
         </if>
+        <if test="plantId!=null">
+            AND A.plant_id = #{plantId, jdbcType=INTEGER}
+        </if>
         <if test="deviceType!=null">
             AND A.device_type = #{deviceType, jdbcType=INTEGER}
         </if>
@@ -1458,6 +1462,121 @@
         </if>
 		GROUP BY
 		building_id
+    </select>
+
+    <select id="selectMonthSettlementByRangeTime" parameterType="map" resultType="map">
+        SELECT
+        A.building_id buildingId,
+        ( SELECT DISTINCT building_name FROM consumption_group_info C WHERE C.building_id = A.building_id )
+        buildingName,
+        ( SELECT DISTINCT plant_name FROM consumption_group_info C WHERE C.building_id = A.building_id ) plantName,
+        SUM (
+        CASE
+        WHEN CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ), #{endTime}, 120 )
+        AND energy_type_name = '电' THEN
+        TagValue ELSE 0.0
+        END
+        ) currentElectricitySumValue,
+        SUM (
+        CASE
+        WHEN CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ),  #{beginTime}, 120 )
+        AND energy_type_name = '电' THEN
+        TagValue ELSE 0.0
+        END
+        ) preElectricitySumValue,
+        SUM (
+        CASE
+        WHEN CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ), #{endTime}, 120 )
+        AND energy_type_name = '水' THEN
+        TagValue ELSE 0.0
+        END
+        ) currentWaterSumValue,
+        SUM (
+        CASE
+        WHEN CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ),  #{beginTime}, 120 )
+        AND energy_type_name = '水' THEN
+        TagValue ELSE 0.0
+        END
+        ) preWaterSumValue,
+        SUM (
+        CASE
+        WHEN CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ), #{endTime}, 120 )
+        AND energy_type_name = '空气' THEN
+        TagValue ELSE 0.0
+        END
+        ) currentAirSumValue,
+        SUM (
+        CASE
+        WHEN CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ), #{beginTime}, 120 )
+        AND energy_type_name = '空气' THEN
+        TagValue ELSE 0.0
+        END
+        ) preAirSumValue,
+        SUM (
+        CASE
+        WHEN CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ), #{endTime}, 120 )
+        AND energy_type_name = '蒸汽' THEN
+        TagValue ELSE 0.0
+        END
+        ) currentSteamSumValue,
+        SUM (
+        CASE
+        WHEN CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) = CONVERT ( VARCHAR ( 10 ), #{beginTime}, 120 )
+        AND energy_type_name = '蒸汽' THEN
+        TagValue ELSE 0.0
+        END
+        ) preSteamSumValue
+        FROM
+        consumption_group_info A
+        LEFT JOIN T_DayData B ON A.tag_name = B.TagName
+        and  CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) &gt;= CONVERT ( VARCHAR ( 10 ), #{beginTime}, 120 )
+        and CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) &lt;= CONVERT ( VARCHAR ( 10 ), #{endTime}, 120 )
+        WHERE
+        A.[disable] = 0
+        <if test="plantId!=null">
+            AND plant_id = #{plantId, jdbcType=INTEGER}
+        </if>
+        <if test="buildingId!=null">
+            AND A.building_id = #{buildingId, jdbcType=INTEGER}
+        </if>
+        <if test="deviceType!=null">
+            AND A.device_type = #{deviceType, jdbcType=INTEGER}
+        </if>
+        <if test="measureLevel!=null and measureLevel!=''">
+            AND A.measure_level = #{measureLevel, jdbcType=INTEGER}
+        </if>
+        GROUP BY building_id
+    </select>
+
+    <select id="selectElectricityOfFPGValueByRangeTime" parameterType="map" resultType="map">
+        SELECT
+        building_id buildingId,
+        MAX ( concat ( plant_name, building_name ) ) in_department,
+        SUM (FValue) sumFValue,
+        sum(PValue) sumPValue,
+        SUM (GValue) sumGValue
+        FROM
+        consumption_group_info A
+        LEFT JOIN T_DayDataJFPG B ON A.tag_name = B.TagName
+        AND CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) &gt;= CONVERT ( VARCHAR ( 10 ), #{beginTime}, 120 )
+        AND CONVERT ( VARCHAR ( 10 ), B.DataTime , 120 ) &lt;= CONVERT ( VARCHAR ( 10 ), #{endTime}, 120 )
+        WHERE
+        A.[disable] = 0
+        AND energy_type_name = '电'
+        <if test="buildingId!=null">
+            AND A.building_id = #{buildingId, jdbcType=INTEGER}
+        </if>
+        <if test="plantId!=null">
+            AND A.plant_id = #{plantId, jdbcType=INTEGER}
+        </if>
+        <if test="deviceType!=null">
+            AND A.device_type = #{deviceType, jdbcType=INTEGER}
+        </if>
+        <if test="measureLevel!=null and measureLevel!=''">
+            AND A.measure_level = #{measureLevel, jdbcType=INTEGER}
+        </if>
+        GROUP BY
+        building_id
     </select>
 
 </mapper>
