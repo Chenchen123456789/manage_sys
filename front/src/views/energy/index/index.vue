@@ -1,417 +1,253 @@
 <template>
-  <div class="dashboard-editor-container">
-    <PanelGroup :homePageChartSettingList="homePageChartSettingList" :yearTotal="yearTotal" />
-    <el-row :gutter="32" class="second-part">
-      <el-carousel :autoplay="true" height="230px" arrow="always" direction="vertical">
-        <el-carousel-item>
-          <el-col
-            :key="item"
-            :span="4"
-            :xs="24"
-            class="el-coldash-board"
-            v-for="item in [4,5,6,7,8,9]"
-          >
-            <Dashboard :key="item" :dashboardDataList="groupedHomePageSettingData" :placeholderId="item"></Dashboard>
-            <div style="position: absolute;top: 202px;">{{getDashBoardDesc(item)}}</div>
-          </el-col>
-        </el-carousel-item>
-        <el-carousel-item>
-          <el-col
-            :key="item"
-            :span="4"
-            :xs="24"
-            class="el-coldash-board"
-            v-for="item in [11,12,13,14,15,16]"
-          >
-            <Dashboard :dashboardDataList="groupedHomePageSettingData" :placeholderId="item"></Dashboard>
-            <div style="position: absolute;top: 202px;">{{getDashBoardDesc(item)}}</div>
-          </el-col>
-        </el-carousel-item>
-      </el-carousel>
-    </el-row>
-
-    <el-row :gutter="32" class="third-part">
-      <el-col :span="8" :xs="24">
-        <el-card class="box-card">
-          <div class="clearfix" slot="header">
-            <span>电量统计</span>
-          </div>
-          <div>
-            <div class="text-center">
-              <el-carousel indicator-position="outside">
-                <el-carousel-item>
-                  <BuildingDosageOfBarChart :chartData="dayDosageOfElectricity"></BuildingDosageOfBarChart>
-                </el-carousel-item>
-                <el-carousel-item>
-                  <BuildingDosageOfPieChart :chartData="monthDosageOfElectricity"></BuildingDosageOfPieChart>
-                </el-carousel-item>
-                <el-carousel-item>
-                  <BuildingDosageOfPie2Chart :chartData="yearDosageOfElectricity"></BuildingDosageOfPie2Chart>
-                </el-carousel-item>
-              </el-carousel>
-            </div>
-          </div>
-        </el-card>
+  <div class="dashboard-container">
+    <el-row class="container">
+      <el-col :span="24">
+        <CountPanel></CountPanel>
       </el-col>
-      <el-col :span="8" :xs="24">
-        <el-card class="box-card">
-          <div class="clearfix" slot="header">
-            <span>水量统计</span>
-          </div>
-          <div>
-            <div class="text-center">
-              <el-carousel indicator-position="outside">
-                <el-carousel-item>
-                  <BuildingDosageOfBarChart :chartData="dayDosageOfWater"></BuildingDosageOfBarChart>
-                </el-carousel-item>
-                <el-carousel-item>
-                  <BuildingDosageOfPieChart :chartData="monthDosageOfWater"></BuildingDosageOfPieChart>
-                </el-carousel-item>
-                <el-carousel-item>
-                  <BuildingDosageOfPie2Chart :chartData="yearDosageOfWater"></BuildingDosageOfPie2Chart>
-                </el-carousel-item>
-              </el-carousel>
+      <el-row class="middle-part">
+        <el-col :span="6">
+          <BarChart className="barchart1" :chartData="chartData1"></BarChart>
+        </el-col>
+        <el-col :span="12">
+          <div class="homepage-background">
+            <el-image fit="contain" class="image" :src="homepageBackground"></el-image>
+            <div @click="handleClickBox(1)" class="box box1">
+              <div class="front"></div>
+              <div class="back"></div>
+              <div class="left"></div>
+              <div class="right"></div>
+              <div class="top"></div>
+              <div class="bottom"></div>
+            </div>
+            <div @click="handleClickBox(2)" class="box box2">
+              <div class="front"></div>
+              <div class="back"></div>
+              <div class="left"></div>
+              <div class="right"></div>
+              <div class="top"></div>
+              <div class="bottom"></div>
+            </div>
+            <div @click="handleClickBox(3)" class="box box3">
+              <div class="front"></div>
+              <div class="back"></div>
+              <div class="left"></div>
+              <div class="right"></div>
+              <div class="top"></div>
+              <div class="bottom"></div>
             </div>
           </div>
-        </el-card>
+        </el-col>
+        <el-col :span="6">
+          <BarChart className="barchart1" :chartData="chartData2"></BarChart>
+        </el-col>
+      </el-row>
+      <el-col :span="12">
+        <LineChart className="chart2" :chartData="chartData3"></LineChart>
       </el-col>
-      <el-col :span="8" :xs="24">
-        <el-card class="box-card">
-          <div class="clearfix" slot="header">
-            <span>气量统计</span>
-          </div>
-          <div>
-            <div class="text-center">
-              <el-carousel indicator-position="outside">
-                <el-carousel-item>
-                  <BuildingDosageOfBarChart :chartData="dayDosageOfAir"></BuildingDosageOfBarChart>
-                </el-carousel-item>
-                <el-carousel-item>
-                  <BuildingDosageOfPieChart :chartData="monthDosageOfAir"></BuildingDosageOfPieChart>
-                </el-carousel-item>
-                <el-carousel-item>
-                  <BuildingDosageOfPie2Chart :chartData="yearDosageOfAir"></BuildingDosageOfPie2Chart>
-                </el-carousel-item>
-              </el-carousel>
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
-
-    <el-row :gutter="32" class="fourth-part">
-      <el-col :span="12" :xs="24">
-        <el-card class="box-card">
-          <div class="clearfix" slot="header">
-            <span>用电、水、气环比</span>
-          </div>
-          <div>
-            <div class="text-center">
-              <el-carousel indicator-position="outside">
-                <el-carousel-item>
-                  <BuildingSequentialDosageOfElectricity :chartData="seqDosageData"></BuildingSequentialDosageOfElectricity>
-                </el-carousel-item>
-                <el-carousel-item>
-                  <BuildingSequentialDosageOfAir :chartData="seqDosageData"></BuildingSequentialDosageOfAir>
-                </el-carousel-item>
-                <el-carousel-item>
-                  <BuildingSequentialDosageOfWater :chartData="seqDosageData"></BuildingSequentialDosageOfWater>
-                </el-carousel-item>
-              </el-carousel>
-            </div>
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="12" :xs="24">
-        <el-card class="box-card">
-          <div class="clearfix" slot="header">
-            <span>电压棒图</span>
-          </div>
-          <div>
-            <div class="text-center">
-              <el-carousel indicator-position="outside">
-                <el-carousel-item>
-                  <VoltageStickFigure :chartData="groupedHomePageSettingData"></VoltageStickFigure>
-                </el-carousel-item>
-              </el-carousel>
-            </div>
-          </div>
-        </el-card>
+      <el-col :span="12">
+        <LineChart className="chart2" :chartData="chartData4"></LineChart>
       </el-col>
     </el-row>
   </div>
 </template>
 
 <script>
-import BuildingDosageOfPieChart from './buildingDosageOfPieChart'
-import BuildingDosageOfBarChart from './buildingDosageOfBarChart'
-import BuildingDosageOfPie2Chart from './buildingDosageOfPie2Chart'
-import VoltageStickFigure from './voltageStickFigure'
-import BuildingSequentialDosageOfAir from './buildingSequentialDosageOfAir'
-import BuildingSequentialDosageOfElectricity from './buildingSequentialDosageOfElectricity'
-import BuildingSequentialDosageOfWater from './buildingSequentialDosageOfWater'
-import PanelGroup from './PanelGroup'
-import Dashboard from './DashBorad'
-import {
-  listHomePageChartSetting,
-  queryBuildingDosageforHomePage,
-  queryYearTotal
-} from '@/api/energy/report'
+import homepageBackground from '../../../assets/image/homepage-background.jpg'
+import BarChart from './BarChart'
+import resize from '../../dashboard/mixins/resize'
+import CountPanel from './countPanel'
+import LineChart from './LineChart'
 
 export default {
   name: 'Index',
   components: {
-    BuildingDosageOfPieChart,
-    BuildingDosageOfBarChart,
-    BuildingDosageOfPie2Chart,
-    VoltageStickFigure,
-    PanelGroup,
-    Dashboard,
-    BuildingSequentialDosageOfAir,
-    BuildingSequentialDosageOfWater,
-    BuildingSequentialDosageOfElectricity
+    CountPanel,
+    BarChart,
+    LineChart,
   },
-  data () {
+  mixins: [resize],
+  data() {
     return {
-      homePageChartSettingList: [],
-      groupedHomePageSettingData: [],
-      dayDosageOfElectricity: [],
-      dayDosageOfAir: [],
-      dayDosageOfWater: [],
-      monthDosageOfElectricity: [],
-      monthDosageOfAir: [],
-      monthDosageOfWater: [],
-      yearDosageOfElectricity: [],
-      yearDosageOfAir: [],
-      yearDosageOfWater: [],
-      seqDosageData: {},
-      yearTotal: {}
+      homepageBackground,
+      chartData1: {},
+      chartData2: {},
+      chartData3: {},
+      chartData4: {},
     }
   },
-  created () {
-    this.getHomePageChartSettingList()
-    this.getBuildingDosage()
-    this.getYearTotal()
+  created() {},
+  mounted() {
+    setTimeout(() => {
+      this.chartData1 = {
+        title: '各月总能耗',
+        yData: [10, 20, 30, 50, 20, 30, 11, 50, 16, 15, 55, 5],
+      }
+      this.chartData2 = {
+        title: '各月空调',
+        yData: [10, 20, 30, 50, 20, 30, 11, 50, 16, 15, 55, 5],
+      }
+      this.chartData3 = {
+        title: '各月冷水机组',
+        yData: [10, 20, 30, 50, 20, 70, 19, 30, 16, 15, 55, 5],
+      }
+      this.chartData4 = {
+        title: '各月空压机',
+        yData: [10, 20, 30, 55, 20, 20, 71, 50, 16, 15, 55, 5],
+      }
+    }, 1000)
   },
   methods: {
-    getYearTotal () {
-      queryYearTotal().then(res => {
-        const data = res.data
-        const currentAirSumValue = data.currentAirSumValue || 0
-        const preAirSumValue = data.preAirSumValue || 0
-
-        const currentElectricitySumValue = data.currentElectricitySumValue || 0
-        const preElectricitySumValue = data.preElectricitySumValue || 0
-
-        const currentWaterSumValue = data.currentWaterSumValue || 0
-        const preWaterSumValue = data.preWaterSumValue || 0
-
-        const currentSteamSumValue = data.currentSteamSumValue || 0
-        const preSteamSumValue = data.preSteamSumValue || 0
-
-        const currentSteamDosage = (currentSteamSumValue - preSteamSumValue) < 0 ? 0 : (currentSteamSumValue - preSteamSumValue)
-        const currentAirDosage = (currentAirSumValue - preAirSumValue) < 0 ? 0 : (currentAirSumValue - preAirSumValue)
-        const currentWaterDosage = (currentWaterSumValue - preWaterSumValue) < 0 ? 0 : (currentWaterSumValue - preWaterSumValue)
-        const currentElectricityDosage = (currentElectricitySumValue - preElectricitySumValue) < 0 ? 0 : (currentElectricitySumValue - preElectricitySumValue)
-
-        this.yearTotal = {
-          currentSteamDosage,
-          currentAirDosage,
-          currentWaterDosage,
-          currentElectricityDosage
-        }
-      })
-    },
-    getBuildingDosage () {
-      queryBuildingDosageforHomePage().then(res => {
-        const buildingDosage = res.data
-        this.seqDosageData = res.data
-        if (buildingDosage) {
-          const dayDosage = buildingDosage.dayDosage
-          const monthDosage = buildingDosage.monthDosage
-          const yearDosage = buildingDosage.yearDosage
-          if (dayDosage) {
-            this.dayDosageOfElectricity = dayDosage.map(item => {
-              return {
-                buildingName: item.buildingName,
-                sumValue: item.currentElectricitySumValue >= 0 ? item.currentElectricitySumValue : 0
-              }
-            })
-
-            this.dayDosageOfAir = dayDosage.map(item => {
-              return {
-                buildingName: item.buildingName,
-                sumValue: item.currentAirSumValue >= 0 ? item.currentAirSumValue : 0
-              }
-            })
-
-            this.dayDosageOfWater = dayDosage.map(item => {
-              return {
-                buildingName: item.buildingName,
-                sumValue: item.currentWaterSumValue >= 0 ? item.currentWaterSumValue : 0
-              }
-            })
-          }
-
-          if (monthDosage) {
-            this.monthDosageOfElectricity = monthDosage.map(item => {
-              return {
-                buildingName: item.buildingName,
-                sumValue: item.currentElectricitySumValue >= 0 ? item.currentElectricitySumValue : 0
-              }
-            })
-
-            this.monthDosageOfAir = monthDosage.map(item => {
-              return {
-                buildingName: item.buildingName,
-                sumValue: item.currentAirSumValue >= 0 ? item.currentAirSumValue : 0
-              }
-            })
-
-            this.monthDosageOfWater = monthDosage.map(item => {
-              return {
-                buildingName: item.buildingName,
-                sumValue: item.currentWaterSumValue >= 0 ? item.currentWaterSumValue : 0
-              }
-            })
-          }
-
-          if (yearDosage) {
-            this.yearDosageOfElectricity = yearDosage.map(item => {
-              return {
-                buildingName: item.buildingName,
-                sumValue: item.currentElectricitySumValue >= 0 ? item.currentElectricitySumValue : 0
-              }
-            })
-            this.yearDosageOfAir = yearDosage.map(item => {
-              return {
-                buildingName: item.buildingName,
-                sumValue: item.currentAirSumValue >= 0 ? item.currentAirSumValue : 0
-              }
-            })
-            this.yearDosageOfWater = yearDosage.map(item => {
-              return {
-                buildingName: item.buildingName,
-                sumValue: item.currentWaterSumValue >= 0 ? item.currentWaterSumValue : 0
-              }
-            })
-          }
-        }
-      })
-    },
-    getDashBoardDesc (placeholderId) {
-      const homePageChartSettingList = this.homePageChartSettingList
-      let desc = ''
-      if (homePageChartSettingList.length > 0) {
-        const obj = homePageChartSettingList.find(
-          item => item.placeholderId === placeholderId
-        )
-        desc = obj ? obj.description : ''
+    handleClickBox(target) {
+      console.log(target)
+      switch (target) {
+        case 1:
+          this.chartData1.yData = [10, 20, 30, 50, 20, 30, 11, 50, 16, 15, 55, 5].map(item => Math.ceil(item/2))
+          this.chartData2.yData = [10, 20, 30, 50, 20, 30, 11, 50, 16, 15, 55, 5].map(item => Math.ceil(item/2))
+          this.chartData3.yData = [10, 20, 30, 50, 20, 30, 11, 50, 16, 15, 55, 5].map(item => Math.ceil(item/2))
+          this.chartData4.yData = [10, 20, 30, 50, 20, 30, 11, 50, 16, 15, 55, 5].map(item => Math.ceil(item/2))
+          break
+        case 2: 
+          this.chartData1.yData = [10, 20, 30, 50, 20, 30, 11, 50, 16, 15, 55, 5].map(item => Math.ceil(item/3))
+          this.chartData2.yData = [10, 20, 30, 50, 20, 30, 11, 50, 16, 15, 55, 5].map(item => Math.ceil(item/3))
+          this.chartData3.yData = [10, 20, 30, 50, 20, 30, 11, 50, 16, 15, 55, 5].map(item => Math.ceil(item/3))
+          this.chartData4.yData = [10, 20, 30, 50, 20, 30, 11, 50, 16, 15, 55, 5].map(item => Math.ceil(item/3))
+          break
+        case 3:
+          this.chartData1.yData = [10, 20, 30, 50, 20, 30, 11, 50, 16, 15, 55, 5].map(item => Math.ceil(item/4))
+          this.chartData2.yData = [10, 20, 30, 50, 20, 30, 11, 50, 16, 15, 55, 5].map(item => Math.ceil(item/4))
+          this.chartData3.yData = [10, 20, 30, 50, 20, 30, 11, 50, 16, 15, 55, 5].map(item => Math.ceil(item/4))
+          this.chartData4.yData = [10, 20, 30, 50, 20, 30, 11, 50, 16, 15, 55, 5].map(item => Math.ceil(item/4))
+          break
+        default:
+          break
       }
-      return desc
+
+      
     },
-    groupArray (arr) {
-      let map = {},
-        dest = []
-      for (const i in arr) {
-        let ai = arr[i]
-        if (!map[ai.placeholderId]) {
-          dest.push({
-            placeholderId: ai.placeholderId,
-            item: [ai]
-          })
-          map[ai.placeholderId] = ai
-        } else {
-          for (const j in dest) {
-            let dj = dest[j]
-            if (dj.placeholderId == ai.placeholderId) {
-              dj.item.push(ai)
-              break
-            }
-          }
-        }
-      }
-      return dest
-    },
-    getHomePageChartSettingList () {
-      listHomePageChartSetting().then(res => {
-        this.homePageChartSettingList = res.data
-        this.groupedHomePageSettingData = this.groupArray(res.data)
-      })
-    }
-  }
+  },
 }
 </script>
 
-<style lang="scss">
-.el-coldash-board {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  padding-left: 0px;
-  padding-left: 0px !important;
-  padding-right: 0px !important;
+<style  lang="scss">
+// px单位转成vw单位
+@function px2vw($size: 14px, $width: 1800px) {
+  @if (type-of($size) == 'number' and unit($size) == 'px') {
+    @return $size / $width * 100vw;
+  } @else {
+    @return $size;
+  }
 }
-.second-part {
-  background: white;
-  margin-bottom: 18px;
-  margin-left: 0px !important;
-  margin-right: 0px !important;
-  // display: flex;
-  // justify-content: space-between;
-  // align-items: center;
-  .el-carousel__indicator {
-    .el-carousel__button {
-      background: gray;
+
+@function px2vh($size: 14px, $height: 1146px) {
+  @if (type-of($size) == 'number' and unit($size) == 'px') {
+    @return $size / $height * 100vh;
+  } @else {
+    @return $size;
+  }
+}
+
+.dashboard-container {
+  position: relative;
+
+  .container{
+    height: 100vh;
+    padding: 20px; 
+    background-color: rgb(240, 242, 245);
+  }
+
+  .barchart1 {
+    height: px2vw(576px) !important;
+  }
+  .chart2 {
+    height: px2vw(280px) !important;
+  }
+
+  .middle-part {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    padding-bottom: 20px;
+  }
+
+  .homepage-background {
+    position: relative;
+    // background: src('../../../assets/image/homepage-background.jpg');
+
+    .image {
+      max-height: px2vw(574px);
+      img{
+       max-height: px2vw(574px);
+      }
     }
   }
-}
-.third-part {
-  margin-left: 0px !important;
-  margin-right: 0px !important;
-  margin-bottom: 18px;
-  background: white;
-  .el-col:first-child {
-    padding-left: 0px !important;
-    padding-right: 0px !important;
+  .box {
+    // opacity: 0;
+    position: absolute;
+    cursor: pointer;
+    // top: px2vw(34px);
+    // right: px2vw(178px);
+    transform: rotateX(31deg) rotateY(-26deg) rotateZ(-7deg);
+    /*让子元素保留3d变换效果*/
+    transform-style: preserve-3d;
+    /*添加透视景深效果*/
+    perspective: 100;
+    /*设置透视的观察角度*/
+    perspective-origin: 10% 10%;
+    // -webkit-perspective: 2000; /* Safari 和 Chrome */
+    // -webkit-perspective-origin: 20% 20%; /* Safari 和 Chrome */
   }
-  .el-col:last-child {
-    padding-left: 0px !important;
-    padding-right: 0px !important;
+  .box1 {
+    top: 16%;
+    right: 55.9%;
   }
-}
-.fourth-part {
-  margin-left: 0px !important;
-  margin-right: 0px !important;
-  background: white;
-  .el-col:first-child {
-    padding-left: 0px !important;
-    padding-right: 10px !important;
+  .box2 {
+    top: 21.5%;
+    right: 52%;
   }
-  .el-col:last-child {
-    padding-left: 10px !important;
-    padding-right: 0px !important;
-  }
-}
-.dashboard-editor-container {
-  min-height: 100vh;
-  max-height: 100%;
-  padding: 20px;
-  background-color: rgb(240, 242, 245);
-  position: relative;
 
-  .chart-wrapper {
-    background: #fff;
-    padding: 16px 16px 0;
-    margin-bottom: 32px;
+  .box3 {
+    transform: rotateX(37deg) rotateY(-30deg) rotateZ(-7deg);
+    top: 39.5%;
+    right: 41.5%;
   }
-}
 
-@media (max-width: 1024px) {
-  .chart-wrapper {
-    padding: 8px;
+  .box:hover {
+    opacity: 1;
+  }
+
+  .box > div {
+    height: px2vw(26px);
+    width: px2vw(100px);
+    position: absolute;
+    opacity: 0.6;
+    background-color: rgba(64, 158, 255, 0.5);
+    border: solid 1px rgb(64, 158, 255);
+  }
+  .front {
+    /*变化完毕后会回到原始状态*/
+    transform: translateZ(px2vw(20px));
+  }
+  .back {
+    transform: translateZ(px2vw(-20px)) rotateY(180deg);
+  }
+  .left {
+    height: px2vw(26px) !important;
+    width: px2vw(40px) !important;
+    /*移动加旋转*/
+    transform: translateX(px2vw(-20px)) rotateY(-90deg);
+  }
+  .right {
+    height: px2vw(26px) !important;
+    width: px2vw(40px) !important;
+    transform: translateX(px2vw(80px)) rotateY(90deg);
+  }
+  .top {
+    height: px2vw(40px) !important;
+    transform: translateY(px2vw(-20px)) rotateX(90deg);
+  }
+  .bottom {
+    height: px2vw(40px) !important;
+    transform: translateY(px2vw(6px)) rotateX(-90deg);
   }
 }
 </style>
